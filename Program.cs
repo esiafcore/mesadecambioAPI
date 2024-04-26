@@ -24,10 +24,20 @@ builder.Services.AddCors(opts =>
 });
 
 builder.Services.AddOutputCache();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Fin de área de los servicios
 var app = builder.Build();
 //Inicio de área de los middleware
+
+//if (builder.Environment.IsDevelopment())
+//{
+
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors();
 app.UseOutputCache();
