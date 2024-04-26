@@ -1,17 +1,32 @@
 using eSiafApiN4.Entidades;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var apellido = builder.Configuration.GetValue<string>("apellido");
-
+var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
 //Inicio de área de los servicios
 
+builder.Services.AddCors(opts =>
+{
+
+    opts.AddDefaultPolicy(config =>
+    {
+        config.WithOrigins(origenesPermitidos)
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+
+    opts.AddPolicy("libre",config =>
+    {
+        config.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 //Fin de área de los servicios
 var app = builder.Build();
 //Inicio de área de los middleware
 
-app.MapGet("/", () => $"Hello World! {apellido}");
+app.MapGet("/", () => "Hello World!");
 app.MapGet("/otra-cosa", () => "!Hola, otra cosa");
 
 app.MapGet("/generos", () =>
