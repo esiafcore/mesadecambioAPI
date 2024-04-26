@@ -1,4 +1,5 @@
 using eSiafApiN4.Entidades;
+using Microsoft.AspNetCore.Cors;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
@@ -26,9 +27,9 @@ builder.Services.AddCors(opts =>
 var app = builder.Build();
 //Inicio de área de los middleware
 
-app.MapGet("/", () => "Hello World!");
-app.MapGet("/otra-cosa", () => "!Hola, otra cosa");
+app.UseCors();
 
+app.MapGet("/", [EnableCors(policyName:"libre")]() => "Hello World!");
 app.MapGet("/generos", () =>
 {
     var generos = new List<Genero>
