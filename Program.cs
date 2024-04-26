@@ -23,14 +23,17 @@ builder.Services.AddCors(opts =>
     });
 });
 
+builder.Services.AddOutputCache();
+
 //Fin de área de los servicios
 var app = builder.Build();
 //Inicio de área de los middleware
 
 app.UseCors();
+app.UseOutputCache();
 
 app.MapGet("/", [EnableCors(policyName:"libre")]() => "Hello World!");
-app.MapGet("/generos", () =>
+app.MapGet("/generos", [EnableCors(policyName: "libre")] () =>
 {
     var generos = new List<Genero>
     {
@@ -40,7 +43,7 @@ app.MapGet("/generos", () =>
     };
 
     return generos;
-});
+}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
 
 //Fin de área de los middleware
 app.Run();
