@@ -34,7 +34,8 @@ public class RepositorioGeneros : IRepositorioGeneros
 
         var generos = await conexion.QueryAsync<Genero>(@"
                         SELECT tbl.Id ,tbl.Nombre
-                        FROM dbo.Generos as tbl;
+                        FROM dbo.Generos as tbl
+                        ORDER BY tbl.Nombre;
                 ");
         return generos.ToList();
     }
