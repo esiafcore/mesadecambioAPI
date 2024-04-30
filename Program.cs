@@ -46,24 +46,29 @@ app.UseCors();
 app.UseOutputCache();
 
 app.MapGet("/", [EnableCors(policyName:"libre")]() => "Hello World!");
-app.MapGet("/generos", [EnableCors(policyName: "libre")] () =>
-{
-    var generos = new List<Genero>
-    {
-        new Genero { Id = 1, Nombre="Drama"},
-        new Genero { Id = 2, Nombre="Acción"},
-        new Genero { Id = 3, Nombre="Comedia"}
-    };
+app.MapGet("/generos", [EnableCors(policyName: "libre")] async (IRepositorioGeneros repositorio)
+    => await repositorio.ObtenerTodos())
+        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
 
-    return generos;
-}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+app.MapGet("/generos/{id:int}", async (int id
+    , IRepositorioGeneros repositorio) =>
+{
+    var genero = await repositorio.ObtenerPorId(id);
+    if (genero is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(genero);
+});
 
 app.MapPost("/generos", async (Genero genero
     , IRepositorioGeneros repositorioGeneros) =>
 {
-    var id = await repositorioGeneros.CrearGenero(genero);
+    var id = await repositorioGeneros.Crear(genero);
     return TypedResults.Created($"/generos/{id}",genero);
 });
+
+
 
 //Fin de área de los middleware
 app.Run();

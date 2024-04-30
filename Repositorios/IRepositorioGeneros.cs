@@ -4,5 +4,7 @@ namespace eSiafApiN4.Repositorios;
 
 public interface IRepositorioGeneros
 {
-    Task<int> CrearGenero(Genero genero);
+    Task<int> Crear(Genero genero);
+    Task<List<Genero>> ObtenerTodos();
+    Task<Genero?> ObtenerPorId(int id);
 }

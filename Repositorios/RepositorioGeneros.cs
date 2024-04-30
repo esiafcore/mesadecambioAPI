@@ -13,7 +13,7 @@ public class RepositorioGeneros : IRepositorioGeneros
         _connectionString = configuration.GetConnectionString("DefaultConnection");
     }
 
-    public async Task<int> CrearGenero(Genero genero)
+    public async Task<int> Crear(Genero genero)
     {
         using var conexion = new SqlConnection(_connectionString);
 
@@ -27,4 +27,27 @@ public class RepositorioGeneros : IRepositorioGeneros
         genero.Id = id;
         return id;
     }
+
+    public async Task<List<Genero>> ObtenerTodos()
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var generos = await conexion.QueryAsync<Genero>(@"
+                        SELECT tbl.Id ,tbl.Nombre
+                        FROM dbo.Generos as tbl;
+                ");
+        return generos.ToList();
+    }
+
+    public async Task<Genero?> ObtenerPorId(int id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var genero = await conexion.QueryFirstOrDefaultAsync<Genero>(@"
+                        SELECT tbl.Id ,tbl.Nombre
+                        FROM dbo.Generos as tbl
+                        WHERE Id = @Id;", new {id});
+        return genero;
+    }
+
 }
