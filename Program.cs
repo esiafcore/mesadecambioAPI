@@ -1,4 +1,5 @@
 using eSiafApiN4.Entidades;
+using eSiafApiN4.Repositorios;
 using Microsoft.AspNetCore.Cors;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,8 @@ builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
+
 //Fin de área de los servicios
 var app = builder.Build();
 //Inicio de área de los middleware
@@ -54,6 +57,12 @@ app.MapGet("/generos", [EnableCors(policyName: "libre")] () =>
 
     return generos;
 }).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+
+app.MapPost("/generos", async (Genero genero, IRepositorioGeneros repositorioGeneros) =>
+{
+    await repositorioGeneros.CrearGenero(genero);
+    return TypedResults.Ok(genero);
+});
 
 //Fin de área de los middleware
 app.Run();
