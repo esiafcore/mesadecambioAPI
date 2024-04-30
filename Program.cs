@@ -58,10 +58,11 @@ app.MapGet("/generos", [EnableCors(policyName: "libre")] () =>
     return generos;
 }).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
 
-app.MapPost("/generos", async (Genero genero, IRepositorioGeneros repositorioGeneros) =>
+app.MapPost("/generos", async (Genero genero
+    , IRepositorioGeneros repositorioGeneros) =>
 {
-    await repositorioGeneros.CrearGenero(genero);
-    return TypedResults.Ok(genero);
+    var id = await repositorioGeneros.CrearGenero(genero);
+    return TypedResults.Created($"/generos/{id}",genero);
 });
 
 //Fin de área de los middleware

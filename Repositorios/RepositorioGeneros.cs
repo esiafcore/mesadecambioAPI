@@ -17,7 +17,14 @@ public class RepositorioGeneros : IRepositorioGeneros
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        var query = conexion.Query("SELECT 1").FirstOrDefault();
-        return await Task.FromResult(0);
+        var id = await conexion.QuerySingleAsync<int>(@"
+                        INSERT INTO Generos (Nombre)
+                        VALUES (@Nombre);
+
+                        SELECT SCOPE_IDENTITY();
+
+                ", genero);
+        genero.Id = id;
+        return id;
     }
 }
