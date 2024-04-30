@@ -1,6 +1,7 @@
 using eSiafApiN4.Entidades;
 using eSiafApiN4.Repositorios;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.OutputCaching;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
@@ -48,7 +49,7 @@ app.UseOutputCache();
 app.MapGet("/", [EnableCors(policyName:"libre")]() => "Hello World!");
 app.MapGet("/generos", [EnableCors(policyName: "libre")] async (IRepositorioGeneros repositorio)
     => await repositorio.ObtenerTodos())
-        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("generos-get"));
 
 app.MapGet("/generos/{id:int}", async (int id
     , IRepositorioGeneros repositorio) =>
@@ -62,9 +63,11 @@ app.MapGet("/generos/{id:int}", async (int id
 });
 
 app.MapPost("/generos", async (Genero genero
-    , IRepositorioGeneros repositorioGeneros) =>
+    , IRepositorioGeneros repositorioGeneros
+    , IOutputCacheStore outputCacheStore) =>
 {
     var id = await repositorioGeneros.Crear(genero);
+    await outputCacheStore.EvictByTagAsync("generos-get", default);
     return TypedResults.Created($"/generos/{id}",genero);
 });
 
