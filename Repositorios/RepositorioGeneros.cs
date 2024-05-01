@@ -51,4 +51,25 @@ public class RepositorioGeneros : IRepositorioGeneros
         return genero;
     }
 
+    public async Task<bool> Existe(int id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        var existe = await conexion.QuerySingleAsync<bool>(@"
+                        IF EXISTS(SELECT 1 FROM dbo.Generos AS tbl WHERE tbl.Id = @Id)
+	                        SELECT 1 AS isExist
+                        ELSE
+	                        SELECT 0 AS isExist",new {id});
+        return existe;
+    }
+
+    public async Task Actualizar(object genero)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        await conexion.ExecuteAsync(@"
+                                            UPDATE dbo.Generos
+                                            SET Nombre = @Nombre
+                                            WHERE Id = @Id
+                                    ",genero);
+    }
 }

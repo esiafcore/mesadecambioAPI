@@ -71,7 +71,20 @@ app.MapPost("/generos", async (Genero genero
     return TypedResults.Created($"/generos/{id}",genero);
 });
 
+app.MapPut("/generos/{id:int}", async (int id, Genero genero
+    , IRepositorioGeneros repositorio
+    ,IOutputCacheStore outputCacheStore) =>
+{
+    var existe = await repositorio.Existe(id);
+    if (!existe)
+    {
+        return Results.NotFound();
+    }
 
+    await repositorio.Actualizar(genero);
+    await outputCacheStore.EvictByTagAsync("generos-get", default);
+    return Results.NoContent();
+});
 
 //Fin de área de los middleware
 app.Run();
