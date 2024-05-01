@@ -72,4 +72,14 @@ public class RepositorioGeneros : IRepositorioGeneros
                                             WHERE Id = @Id
                                     ",genero);
     }
+
+    public async Task Borrar(int id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        await conexion.ExecuteAsync(@"
+                                        DELETE dbo.Generos
+                                        WHERE Id = @Id
+                                    ", new { id });
+     }
 }
