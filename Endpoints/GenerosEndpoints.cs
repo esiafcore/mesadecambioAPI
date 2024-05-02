@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using AutoMapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
 using eSiafApiN4.Repositorios;
@@ -21,58 +22,47 @@ public static class GenerosEndpoints
         return group;
     }
 
-    static async Task<Ok<List<GeneroDto>>> ObtenerGeneros(IRepositorioGeneros repositorio)
+    static async Task<Ok<List<GeneroDto>>> ObtenerGeneros(IRepositorioGeneros repositorio
+        ,IMapper mapper)
     {
         var generos = await repositorio.ObtenerTodos();
-        var objList = generos
-            .Select(x=> new GeneroDto
-            {
-                Id = x.Id,
-                Nombre = x.Nombre
-            }).ToList();
+        var objList = mapper.Map<List<GeneroDto>>(generos);
 
         return TypedResults.Ok(objList);
     }
 
     static async Task<Results<Ok<GeneroDto>, NotFound>> ObtenerGeneroPorId(int id
-        , IRepositorioGeneros repositorio)
+        , IRepositorioGeneros repositorio
+        , IMapper mapper)
     {
         var genero = await repositorio.ObtenerPorId(id);
         if (genero is null)
         {
             return TypedResults.NotFound();
         }
-        var objItem = new GeneroDto
-        {
-            Id = id,
-            Nombre = genero.Nombre
-        };
+        var objItem = mapper.Map<GeneroDto>(genero);
 
         return TypedResults.Ok(objItem);
     }
 
     static async Task<Created<GeneroDto>> CrearGenero(GeneroDtoUpsert objDto
         , IRepositorioGeneros repositorioGeneros
-        , IOutputCacheStore outputCacheStore)
+        , IOutputCacheStore outputCacheStore
+        , IMapper mapper)
     {
-        var objNew = new Genero
-        {
-            Nombre = objDto.Nombre
-        };
-        
+        var objNew = mapper.Map<Genero>(objDto);
         var id = await repositorioGeneros.Crear(objNew);
         await outputCacheStore.EvictByTagAsync("generos-get", default);
-        var objItem = new GeneroDto
-        {
-            Id = id,
-            Nombre = objNew.Nombre
-        };
+
+        var objItem = mapper.Map<GeneroDto>(objNew);
+        objItem.Id = id;
         return TypedResults.Created($"/generos/{id}", objItem);
     }
 
     static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, GeneroDtoUpsert objDto
         , IRepositorioGeneros repositorio
-        , IOutputCacheStore outputCacheStore)
+        , IOutputCacheStore outputCacheStore
+        , IMapper mapper)
     {
         var existe = await repositorio.Existe(id);
         if (!existe)
@@ -80,12 +70,8 @@ public static class GenerosEndpoints
             return TypedResults.NotFound();
         }
 
-        var objUpdated = new Genero
-        {
-            Id = id,
-            Nombre = objDto.Nombre
-        };
-
+        var objUpdated = mapper.Map<Genero>(objDto);
+        objUpdated.Id = id;
         await repositorio.Actualizar(objUpdated);
         await outputCacheStore.EvictByTagAsync("generos-get", default);
         return TypedResults.NoContent();

@@ -33,6 +33,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 //Fin de área de los servicios
 var app = builder.Build();
 //Inicio de área de los middleware
