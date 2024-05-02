@@ -1,6 +1,7 @@
 using eSiafApiN4.Entidades;
 using eSiafApiN4.Repositorios;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,7 @@ builder.Services.AddCors(opts =>
         .AllowAnyMethod();
     });
 
-    opts.AddPolicy("libre",config =>
+    opts.AddPolicy("libre", config =>
     {
         config.AllowAnyOrigin()
             .AllowAnyHeader()
@@ -46,59 +47,70 @@ app.UseSwaggerUI();
 app.UseCors();
 app.UseOutputCache();
 
-app.MapGet("/", [EnableCors(policyName:"libre")]() => "Hello World!");
-app.MapGet("/generos", [EnableCors(policyName: "libre")] async (IRepositorioGeneros repositorio)
-    => await repositorio.ObtenerTodos())
-        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("generos-get"));
+var endpointGeneros = app.MapGroup("/generos");
 
-app.MapGet("/generos/{id:int}", async (int id
-    , IRepositorioGeneros repositorio) =>
-{
-    var genero = await repositorio.ObtenerPorId(id);
-    if (genero is null)
-    {
-        return Results.NotFound();
-    }
-    return Results.Ok(genero);
-});
-
-app.MapPost("/generos", async (Genero genero
-    , IRepositorioGeneros repositorioGeneros
-    , IOutputCacheStore outputCacheStore) =>
-{
-    var id = await repositorioGeneros.Crear(genero);
-    await outputCacheStore.EvictByTagAsync("generos-get", default);
-    return TypedResults.Created($"/generos/{id}",genero);
-});
-
-app.MapPut("/generos/{id:int}", async (int id, Genero genero
-    , IRepositorioGeneros repositorio
-    ,IOutputCacheStore outputCacheStore) =>
-{
-    var existe = await repositorio.Existe(id);
-    if (!existe)
-    {
-        return Results.NotFound();
-    }
-
-    await repositorio.Actualizar(genero);
-    await outputCacheStore.EvictByTagAsync("generos-get", default);
-    return Results.NoContent();
-});
-
-app.MapDelete("/generos/{id:int}", async (int id, IRepositorioGeneros repositorio
-    , IOutputCacheStore outputCacheStore) =>
-{
-    var existe = await repositorio.Existe(id);
-    if (!existe)
-    {
-        return Results.NotFound();
-    }
-    await repositorio.Borrar(id);
-    await outputCacheStore.EvictByTagAsync("generos-get", default);
-    return Results.NoContent();
-});
+endpointGeneros.MapGet("/", ObtenerGeneros)
+        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
+        .Tag("generos-get"));
+endpointGeneros.MapGet("/{id:int}", ObtenerGeneroPorId);
+endpointGeneros.MapPost("/", CrearGenero);
+endpointGeneros.MapPut("/{id:int}", ActualizarGenero);
+endpointGeneros.MapDelete("/{id:int}", BorrarGenero);
 
 
 //Fin de área de los middleware
 app.Run();
+
+static async Task<Ok<List<Genero>>> ObtenerGeneros(IRepositorioGeneros repositorio)
+{
+    var generos = await repositorio.ObtenerTodos();
+    return TypedResults.Ok(generos);
+}
+
+static async Task<Results<Ok<Genero>, NotFound>> ObtenerGeneroPorId(int id
+        , IRepositorioGeneros repositorio)
+{
+    var genero = await repositorio.ObtenerPorId(id);
+    if (genero is null)
+    {
+        return TypedResults.NotFound();
+    }
+    return TypedResults.Ok(genero);
+}
+
+static async Task<Created<Genero>> CrearGenero(Genero genero
+        , IRepositorioGeneros repositorioGeneros
+        , IOutputCacheStore outputCacheStore)
+{
+    var id = await repositorioGeneros.Crear(genero);
+    await outputCacheStore.EvictByTagAsync("generos-get", default);
+    return TypedResults.Created($"/generos/{id}", genero);
+}
+
+static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, Genero genero
+        , IRepositorioGeneros repositorio
+        , IOutputCacheStore outputCacheStore)
+{
+    var existe = await repositorio.Existe(id);
+    if (!existe)
+    {
+        return TypedResults.NotFound();
+    }
+
+    await repositorio.Actualizar(genero);
+    await outputCacheStore.EvictByTagAsync("generos-get", default);
+    return TypedResults.NoContent();
+}
+
+static async Task<Results<NoContent, NotFound>> BorrarGenero(int id, IRepositorioGeneros repositorio
+        , IOutputCacheStore outputCacheStore)
+{
+    var existe = await repositorio.Existe(id);
+    if (!existe)
+    {
+        return TypedResults.NotFound();
+    }
+    await repositorio.Borrar(id);
+    await outputCacheStore.EvictByTagAsync("generos-get", default);
+    return TypedResults.NoContent();
+}
