@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
 using eSiafApiN4.Repositorios;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,13 +21,20 @@ public static class GenerosEndpoints
         return group;
     }
 
-    static async Task<Ok<List<Genero>>> ObtenerGeneros(IRepositorioGeneros repositorio)
+    static async Task<Ok<List<GeneroDto>>> ObtenerGeneros(IRepositorioGeneros repositorio)
     {
         var generos = await repositorio.ObtenerTodos();
-        return TypedResults.Ok(generos);
+        var objList = generos
+            .Select(x=> new GeneroDto
+            {
+                Id = x.Id,
+                Nombre = x.Nombre
+            }).ToList();
+
+        return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<Genero>, NotFound>> ObtenerGeneroPorId(int id
+    static async Task<Results<Ok<GeneroDto>, NotFound>> ObtenerGeneroPorId(int id
         , IRepositorioGeneros repositorio)
     {
         var genero = await repositorio.ObtenerPorId(id);
@@ -34,19 +42,35 @@ public static class GenerosEndpoints
         {
             return TypedResults.NotFound();
         }
-        return TypedResults.Ok(genero);
+        var objItem = new GeneroDto
+        {
+            Id = id,
+            Nombre = genero.Nombre
+        };
+
+        return TypedResults.Ok(objItem);
     }
 
-    static async Task<Created<Genero>> CrearGenero(Genero genero
+    static async Task<Created<GeneroDto>> CrearGenero(GeneroDtoUpsert objDto
         , IRepositorioGeneros repositorioGeneros
         , IOutputCacheStore outputCacheStore)
     {
-        var id = await repositorioGeneros.Crear(genero);
+        var objNew = new Genero
+        {
+            Nombre = objDto.Nombre
+        };
+        
+        var id = await repositorioGeneros.Crear(objNew);
         await outputCacheStore.EvictByTagAsync("generos-get", default);
-        return TypedResults.Created($"/generos/{id}", genero);
+        var objItem = new GeneroDto
+        {
+            Id = id,
+            Nombre = objNew.Nombre
+        };
+        return TypedResults.Created($"/generos/{id}", objItem);
     }
 
-    static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, Genero genero
+    static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, GeneroDtoUpsert objDto
         , IRepositorioGeneros repositorio
         , IOutputCacheStore outputCacheStore)
     {
@@ -56,7 +80,13 @@ public static class GenerosEndpoints
             return TypedResults.NotFound();
         }
 
-        await repositorio.Actualizar(genero);
+        var objUpdated = new Genero
+        {
+            Id = id,
+            Nombre = objDto.Nombre
+        };
+
+        await repositorio.Actualizar(objUpdated);
         await outputCacheStore.EvictByTagAsync("generos-get", default);
         return TypedResults.NoContent();
     }
