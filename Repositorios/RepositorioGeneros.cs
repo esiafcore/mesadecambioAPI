@@ -1,8 +1,9 @@
 ﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using Dapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
-using Microsoft.Data.SqlClient;
+
 
 namespace eSiafApiN4.Repositorios;
 

@@ -12,5 +12,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<GeneroDtoUpdate, Genero>();
         CreateMap<GeneroDtoCreate, GeneroDtoUpdate>();
         CreateMap<Genero, GeneroDto>();
+
+        CreateMap<AsientosContables, AsientosContablesDto>();
+
     }
 }

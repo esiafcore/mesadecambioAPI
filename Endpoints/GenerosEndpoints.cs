@@ -35,12 +35,12 @@ public static class GenerosEndpoints
         , IRepositorioGeneros repositorio
         , IMapper mapper)
     {
-        var genero = await repositorio.ObtenerPorId(id);
-        if (genero is null)
+        var dataItem = await repositorio.ObtenerPorId(id);
+        if (dataItem is null)
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<GeneroDto>(genero);
+        var objItem = mapper.Map<GeneroDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }

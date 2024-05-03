@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Entidades\" />
+    <Folder Include="FiltersParameters\" />
   </ItemGroup>
 
   <ItemGroup>

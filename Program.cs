@@ -32,6 +32,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
+builder.Services.AddScoped<IRepositorioAsientosContables, RepositorioAsientosContables>();
+
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -47,7 +49,7 @@ app.UseOutputCache();
 
 app.MapGroup("/generos").MapGeneros();
 
-
+app.MapGroup("/asientoscontables").MapAsientosContables();
 
 
 //Fin de área de los middleware
