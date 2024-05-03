@@ -45,21 +45,20 @@ public static class GenerosEndpoints
         return TypedResults.Ok(objItem);
     }
 
-    static async Task<Created<GeneroDto>> CrearGenero(GeneroDtoUpsert objDto
+    static async Task<Created<GeneroDto>> CrearGenero(GeneroDtoCreate objCreate
         , IRepositorioGeneros repositorioGeneros
         , IOutputCacheStore outputCacheStore
         , IMapper mapper)
     {
-        var objNew = mapper.Map<Genero>(objDto);
-        var id = await repositorioGeneros.Crear(objNew);
+        var id = await repositorioGeneros.Crear(objCreate);
         await outputCacheStore.EvictByTagAsync("generos-get", default);
 
-        var objItem = mapper.Map<GeneroDto>(objNew);
+        var objItem = mapper.Map<GeneroDto>(objCreate);
         objItem.Id = id;
         return TypedResults.Created($"/generos/{id}", objItem);
     }
 
-    static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, GeneroDtoUpsert objDto
+    static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, GeneroDtoCreate objCreate
         , IRepositorioGeneros repositorio
         , IOutputCacheStore outputCacheStore
         , IMapper mapper)
@@ -70,7 +69,7 @@ public static class GenerosEndpoints
             return TypedResults.NotFound();
         }
 
-        var objUpdated = mapper.Map<Genero>(objDto);
+        var objUpdated = mapper.Map<GeneroDtoUpdate>(objCreate);
         objUpdated.Id = id;
         await repositorio.Actualizar(objUpdated);
         await outputCacheStore.EvictByTagAsync("generos-get", default);

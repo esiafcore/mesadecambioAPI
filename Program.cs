@@ -39,11 +39,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();
 //Inicio de área de los middleware
 
-//if (builder.Environment.IsDevelopment())
-//{
-
-//}
-
 app.UseSwagger();
 app.UseSwaggerUI();
 

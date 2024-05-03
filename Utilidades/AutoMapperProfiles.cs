@@ -8,7 +8,9 @@ public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<GeneroDtoUpsert, Genero>();
+        CreateMap<GeneroDtoCreate, Genero>();
+        CreateMap<GeneroDtoUpdate, Genero>();
+        CreateMap<GeneroDtoCreate, GeneroDtoUpdate>();
         CreateMap<Genero, GeneroDto>();
     }
 }
