@@ -33,6 +33,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGenero>();
 builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
+builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -50,7 +52,7 @@ app.UseOutputCache();
 app.MapGroup("/generos").MapGenero();
 
 app.MapGroup("/asientoscontables").MapAsientoContable();
-
+app.MapGroup("/bancos").MapBanco();
 
 //Fin de área de los middleware
 app.Run();

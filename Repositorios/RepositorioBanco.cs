@@ -1,34 +1,34 @@
-﻿using eSiafApiN4.Entidades;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using System.Data;
 using Dapper;
+using eSiafApiN4.Entidades;
 using eSiafApiN4.FiltersParameters;
+using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios;
 
-public class RepositorioAsientoContable : IRepositorioAsientoContable
+public class RepositorioBanco : IRepositorioBanco
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;
 
-    public RepositorioAsientoContable(IConfiguration configuration 
-        ,IHttpContextAccessor httpContextAccessor)
+    public RepositorioBanco(IConfiguration configuration
+        , IHttpContextAccessor httpContextAccessor)
     {
         _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<AsientosContables>> GetAlls(AsientoContableParams queryParams)
+    public async Task<List<Bancos>> GetAlls(QueryParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<AsientosContables>(sql: @"cnt.asientoscontables_getall"
-            , param: queryParams, commandType: CommandType.StoredProcedure);
+            .QueryAsync<Bancos>(sql: @"bco.bancos_getall"
+                , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"cnt.asientoscontables_count"
-            , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
+            sql: @"bco.bancos_count"
+            , param: new { queryParams.Uidcia}
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
@@ -46,14 +46,14 @@ public class RepositorioAsientoContable : IRepositorioAsientoContable
         return objList.ToList();
     }
 
-    public async Task<AsientosContables?> GetById(Guid id)
+    public async Task<Bancos?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<AsientosContables>(sql: @"cnt.asientoscontables_getid"
-            , param: new { uidregist = id}
-            , commandType: CommandType.StoredProcedure);
+            .QueryFirstOrDefaultAsync<Bancos>(sql: @"bco.bancos_getid"
+                , param: new { uidregist = id }
+                , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
 }

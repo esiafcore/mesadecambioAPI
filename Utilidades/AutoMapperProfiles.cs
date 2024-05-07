@@ -14,6 +14,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<Genero, GeneroDto>();
 
         CreateMap<AsientosContables, AsientosContablesDto>();
+        CreateMap<Bancos, BancosDto>();
 
     }
 }

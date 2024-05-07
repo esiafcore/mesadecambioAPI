@@ -5,6 +5,6 @@ namespace eSiafApiN4.Repositorios;
 
 public interface IRepositorioAsientoContable
 {
-    Task<List<AsientosContables>> ObtenerTodos(AsientoContableParams queryParams);
-    Task<AsientosContables?> ObtenerPorId(Guid id);
+    Task<List<AsientosContables>> GetAlls(AsientoContableParams queryParams);
+    Task<AsientosContables?> GetById(Guid id);
 }
