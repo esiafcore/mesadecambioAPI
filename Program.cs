@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGenero>();
 builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
-
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(Program));
 

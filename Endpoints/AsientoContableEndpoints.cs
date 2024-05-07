@@ -10,7 +10,7 @@ public static class AsientoContableEndpoints
 {
     public static RouteGroupBuilder MapAsientoContable(this RouteGroupBuilder group)
     {
-        group.MapGet("/", AsientoContableGetAll)
+        group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
                 .Tag("asientoscontables-get"));
         group.MapGet("/{id:Guid}", AsientoContableGetById);
@@ -18,15 +18,18 @@ public static class AsientoContableEndpoints
         return group;
     }
 
-    static async Task<Ok<List<AsientosContablesDto>>> AsientoContableGetAll(Guid uidcia, int yearfiscal, int mesfiscal
+    static async Task<Ok<List<AsientosContablesDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
         , IRepositorioAsientoContable repositorio
-        , IMapper mapper)
+        , IMapper mapper
+        , int pagina = 1, int recordsPorPagina = 10)
     {
         AsientoContableParams queryParams = new()
         {
-            uidcia = uidcia,
-            yearfiscal = yearfiscal,
-            mesfiscal = mesfiscal
+            Uidcia = uidcia,
+            Yearfiscal = yearfiscal,
+            Mesfiscal = mesfiscal,
+            Pagina = pagina,
+            RecordsPorPagina = recordsPorPagina
         };
 
         var dataList = await repositorio.ObtenerTodos(queryParams);

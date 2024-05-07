@@ -2,7 +2,9 @@
 
 public class AsientoContableParams
 {
-    public Guid uidcia { get; set; }
-    public int yearfiscal { get; set; }
-    public int mesfiscal { get; set; }
+    public Guid Uidcia { get; set; }
+    public int Yearfiscal { get; set; }
+    public int Mesfiscal { get; set; }
+    public int Pagina { get; set; }
+    public int RecordsPorPagina { get; set;}
 }
