@@ -6,23 +6,23 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSiafApiN4.Endpoints;
 
-public static class AsientosContablesEndpoints
+public static class AsientoContableEndpoints
 {
-    public static RouteGroupBuilder MapAsientosContables(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapAsientoContable(this RouteGroupBuilder group)
     {
-        group.MapGet("/", ObtenerAsientosContables)
+        group.MapGet("/", AsientoContableGetAll)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
                 .Tag("asientoscontables-get"));
-        group.MapGet("/{id:Guid}", ObtenerAsientosContablesPorId);
+        group.MapGet("/{id:Guid}", AsientoContableGetById);
 
         return group;
     }
 
-    static async Task<Ok<List<AsientosContablesDto>>> ObtenerAsientosContables(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioAsientosContables repositorio
+    static async Task<Ok<List<AsientosContablesDto>>> AsientoContableGetAll(Guid uidcia, int yearfiscal, int mesfiscal
+        , IRepositorioAsientoContable repositorio
         , IMapper mapper)
     {
-        AsientosContablesParams queryParams = new()
+        AsientoContableParams queryParams = new()
         {
             uidcia = uidcia,
             yearfiscal = yearfiscal,
@@ -35,8 +35,8 @@ public static class AsientosContablesEndpoints
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<AsientosContablesDto>, NotFound>> ObtenerAsientosContablesPorId(Guid id
-        , IRepositorioAsientosContables repositorio
+    static async Task<Results<Ok<AsientosContablesDto>, NotFound>> AsientoContableGetById(Guid id
+        , IRepositorioAsientoContable repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.ObtenerPorId(id);

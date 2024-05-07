@@ -31,8 +31,8 @@ builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
-builder.Services.AddScoped<IRepositorioAsientosContables, RepositorioAsientosContables>();
+builder.Services.AddScoped<IRepositorioGeneros, RepositorioGenero>();
+builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
 
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -47,9 +47,9 @@ app.UseSwaggerUI();
 app.UseCors();
 app.UseOutputCache();
 
-app.MapGroup("/generos").MapGeneros();
+app.MapGroup("/generos").MapGenero();
 
-app.MapGroup("/asientoscontables").MapAsientosContables();
+app.MapGroup("/asientoscontables").MapAsientoContable();
 
 
 //Fin de área de los middleware

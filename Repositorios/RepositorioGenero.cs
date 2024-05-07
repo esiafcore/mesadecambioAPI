@@ -7,7 +7,7 @@ using eSiafApiN4.Entidades;
 
 namespace eSiafApiN4.Repositorios;
 
-public class RepositorioGeneros(IConfiguration configuration) : IRepositorioGeneros
+public class RepositorioGenero(IConfiguration configuration) : IRepositorioGeneros
 {
     private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 

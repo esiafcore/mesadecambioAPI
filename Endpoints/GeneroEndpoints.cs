@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.OutputCaching;
 
 namespace eSiafApiN4.Endpoints;
 
-public static class GenerosEndpoints
+public static class GeneroEndpoints
 {
-    public static RouteGroupBuilder MapGeneros(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapGenero(this RouteGroupBuilder group)
     {
         group.MapGet("/", ObtenerGeneros)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
