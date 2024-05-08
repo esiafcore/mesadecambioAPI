@@ -7,28 +7,28 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios;
 
-public class RepositorioBanco : IRepositorioBanco
+public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;
 
-    public RepositorioBanco(IConfiguration configuration
+    public RepositorioCuentaBancaria(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
         _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<Bancos>> GetAlls(QueryParams queryParams)
+    public async Task<List<CuentasBancarias>> GetAlls(QueryParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<Bancos>(sql: @"bco.bancos_getall"
+            .QueryAsync<CuentasBancarias>(sql: @"bco.cuentasbancarias_getall"
                 , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.bancos_count"
+            sql: @"bco.cuentasbancarias_count"
             , param: new { queryParams.Uidcia}
             , commandType: CommandType.StoredProcedure);
 
@@ -46,12 +46,12 @@ public class RepositorioBanco : IRepositorioBanco
         return objList.ToList();
     }
 
-    public async Task<Bancos?> GetById(Guid id)
+    public async Task<CuentasBancarias?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<Bancos>(sql: @"bco.bancos_getid"
+            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.cuentasbancarias_getid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

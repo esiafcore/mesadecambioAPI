@@ -6,40 +6,38 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSiafApiN4.Endpoints;
 
-public static class AsientoContableEndpoints
+public static class CuentaBancariaEndpoints
 {
-    public static RouteGroupBuilder MapAsientoContable(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapCuentaBancaria(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("asientoscontables-get"));
+                .Tag("cuentasbancarias-get"));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;
     }
 
-    static async Task<Ok<List<AsientosContablesDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioAsientoContable repositorio
+    static async Task<Ok<List<CuentasBancariasDto>>> GetAlls(Guid uidcia
+        , IRepositorioCuentaBancaria repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        YearMonthParams queryParams = new()
+        QueryParams queryParams = new()
         {
             Uidcia = uidcia,
-            Yearfiscal = yearfiscal,
-            Mesfiscal = mesfiscal,
             Pagina = pagina,
             RecordsPorPagina = recordsPorPagina
         };
 
         var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<AsientosContablesDto>>(dataList);
+        var objList = mapper.Map<List<CuentasBancariasDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<AsientosContablesDto>, NotFound>> GetById(Guid id
-        , IRepositorioAsientoContable repositorio
+    static async Task<Results<Ok<CuentasBancariasDto>, NotFound>> GetById(Guid id
+        , IRepositorioCuentaBancaria repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.GetById(id);
@@ -47,7 +45,7 @@ public static class AsientoContableEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<AsientosContablesDto>(dataItem);
+        var objItem = mapper.Map<CuentasBancariasDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }

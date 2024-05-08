@@ -6,20 +6,20 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSiafApiN4.Endpoints;
 
-public static class AsientoContableEndpoints
+public static class TransaccionBcoEndpoints
 {
-    public static RouteGroupBuilder MapAsientoContable(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapTransaccionBco(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("asientoscontables-get"));
+                .Tag("transaccionesbco-get"));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;
     }
 
-    static async Task<Ok<List<AsientosContablesDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioAsientoContable repositorio
+    static async Task<Ok<List<TransaccionesBcoDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+        , IRepositorioTransaccionBco repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -33,13 +33,13 @@ public static class AsientoContableEndpoints
         };
 
         var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<AsientosContablesDto>>(dataList);
+        var objList = mapper.Map<List<TransaccionesBcoDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<AsientosContablesDto>, NotFound>> GetById(Guid id
-        , IRepositorioAsientoContable repositorio
+    static async Task<Results<Ok<TransaccionesBcoDto>, NotFound>> GetById(Guid id
+        , IRepositorioTransaccionBco repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.GetById(id);
@@ -47,7 +47,7 @@ public static class AsientoContableEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<AsientosContablesDto>(dataItem);
+        var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }

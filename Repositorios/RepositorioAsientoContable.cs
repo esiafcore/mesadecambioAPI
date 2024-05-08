@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using eSiafApiN4.FiltersParameters;
+using eSiafApiN4.Utilidades;
 
 namespace eSiafApiN4.Repositorios;
 
@@ -18,7 +19,7 @@ public class RepositorioAsientoContable : IRepositorioAsientoContable
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<AsientosContables>> GetAlls(AsientoContableParams queryParams)
+    public async Task<List<AsientosContables>> GetAlls(YearMonthParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
@@ -36,9 +37,8 @@ public class RepositorioAsientoContable : IRepositorioAsientoContable
 
         if (cantidadRegistros > 0)
         {
-            var ultimaPagina = cantidadRegistros % queryParams.RecordsPorPagina;
-            var cantidadTotalPaginas = (cantidadRegistros / queryParams.RecordsPorPagina);
-            cantidadTotalPaginas += ultimaPagina != 0 ? 1 : 0;
+            var cantidadTotalPaginas = AppFunctions.CantidadTotalPaginas(queryParams.RecordsPorPagina
+                , cantidadRegistros);
             _httpContext.Response.Headers.Append("cantidadTotalPaginas",
                 cantidadTotalPaginas.ToString());
         }

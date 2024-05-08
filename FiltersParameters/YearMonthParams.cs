@@ -1,6 +1,6 @@
 ﻿namespace eSiafApiN4.FiltersParameters;
 
-public class AsientoContableParams
+public class YearMonthParams
 {
     public Guid Uidcia { get; set; }
     public int Yearfiscal { get; set; }

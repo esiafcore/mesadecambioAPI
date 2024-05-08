@@ -34,6 +34,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGenero>();
 builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
+builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
+builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -49,10 +51,12 @@ app.UseSwaggerUI();
 app.UseCors();
 app.UseOutputCache();
 
-app.MapGroup("/generos").MapGenero();
+//app.MapGroup("/generos").MapGenero();
 
 app.MapGroup("/asientoscontables").MapAsientoContable();
 app.MapGroup("/bancos").MapBanco();
+app.MapGroup("/transaccionesbco").MapTransaccionBco();
+app.MapGroup("/cuentasbancarias").MapCuentaBancaria();
 
 //Fin de área de los middleware
 app.Run();
