@@ -7,28 +7,23 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios;
 
-public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
-{
-    private readonly string _connectionString;
-    private readonly HttpContext _httpContext;
-
-    public RepositorioCuentaBancaria(IConfiguration configuration
+public class RepositorioCuentaBancaria(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
-    {
-        _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
-        _httpContext = httpContextAccessor.HttpContext!;
-    }
+    : IRepositorioCuentaBancaria
+{
+    private readonly string _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<List<CuentasBancarias>> GetAlls(QueryParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<CuentasBancarias>(sql: @"bco.cuentasbancarias_getall"
+            .QueryAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getall"
                 , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.cuentasbancarias_count"
+            sql: @"bco.usp_cuentasbancarias_count"
             , param: new { queryParams.Uidcia}
             , commandType: CommandType.StoredProcedure);
 
@@ -51,7 +46,7 @@ public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.cuentasbancarias_getid"
+            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

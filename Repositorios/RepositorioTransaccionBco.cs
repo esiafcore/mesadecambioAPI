@@ -7,28 +7,23 @@ using eSiafApiN4.Utilidades;
 
 namespace eSiafApiN4.Repositorios;
 
-public class RepositorioTransaccionBco : IRepositorioTransaccionBco
+public class RepositorioTransaccionBco(IConfiguration configuration
+        , IHttpContextAccessor httpContextAccessor)
+    : IRepositorioTransaccionBco
 {
-    private readonly string _connectionString;
-    private readonly HttpContext _httpContext;
-
-    public RepositorioTransaccionBco(IConfiguration configuration 
-        ,IHttpContextAccessor httpContextAccessor)
-    {
-        _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
-        _httpContext = httpContextAccessor.HttpContext!;
-    }
+    private readonly string _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<List<TransaccionesBco>> GetAlls(YearMonthParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<TransaccionesBco>(sql: @"bco.transaccionesbco_getall"
+            .QueryAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getall"
             , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.transaccionesbco_count"
+            sql: @"bco.usp_transaccionesbco_count"
             , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
             , commandType: CommandType.StoredProcedure);
 
@@ -51,7 +46,7 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<TransaccionesBco>(sql: @"bco.transaccionesbco_getid"
+            .QueryFirstOrDefaultAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getid"
             , param: new { uidregist = id}
             , commandType: CommandType.StoredProcedure);
         return dataItem;

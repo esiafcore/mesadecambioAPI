@@ -1,9 +1,6 @@
 using eSiafApiN4.Endpoints;
-using eSiafApiN4.Entidades;
 using eSiafApiN4.Repositorios;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OutputCaching;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
@@ -40,6 +37,8 @@ builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 
 //Fin de área de los servicios
 var app = builder.Build();
