@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace eSiafApiN4.Entidades
+namespace eSiafApiN4.Entidades.eSiafN4
 {
     /// <summary>
     /// Cuentas bancarias
     /// </summary>
-    public partial class CuentasBancarias {
+    public partial class CuentasBancarias
+    {
 
         /// <summary>
         /// Uid registro

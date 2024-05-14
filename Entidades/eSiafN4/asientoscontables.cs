@@ -10,12 +10,13 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace eSiafApiN4.Entidades;
+namespace eSiafApiN4.Entidades.eSiafN4;
 
 /// <summary>
 /// Asientos contables
 /// </summary>
-public partial class AsientosContables {
+public partial class AsientosContables
+{
 
     /// <summary>
     /// Uid registro

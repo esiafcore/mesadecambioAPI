@@ -10,12 +10,13 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace eSiafApiN4.Entidades
+namespace eSiafApiN4.Entidades.eSiafN4
 {
     /// <summary>
     /// Transacciones banco
     /// </summary>
-    public partial class TransaccionesBco {
+    public partial class TransaccionesBco
+    {
 
         /// <summary>
         /// Uid registro

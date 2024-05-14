@@ -1,9 +1,9 @@
-﻿using eSiafApiN4.Entidades;
-using System.Data;
+﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
+using eSiafApiN4.Entidades.eSiafN4;
 
 namespace eSiafApiN4.Repositorios;
 
@@ -16,6 +16,7 @@ public class RepositorioAsientoContable(IConfiguration configuration
 
     public async Task<List<AsientosContables>> GetAlls(YearMonthParams queryParams)
     {
+
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion

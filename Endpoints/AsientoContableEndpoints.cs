@@ -3,6 +3,7 @@ using eSiafApiN4.DTOs;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Repositorios;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Endpoints;
 
@@ -18,7 +19,7 @@ public static class AsientoContableEndpoints
         return group;
     }
 
-    static async Task<Ok<List<AsientosContablesDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+    static async Task<Results<Ok<List<AsientosContablesDto>>,BadRequest<string>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
         , IRepositorioAsientoContable repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
@@ -32,24 +33,45 @@ public static class AsientoContableEndpoints
             RecordsPorPagina = recordsPorPagina
         };
 
-        var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<AsientosContablesDto>>(dataList);
-
-        return TypedResults.Ok(objList);
+        try
+        {
+            var dataList = await repositorio.GetAlls(queryParams);
+            var objList = mapper.Map<List<AsientosContablesDto>>(dataList);
+            return TypedResults.Ok(objList);
+        }
+        catch (SqlException e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
-    static async Task<Results<Ok<AsientosContablesDto>, NotFound>> GetById(Guid id
+    static async Task<Results<Ok<AsientosContablesDto>, NotFound, BadRequest<string>>> GetById(Guid id
         , IRepositorioAsientoContable repositorio
         , IMapper mapper)
     {
-        var dataItem = await repositorio.GetById(id);
-        if (dataItem is null)
+        try
         {
-            return TypedResults.NotFound();
-        }
-        var objItem = mapper.Map<AsientosContablesDto>(dataItem);
+            var dataItem = await repositorio.GetById(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound();
+            }
+            var objItem = mapper.Map<AsientosContablesDto>(dataItem);
 
-        return TypedResults.Ok(objItem);
+            return TypedResults.Ok(objItem);
+        }
+        catch (SqlException e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
 }

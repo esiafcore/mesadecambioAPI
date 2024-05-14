@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Dapper;
-using eSiafApiN4.Entidades;
+using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
