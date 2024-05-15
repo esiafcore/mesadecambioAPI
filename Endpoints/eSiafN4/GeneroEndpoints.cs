@@ -2,11 +2,11 @@
 using AutoMapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
-using eSiafApiN4.Repositorios;
+using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 
-namespace eSiafApiN4.Endpoints;
+namespace eSiafApiN4.Endpoints.eSiafN4;
 
 public static class GeneroEndpoints
 {
@@ -23,7 +23,7 @@ public static class GeneroEndpoints
     }
 
     static async Task<Ok<List<GeneroDto>>> ObtenerGeneros(IRepositorioGeneros repositorio
-        ,IMapper mapper)
+        , IMapper mapper)
     {
         var generos = await repositorio.ObtenerTodos();
         var objList = mapper.Map<List<GeneroDto>>(generos);

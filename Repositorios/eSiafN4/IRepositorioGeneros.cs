@@ -1,7 +1,7 @@
 ﻿using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
 
-namespace eSiafApiN4.Repositorios;
+namespace eSiafApiN4.Repositorios.eSiafN4;
 
 public interface IRepositorioGeneros
 {

@@ -1,6 +1,6 @@
 ﻿namespace eSiafApiN4.Entidades.XanesN8;
 
-public class UspQuotationsListByDate
+public class QuotationsList
 {
     public int Id { get; set; }
     public int TypeNumeral { get; set; }

@@ -5,7 +5,7 @@ using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
 
-namespace eSiafApiN4.Repositorios;
+namespace eSiafApiN4.Repositorios.eSiafN4;
 
 public class RepositorioBanco(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
@@ -24,7 +24,7 @@ public class RepositorioBanco(IConfiguration configuration
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"bco.usp_bancos_count"
-            , param: new { queryParams.Uidcia}
+            , param: new { queryParams.Uidcia }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",

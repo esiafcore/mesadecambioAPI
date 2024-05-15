@@ -7,11 +7,14 @@ public class PaginacionDto
     private readonly int _cantidadMaximaRecordsPorPagina = 50;
 
 	public int RecordsPorPagina
-	{
+    {
 		get => _recordsPorPagina;
-        set =>
-            _recordsPorPagina = (value > _cantidadMaximaRecordsPorPagina)?
-                _cantidadMaximaRecordsPorPagina: value;
-    }
-
+        set {
+            if (value != 0)
+            {
+				_recordsPorPagina = (value > _cantidadMaximaRecordsPorPagina) ?
+				_cantidadMaximaRecordsPorPagina : value;
+			}
+		}
+	}
 }

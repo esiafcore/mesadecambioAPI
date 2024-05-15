@@ -1,30 +1,30 @@
 ﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using Dapper;
-using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
-using Microsoft.Data.SqlClient;
+using eSiafApiN4.Entidades.eSiafN4;
 
-namespace eSiafApiN4.Repositorios;
+namespace eSiafApiN4.Repositorios.eSiafN4;
 
-public class RepositorioCuentaBancaria(IConfiguration configuration
+public class RepositorioTransaccionBco(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
-    : IRepositorioCuentaBancaria
+    : IRepositorioTransaccionBco
 {
     private readonly string _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<List<CuentasBancarias>> GetAlls(QueryParams queryParams)
+    public async Task<List<TransaccionesBco>> GetAlls(YearMonthParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getall"
-                , param: queryParams, commandType: CommandType.StoredProcedure);
+            .QueryAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getall"
+            , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.usp_cuentasbancarias_count"
-            , param: new { queryParams.Uidcia}
+            sql: @"bco.usp_transaccionesbco_count"
+            , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
@@ -41,14 +41,14 @@ public class RepositorioCuentaBancaria(IConfiguration configuration
         return objList.ToList();
     }
 
-    public async Task<CuentasBancarias?> GetById(Guid id)
+    public async Task<TransaccionesBco?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getid"
-                , param: new { uidregist = id }
-                , commandType: CommandType.StoredProcedure);
+            .QueryFirstOrDefaultAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getid"
+            , param: new { uidregist = id }
+            , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
 }

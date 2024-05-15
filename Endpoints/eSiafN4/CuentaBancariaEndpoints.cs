@@ -1,25 +1,25 @@
 ﻿using AutoMapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios;
+using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace eSiafApiN4.Endpoints;
+namespace eSiafApiN4.Endpoints.eSiafN4;
 
-public static class BancoEndpoints
+public static class CuentaBancariaEndpoints
 {
-    public static RouteGroupBuilder MapBanco(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapCuentaBancaria(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("bancos-get"));
+                .Tag("cuentasbancarias-get"));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;
     }
 
-    static async Task<Ok<List<BancosDto>>> GetAlls(Guid uidcia
-        , IRepositorioBanco repositorio
+    static async Task<Ok<List<CuentasBancariasDto>>> GetAlls(Guid uidcia
+        , IRepositorioCuentaBancaria repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -31,13 +31,13 @@ public static class BancoEndpoints
         };
 
         var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<BancosDto>>(dataList);
+        var objList = mapper.Map<List<CuentasBancariasDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<BancosDto>, NotFound>> GetById(Guid id
-        , IRepositorioBanco repositorio
+    static async Task<Results<Ok<CuentasBancariasDto>, NotFound>> GetById(Guid id
+        , IRepositorioCuentaBancaria repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.GetById(id);
@@ -45,7 +45,7 @@ public static class BancoEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<BancosDto>(dataItem);
+        var objItem = mapper.Map<CuentasBancariasDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }

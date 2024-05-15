@@ -5,7 +5,7 @@ using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
 using eSiafApiN4.Entidades.eSiafN4;
 
-namespace eSiafApiN4.Repositorios;
+namespace eSiafApiN4.Repositorios.eSiafN4;
 
 public class RepositorioAsientoContable(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
@@ -48,7 +48,7 @@ public class RepositorioAsientoContable(IConfiguration configuration
 
         var dataItem = await conexion
             .QueryFirstOrDefaultAsync<AsientosContables>(sql: @"cnt.usp_asientoscontables_getid"
-            , param: new { uidregist = id}
+            , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;
     }

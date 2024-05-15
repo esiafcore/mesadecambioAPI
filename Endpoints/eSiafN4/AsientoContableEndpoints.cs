@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios;
+using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 
-namespace eSiafApiN4.Endpoints;
+namespace eSiafApiN4.Endpoints.eSiafN4;
 
 public static class AsientoContableEndpoints
 {
@@ -19,7 +19,7 @@ public static class AsientoContableEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<AsientosContablesDto>>,BadRequest<string>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+    static async Task<Results<Ok<List<AsientosContablesDto>>, BadRequest<string>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
         , IRepositorioAsientoContable repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)

@@ -1,45 +1,43 @@
 ﻿using AutoMapper;
 using eSiafApiN4.DTOs;
 using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios;
+using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace eSiafApiN4.Endpoints;
+namespace eSiafApiN4.Endpoints.eSiafN4;
 
-public static class TransaccionBcoEndpoints
+public static class BancoEndpoints
 {
-    public static RouteGroupBuilder MapTransaccionBco(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapBanco(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("transaccionesbco-get"));
+                .Tag("bancos-get"));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;
     }
 
-    static async Task<Ok<List<TransaccionesBcoDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioTransaccionBco repositorio
+    static async Task<Ok<List<BancosDto>>> GetAlls(Guid uidcia
+        , IRepositorioBanco repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        YearMonthParams queryParams = new()
+        QueryParams queryParams = new()
         {
             Uidcia = uidcia,
-            Yearfiscal = yearfiscal,
-            Mesfiscal = mesfiscal,
             Pagina = pagina,
             RecordsPorPagina = recordsPorPagina
         };
 
         var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<TransaccionesBcoDto>>(dataList);
+        var objList = mapper.Map<List<BancosDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<TransaccionesBcoDto>, NotFound>> GetById(Guid id
-        , IRepositorioTransaccionBco repositorio
+    static async Task<Results<Ok<BancosDto>, NotFound>> GetById(Guid id
+        , IRepositorioBanco repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.GetById(id);
@@ -47,7 +45,7 @@ public static class TransaccionBcoEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
+        var objItem = mapper.Map<BancosDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }

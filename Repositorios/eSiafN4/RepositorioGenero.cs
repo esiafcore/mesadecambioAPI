@@ -5,7 +5,7 @@ using eSiafApiN4.DTOs;
 using eSiafApiN4.Entidades;
 
 
-namespace eSiafApiN4.Repositorios;
+namespace eSiafApiN4.Repositorios.eSiafN4;
 
 public class RepositorioGenero(IConfiguration configuration) : IRepositorioGeneros
 {
@@ -24,8 +24,8 @@ public class RepositorioGenero(IConfiguration configuration) : IRepositorioGener
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        var generos = await conexion.QueryAsync<Genero>(sql:@"dbo.Generos_GetAll"
-                ,commandType: CommandType.StoredProcedure);
+        var generos = await conexion.QueryAsync<Genero>(sql: @"dbo.Generos_GetAll"
+                , commandType: CommandType.StoredProcedure);
         return generos.ToList();
     }
 
@@ -33,16 +33,16 @@ public class RepositorioGenero(IConfiguration configuration) : IRepositorioGener
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        var genero = await conexion.QueryFirstOrDefaultAsync<Genero>(sql: @"dbo.Generos_GetId", param:new {id}
-        ,commandType: CommandType.StoredProcedure);
+        var genero = await conexion.QueryFirstOrDefaultAsync<Genero>(sql: @"dbo.Generos_GetId", param: new { id }
+        , commandType: CommandType.StoredProcedure);
         return genero;
     }
 
     public async Task<bool> Existe(int id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>(sql: @"dbo.Generos_IsExist", param:new {id}
-        ,commandType: CommandType.StoredProcedure);
+        var existe = await conexion.QuerySingleAsync<bool>(sql: @"dbo.Generos_IsExist", param: new { id }
+        , commandType: CommandType.StoredProcedure);
         return existe;
     }
 
@@ -50,15 +50,15 @@ public class RepositorioGenero(IConfiguration configuration) : IRepositorioGener
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        await conexion.ExecuteAsync(sql:@"dbo.Generos_Update",param:objUpdate
-            ,commandType: CommandType.StoredProcedure);
+        await conexion.ExecuteAsync(sql: @"dbo.Generos_Update", param: objUpdate
+            , commandType: CommandType.StoredProcedure);
     }
 
     public async Task Borrar(int id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        await conexion.ExecuteAsync(sql:@"dbo.Generos_Delete", param:new { id }
-        ,commandType: CommandType.StoredProcedure);
-     }
+        await conexion.ExecuteAsync(sql: @"dbo.Generos_Delete", param: new { id }
+        , commandType: CommandType.StoredProcedure);
+    }
 }
