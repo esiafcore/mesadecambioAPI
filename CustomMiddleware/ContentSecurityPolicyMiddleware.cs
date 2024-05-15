@@ -11,12 +11,6 @@ public class ContentSecurityPolicyMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        //Remover Server Header
-        if (context.Response.Headers.ContainsKey("Server"))
-        {
-            context.Response.Headers.Remove("Server");
-        }
-
         string nameSecurityPolicy = "Content-Security-Policy-Report-Only";
         //string nameSecurityPolicy = "Content-Security-Policy";
 
