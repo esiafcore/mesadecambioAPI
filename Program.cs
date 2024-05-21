@@ -1,7 +1,9 @@
 using eSiafApiN4.CustomMiddleware;
 using eSiafApiN4.Endpoints.eSiafN4;
+using eSiafApiN4.Endpoints.XanesN4;
 using eSiafApiN4.Endpoints.XanesN8;
 using eSiafApiN4.Repositorios.eSiafN4;
+using eSiafApiN4.Repositorios.XanesN4;
 using eSiafApiN4.Repositorios.XanesN8;
 using FluentValidation;
 
@@ -33,6 +35,7 @@ builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
 builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria>();
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
+builder.Services.AddScoped<IRepositorioQuotationHeader, RepositorioQuotationHeader>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -64,6 +67,7 @@ app.MapGroup("/bancos").MapBanco();
 app.MapGroup("/transaccionesbco").MapTransaccionBco();
 app.MapGroup("/cuentasbancarias").MapCuentaBancaria();
 app.MapGroup("/quotations").MapQuotation();
+app.MapGroup("/quotationslegacy").MapQuotationLegacy();
 
 //Fin de área de los middleware
 app.Run();

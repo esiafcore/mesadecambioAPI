@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Endpoints\XanesN8\" />
+    <Folder Include="Entidades\XanesN4\" />
   </ItemGroup>
 
 </Project>
