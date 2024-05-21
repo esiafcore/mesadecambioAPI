@@ -6,21 +6,18 @@ using eSiafApiN4.Repositorios.XanesN8;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
-//Remover Server Header
-builder.WebHost.UseKestrel(x =>
-{
-    x.AddServerHeader = false;
-});
-
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
 //Inicio de área de los servicios
-
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 builder.Services.AddCors(opts =>
 {
 
     opts.AddDefaultPolicy(config =>
     {
-        config.WithOrigins(origenesPermitidos)
+        config.AllowAnyOrigin() //.WithOrigins(origenesPermitidos)
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
@@ -42,12 +39,17 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-
 //Fin de área de los servicios
 var app = builder.Build();
-//Inicio de área de los middleware
 app.UseMiddleware<ContentSecurityPolicyMiddleware>();
-//Content Security Policy
+app.UseAntiforgery();
+
+app.UseHttpsRedirection();
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

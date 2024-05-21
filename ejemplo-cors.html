@@ -7,7 +7,7 @@
 <body>
 <h1>Prueba CORS del Web API (presionar F12)</h1>
 <script>
-        const urlWebAPI = 'https://localhost:7075/';
+        const urlWebAPI = 'https://localhost:7075';
         consumirWebAPI();
         async function consumirWebAPI() {
             const respuesta = await fetch(urlWebAPI, {
@@ -19,7 +19,6 @@
 
             const json = await respuesta.text();
             console.log(json);
-
         }
     </script>
 </body>

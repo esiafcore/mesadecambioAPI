@@ -18,7 +18,7 @@ public class ContentSecurityPolicyMiddleware
         {
             context.Response.Headers.Add(nameSecurityPolicy,
                 "default-src 'self' 'unsafe-inline';" +
-                "connect-src 'self' 'unsafe-inline' https://vmi531999.contaboserver.net:7202 http://localhost:9003 ws://localhost:9003 wss://localhost:44332;" +
+                "connect-src 'self' 'unsafe-inline' https://vmi531999.contaboserver.net:7202 http://localhost:20092 ws://localhost:20092 wss://localhost:44346;" +
                 "font-src 'self' https://fonts.gstatic.com/ ;" +
                 "object-src 'self';" +
                 "style-src 'self' 'unsafe-inline' https://vmi531999.contaboserver.net:7202 https://cdn.datatables.net/ https://cdn.jsdelivr.net/ https://fonts.googleapis.com/ ;" +
@@ -31,8 +31,6 @@ public class ContentSecurityPolicyMiddleware
         context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
         context.Response.Headers.Add("Referrer-Policy", "no-referrer");
         context.Response.Headers.Add("Permissions-Policy", "camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), usb=()");
-        context.Response.Headers.Remove("X-Powered-By");
-        context.Response.Headers.Remove("Server");
 
         await _next(context);
     }
