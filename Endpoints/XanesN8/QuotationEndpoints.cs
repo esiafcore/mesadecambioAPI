@@ -32,6 +32,12 @@ public static class QuotationEndpoints
             RecordsPorPagina = recordsPorPagina
         };
 
+        //Validar Rango de fecha
+        if (queryParams.EndDate < queryParams.BeginDate)
+        {
+            return TypedResults.BadRequest($"Fecha final: {queryParams.EndDate.ToShortDateString()} no puede ser menor que fecha inicial: {queryParams.BeginDate.ToShortDateString()}");
+        }
+
         try
         {
             var dataList = await repositorio.GetAlls(queryParams);
