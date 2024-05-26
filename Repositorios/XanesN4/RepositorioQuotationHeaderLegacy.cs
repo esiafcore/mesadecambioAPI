@@ -1,28 +1,28 @@
-﻿using eSiafApiN4.Entidades.XanesN4;
+﻿using Dapper;
+using eSiafApiN4.Entidades.XanesN4;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using Dapper;
 
 namespace eSiafApiN4.Repositorios.XanesN4;
 
-public class RepositorioQuotationDetail(IConfiguration configuration
-    , IHttpContextAccessor httpContextAccessor) : IRepositorioQuotationDetail
+public class RepositorioQuotationHeaderLegacy(IConfiguration configuration
+    , IHttpContextAccessor httpContextAccessor) : IRepositorioQuotationHeaderLegacy
 {
     private readonly string _connectionString = configuration.GetConnectionString("XanesN4Connection")!;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<List<QuotationDetailList>> GetAlls(DatesParams queryParams)
+    public async Task<List<QuotationHeaderList>> GetAlls(DatesParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<QuotationDetailList>(sql: @"dbo.usp_quotationsdetail_getall"
+            .QueryAsync<QuotationHeaderList>(sql: @"dbo.usp_quotationsheader_getall"
                 , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"dbo.usp_quotationsdetail_count"
+            sql: @"dbo.usp_quotationsheader_count"
             , param: new { queryParams.BeginDate, queryParams.EndDate }
             , commandType: CommandType.StoredProcedure);
 

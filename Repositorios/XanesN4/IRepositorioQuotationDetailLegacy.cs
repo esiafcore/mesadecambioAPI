@@ -3,8 +3,8 @@ using eSiafApiN4.FiltersParameters;
 
 namespace eSiafApiN4.Repositorios.XanesN4;
 
-public interface IRepositorioQuotationHeader
+public interface IRepositorioQuotationDetailLegacy
 {
-    Task<List<QuotationHeaderList>> GetAlls(DatesParams queryParams);
+    Task<List<QuotationDetailList>> GetAlls(DatesParams queryParams);
 
 }

@@ -7,19 +7,19 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Endpoints.XanesN4;
 
-public static class QuotationLegacyDetailEndpoints
+public static class QuotationDetailLegacyEndpoints
 {
-    public static RouteGroupBuilder MapQuotationLegacyDetail(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapQuotationDetailLegacy(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("quotationslegacydetail-get"));
+                .Tag("quotationsdetaillegacy-get"));
 
         return group;
     }
 
     static async Task<Results<Ok<List<QuotationDetailList>>, BadRequest<string>>> GetAlls(DateTime beginDate, DateTime endDate
-        , IRepositorioQuotationDetail repositorio
+        , IRepositorioQuotationDetailLegacy repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
