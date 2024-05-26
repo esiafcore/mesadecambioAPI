@@ -1,4 +1,4 @@
-﻿using eSiafApiN4.DTOs;
+﻿using eSiafApiN4.DTOs.eSiafN4;
 using FluentValidation;
 
 namespace eSiafApiN4.Validaciones;

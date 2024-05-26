@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.DTOs;
+﻿namespace eSiafApiN4.DTOs.eSiafN4;
 
 public class BancosDtoCreate
 {

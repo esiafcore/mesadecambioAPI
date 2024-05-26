@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\XanesN8\" />
     <Folder Include="Endpoints\XanesN8\" />
   </ItemGroup>
 

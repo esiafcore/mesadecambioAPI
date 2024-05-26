@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eSiafApiN4.DTOs;
+using eSiafApiN4.DTOs.eSiafN4;
 using eSiafApiN4.Entidades;
 using eSiafApiN4.Entidades.eSiafN4;
 
