@@ -51,4 +51,33 @@ public class RepositorioBanco(IConfiguration configuration
                 , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
+
+    public async Task<Guid> Create(Bancos objNew)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        Guid uidRegist = Guid.NewGuid();
+
+        var id = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
+            new
+            {uidRegist,objNew.UidCia,objNew.Codigo
+            ,objNew.Descripci,objNew.IndTarjetaCredito
+            ,objNew.NumeroObjeto,objNew.NumeroEstado
+            ,objNew.CodigoOperacionSwitch,objNew.CuentaContableInterfazSwitch
+            ,objNew.CodigoOperacionMantenimiento,objNew.CuentaContableInterfazMantenimiento
+            ,objNew.ComisionBancariaPor
+            ,objNew.CreFch,objNew.CreUsr,objNew.CreHsn
+            ,objNew.CreHid,objNew.CreIps
+            },
+            commandType: CommandType.StoredProcedure);
+
+        return await Task.FromResult<Guid>(uidRegist);
+
+    }
+
+    public async Task Delete(Guid id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        await conexion.ExecuteAsync("bco.usp_bancos_delete", new { uidregist = id });
+    }
+
 }

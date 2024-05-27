@@ -17,6 +17,7 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<AsientosContables, AsientosContablesDto>();
         CreateMap<Bancos, BancosDto>();
+        CreateMap<BancosDtoCreate, Bancos>();
         CreateMap<TransaccionesBco, TransaccionesBcoDto>();
         CreateMap<CuentasBancarias, CuentasBancariasDto>();
 
