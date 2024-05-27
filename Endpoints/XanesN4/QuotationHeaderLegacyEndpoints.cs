@@ -18,16 +18,19 @@ public static class QuotationHeaderLegacyEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<QuotationHeaderList>>, BadRequest<string>>> GetAlls(DateTime beginDate, DateTime endDate
+    static async Task<Results<Ok<List<QuotationHeaderList>>, BadRequest<string>>> GetAlls(DateTime beginDate
+        , DateTime endDate
+        , string? identificationNumber
         , IRepositorioQuotationHeaderLegacy repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        DatesParams queryParams = new()
+        QuotaParams queryParams = new()
         {
             CompanyId = 0,
             BeginDate = beginDate,
             EndDate = endDate,
+            IdentificationNumber = identificationNumber,
             Pagina = pagina,
             RecordsPorPagina = recordsPorPagina
         };

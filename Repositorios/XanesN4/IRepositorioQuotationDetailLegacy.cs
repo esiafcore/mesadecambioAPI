@@ -5,6 +5,6 @@ namespace eSiafApiN4.Repositorios.XanesN4;
 
 public interface IRepositorioQuotationDetailLegacy
 {
-    Task<List<QuotationDetailList>> GetAlls(DatesParams queryParams);
+    Task<List<QuotationDetailList>> GetAlls(QuotaParams queryParams);
 
 }

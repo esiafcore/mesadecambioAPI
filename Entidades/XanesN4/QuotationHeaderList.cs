@@ -7,6 +7,7 @@ public class QuotationHeaderList
     public int NumeralTrx { get; set; }
     public DateTime DateTrx { get; set; }
     public string CustomerCode { get; set; } = null!;
+    public string CustomerIdentificationNumber{ get; set; } = null!;
     public string BusinessName { get; set; } = null!;
     public int CurrencyTransaction { get; set;}
     public int CurrencyDeposit { get; set; }

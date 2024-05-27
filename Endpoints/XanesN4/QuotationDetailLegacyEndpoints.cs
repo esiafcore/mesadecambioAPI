@@ -19,15 +19,17 @@ public static class QuotationDetailLegacyEndpoints
     }
 
     static async Task<Results<Ok<List<QuotationDetailList>>, BadRequest<string>>> GetAlls(DateTime beginDate, DateTime endDate
+        , string? identificationNumber
         , IRepositorioQuotationDetailLegacy repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        DatesParams queryParams = new()
+        QuotaParams queryParams = new()
         {
             CompanyId = 0,
             BeginDate = beginDate,
             EndDate = endDate,
+            IdentificationNumber = identificationNumber,
             Pagina = pagina,
             RecordsPorPagina = recordsPorPagina
         };

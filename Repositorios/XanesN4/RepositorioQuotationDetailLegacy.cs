@@ -13,7 +13,7 @@ public class RepositorioQuotationDetailLegacy(IConfiguration configuration
     private readonly string _connectionString = configuration.GetConnectionString("XanesN4Connection")!;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<List<QuotationDetailList>> GetAlls(DatesParams queryParams)
+    public async Task<List<QuotationDetailList>> GetAlls(QuotaParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
@@ -23,7 +23,7 @@ public class RepositorioQuotationDetailLegacy(IConfiguration configuration
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"dbo.usp_quotationsdetail_count"
-            , param: new { queryParams.BeginDate, queryParams.EndDate }
+            , param: new { queryParams.BeginDate, queryParams.EndDate ,queryParams.IdentificationNumber }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
