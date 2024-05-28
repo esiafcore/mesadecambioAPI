@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using eSiafApiN4.DTOs.eSiafN4;
 using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.FiltersParameters;
@@ -6,6 +6,7 @@ using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
@@ -60,17 +61,29 @@ public static class BancoEndpoints
         return TypedResults.Ok(objItem);
     }
 
-    static async Task<Results<Created<BancosDto>, ValidationProblem>>
-        Create([FromForm] BancosDtoCreate objCreateDto
+    static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>, ValidationProblem>>
+        Create(BancosDtoCreate BancoDtoCreate
         ,IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
         ,IMapper mapper)
     {
-        var objNew = mapper.Map<Bancos>(objCreateDto);
+        try
+        {
+            var objNew = mapper.Map<Bancos>(BancoDtoCreate);
+            var id = await repositorio.Create(objNew);
+            await outputCacheStore.EvictByTagAsync(_evictByTag, default);
+            var objDto = mapper.Map<BancosDto>(objNew);
+            return TypedResults.Created($"/bancos/{id}", objDto);
 
-        var id = await repositorio.Create(objNew);
-        await outputCacheStore.EvictByTagAsync(_evictByTag, default);
-        var objDto = mapper.Map<BancosDto>(objNew);
-        return TypedResults.Created($"/bancos/{id}", objDto);
+        }
+        catch (DbException e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return TypedResults.BadRequest();
+        }
     }
 
     static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repositorio,

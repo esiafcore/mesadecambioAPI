@@ -17,4 +17,6 @@ public class Customer
     public string? BusinessAddress { get; set; }
     public bool IsBank { get; set; }
     public bool IsSystemRow { get; set; }
+    public int TotalQuotations { get; set; }
+
 }

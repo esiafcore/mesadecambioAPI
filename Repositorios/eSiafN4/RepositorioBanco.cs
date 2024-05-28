@@ -56,6 +56,10 @@ public class RepositorioBanco(IConfiguration configuration
     {
         using var conexion = new SqlConnection(_connectionString);
         Guid uidRegist = Guid.NewGuid();
+        objNew.CreFch = DateTime.UtcNow;
+        objNew.CreUsr = AC.LocalUserName;
+        objNew.CreHsn = AC.LocHostMe;
+        objNew.CreIps = AC.Ipv4Default;
 
         var id = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
             new
@@ -65,8 +69,8 @@ public class RepositorioBanco(IConfiguration configuration
             ,objNew.CodigoOperacionSwitch,objNew.CuentaContableInterfazSwitch
             ,objNew.CodigoOperacionMantenimiento,objNew.CuentaContableInterfazMantenimiento
             ,objNew.ComisionBancariaPor
-            ,objNew.CreFch,objNew.CreUsr,objNew.CreHsn
-            ,objNew.CreHid,objNew.CreIps
+            ,objNew.CreFch,objNew.CreUsr
+            ,objNew.CreHsn,objNew.CreIps
             },
             commandType: CommandType.StoredProcedure);
 

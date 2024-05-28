@@ -2,7 +2,6 @@
 
 public class BancosDtoCreate
 {
-    public Guid UidRegist { get; set; }
     public Guid UidCia { get; set; }
     public string Codigo { get; set; } = null!;
     public string Descripci { get; set; } = null!;
@@ -13,10 +12,9 @@ public class BancosDtoCreate
     public Guid? CuentaContableInterfazSwitch { get; set; }
     public string CodigoOperacionMantenimiento { get; set; } = null!;
     public Guid? CuentaContableInterfazMantenimiento { get; set; }
-    public DateTime CreFch { get; set; }
+    public DateTime? CreFch { get; set; }
     public string? CreUsr { get; set; }
     public string? CreHsn { get; set; }
-    public string? CreHid { get; set; }
     public string? CreIps { get; set; }
     public decimal ComisionBancariaPor { get; set; }
 }
