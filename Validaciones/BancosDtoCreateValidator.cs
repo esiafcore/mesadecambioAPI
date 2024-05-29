@@ -7,6 +7,9 @@ public class BancosDtoCreateValidator : AbstractValidator<BancosDtoCreate>
 {
     public BancosDtoCreateValidator()
     {
+        RuleFor(x => x.UidCia)
+            .NotEmpty().WithMessage("El campo {PropertyName} es requerido");
+
         RuleFor(x => x.Codigo)
             .NotEmpty().WithMessage("El campo {PropertyName} es requerido")
             .MaximumLength(10).WithMessage("La longitud máxima de caracteres permitidos para el campo {PropertyName} es {MaxLength}");

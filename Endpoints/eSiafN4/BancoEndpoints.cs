@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.OutputCaching;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
     using Microsoft.Data.SqlClient;
+using FluentValidation;
 
-    namespace eSiafApiN4.Endpoints.eSiafN4;
+namespace eSiafApiN4.Endpoints.eSiafN4;
 
 public static class BancoEndpoints
 {
@@ -63,13 +64,20 @@ public static class BancoEndpoints
     }
 
     static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>, ValidationProblem>>
-        Create(BancosDtoCreate BancoDtoCreate
+        Create(BancosDtoCreate bancoDtoCreate
         ,IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
-        ,IMapper mapper)
+        ,IMapper mapper
+        ,IValidator<BancosDtoCreate> validator)
     {
         try
         {
-            var objNew = mapper.Map<Bancos>(BancoDtoCreate);
+            var resultadoValidacion = await validator.ValidateAsync(bancoDtoCreate);
+            if(!resultadoValidacion.IsValid)
+            {
+                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
+            }
+
+            var objNew = mapper.Map<Bancos>(bancoDtoCreate);
             var id = await repositorio.Create(objNew);
             objNew.UidRegist = id;
             await outputCacheStore.EvictByTagAsync(_evictByTag, default);
