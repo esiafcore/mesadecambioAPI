@@ -61,9 +61,9 @@ public class RepositorioBanco(IConfiguration configuration
         objNew.CreHsn = AC.LocHostMe;
         objNew.CreIps = AC.Ipv4Default;
 
-        var id = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
+        var idResult = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
             new
-            {uidRegist,objNew.UidCia,objNew.Codigo
+            {uidregist = uidRegist,objNew.UidCia,objNew.Codigo
             ,objNew.Descripci,objNew.IndTarjetaCredito
             ,objNew.NumeroObjeto,objNew.NumeroEstado
             ,objNew.CodigoOperacionSwitch,objNew.CuentaContableInterfazSwitch

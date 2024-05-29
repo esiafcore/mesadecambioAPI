@@ -70,7 +70,7 @@ app.MapGroup("/transaccionesbco").MapTransaccionBco();
 app.MapGroup("/cuentasbancarias").MapCuentaBancaria();
 app.MapGroup("/quotations").MapQuotation();
 app.MapGroup("/quotationslegacy").MapQuotationHeaderLegacy();
-app.MapGroup("/quotaitonsdetaillegacy").MapQuotationDetailLegacy();
+app.MapGroup("/quotationsdetaillegacy").MapQuotationDetailLegacy();
 app.MapGroup("/customerslegacy").MapCustomerLegacy();
 
 //Fin de área de los middleware

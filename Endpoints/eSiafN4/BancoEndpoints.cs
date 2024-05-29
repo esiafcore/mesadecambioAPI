@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+    using Microsoft.Data.SqlClient;
 
-namespace eSiafApiN4.Endpoints.eSiafN4;
+    namespace eSiafApiN4.Endpoints.eSiafN4;
 
 public static class BancoEndpoints
 {
@@ -70,20 +71,17 @@ public static class BancoEndpoints
         {
             var objNew = mapper.Map<Bancos>(BancoDtoCreate);
             var id = await repositorio.Create(objNew);
+            objNew.UidRegist = id;
             await outputCacheStore.EvictByTagAsync(_evictByTag, default);
             var objDto = mapper.Map<BancosDto>(objNew);
             return TypedResults.Created($"/bancos/{id}", objDto);
 
         }
-        catch (DbException e)
+        catch (Exception e)
         {
             return TypedResults.BadRequest(e.Message);
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return TypedResults.BadRequest();
-        }
+        //SqlException,DbException,InvalidOperationException => e.Message 
     }
 
     static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repositorio,
