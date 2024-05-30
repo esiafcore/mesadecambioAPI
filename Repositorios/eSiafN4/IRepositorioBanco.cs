@@ -10,4 +10,6 @@ public interface IRepositorioBanco
     Task<Bancos?> GetById(Guid id);
     Task<Guid> Create(Bancos objNew);
     Task Delete(Guid id);
+    Task<bool> Exist(Guid id, string code);
+
 }

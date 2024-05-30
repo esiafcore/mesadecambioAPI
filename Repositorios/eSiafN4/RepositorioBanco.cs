@@ -78,6 +78,15 @@ public class RepositorioBanco(IConfiguration configuration
 
     }
 
+    public async Task<bool> Exist(Guid id, string code)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_existbyidandcode"
+            , param: new { id = id, codigo = code }
+            , commandType: CommandType.StoredProcedure);
+        return existe;
+    }
+
     public async Task Delete(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
