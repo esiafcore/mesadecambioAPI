@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
     using Microsoft.Data.SqlClient;
 using FluentValidation;
+using eSiafApiN4.Entidades;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
 
@@ -26,6 +27,8 @@ public static class BancoEndpoints
         group.MapGet("/{id:Guid}", GetById);
         group.MapPost("/", Create)
             .DisableAntiforgery();
+        group.MapPut("/{id:Guid}", Update);
+
         group.MapDelete("/{id:Guid}", Delete);
 
         return group;
@@ -90,6 +93,38 @@ public static class BancoEndpoints
             return TypedResults.BadRequest(e.Message);
         }
         //SqlException,DbException,InvalidOperationException => e.Message 
+    }
+
+    static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
+        Update(Guid id, BancosDtoUpdate bancoDtoUpdate
+            , IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
+            , IMapper mapper
+            , IValidator<BancosDtoUpdate> validator)
+    {
+        try
+        {
+            var resultadoValidacion = await validator.ValidateAsync(bancoDtoUpdate);
+            if (!resultadoValidacion.IsValid)
+            {
+                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
+            }
+
+            var existe = await repositorio.Exist(id);
+            if (!existe)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var objUpdate = mapper.Map<Bancos>(bancoDtoUpdate);
+
+            await repositorio.Update(objUpdate);
+            await outputCacheStore.EvictByTagAsync(_evictByTag, default);
+            return TypedResults.NoContent();
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
     static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repositorio,

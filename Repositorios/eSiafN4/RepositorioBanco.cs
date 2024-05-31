@@ -78,11 +78,35 @@ public class RepositorioBanco(IConfiguration configuration
 
     }
 
+    public async Task Update(Bancos objUpdate)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        Guid uidRegist = Guid.NewGuid();
+        objUpdate.ModFch = DateTime.UtcNow;
+        objUpdate.ModUsr = AC.LocalUserName;
+        objUpdate.ModHsn = AC.LocHostMe;
+        objUpdate.ModIps = AC.Ipv4Default;
+
+        var idResult = await conexion.ExecuteAsync("bco.usp_bancos_update",
+            objUpdate, commandType: CommandType.StoredProcedure);
+
+    }
+
     public async Task<bool> Exist(Guid id, string code)
     {
         using var conexion = new SqlConnection(_connectionString);
         var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_existbyidandcode"
             , param: new { id = id, codigo = code }
+            , commandType: CommandType.StoredProcedure);
+        return existe;
+    }
+
+    public async Task<bool> Exist(Guid id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_existbyid"
+            , param: new {id}
             , commandType: CommandType.StoredProcedure);
         return existe;
     }
