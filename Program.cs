@@ -44,6 +44,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.Services.AddAuthentication().AddJwtBearer();
+builder.Services.AddAuthorization();
+
 //Fin de área de los servicios
 var app = builder.Build();
 app.UseMiddleware<ContentSecurityPolicyMiddleware>();
@@ -61,6 +64,8 @@ app.UseSwaggerUI();
 
 app.UseCors();
 app.UseOutputCache();
+
+app.UseAuthorization();
 
 //app.MapGroup("/generos").MapGenero();
 
