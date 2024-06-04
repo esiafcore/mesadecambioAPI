@@ -49,7 +49,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddAuthentication().AddJwtBearer(options => 
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+{
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = false,
@@ -59,8 +60,9 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
         //IssuerSigningKey = Llaves.ObtenerLlave(builder.Configuration).First(),
         IssuerSigningKeys = Llaves.ObtenerTodasLasLlaves(builder.Configuration),
         ClockSkew = TimeSpan.Zero
-    }
-);
+    };
+});
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();
@@ -87,8 +89,6 @@ app.UseOutputCache();
 
 app.UseAuthorization();
 
-//app.MapGroup("/generos").MapGenero();
-
 app.MapGroup("/asientoscontables").MapAsientoContable();
 app.MapGroup("/bancos").MapBanco();
 app.MapGroup("/transaccionesbco").MapTransaccionBco();
@@ -97,6 +97,7 @@ app.MapGroup("/quotations").MapQuotation();
 app.MapGroup("/quotationslegacy").MapQuotationHeaderLegacy();
 app.MapGroup("/quotationsdetaillegacy").MapQuotationDetailLegacy();
 app.MapGroup("/customerslegacy").MapCustomerLegacy();
+app.MapGroup("/usuarios").MapUsuarios();
 
 //Fin de área de los middleware
 app.Run();
