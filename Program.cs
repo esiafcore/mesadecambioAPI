@@ -5,7 +5,9 @@ using eSiafApiN4.Endpoints.XanesN8;
 using eSiafApiN4.Repositorios.eSiafN4;
 using eSiafApiN4.Repositorios.XanesN4;
 using eSiafApiN4.Repositorios.XanesN8;
+using eSiafApiN4.Servicios;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
@@ -47,6 +49,10 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
+
+builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();
+builder.Services.AddIdentityCore<IdentityUser>();
+builder.Services.AddTransient<SignInManager<IdentityUser>>();
 
 //Fin de área de los servicios
 var app = builder.Build();

@@ -1,11 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using eSiafApiN4.Repositorios.XanesN8;
+using Microsoft.AspNetCore.Identity;
 
 namespace eSiafApiN4.Servicios;
 
 public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUser>
     ,IUserPasswordStore<IdentityUser>
 {
-    
+    private readonly IRepositorioUsuarios _repo;
+
+    public UsuarioStore(IRepositorioUsuarios repo)
+    {
+        _repo = repo;
+    }
     //::Begin IUserStore
     public void Dispose()
     {
@@ -13,12 +19,12 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
 
     public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(user.Id);
     }
 
     public Task<string?> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult<string?>(user.Email);
     }
 
     public Task SetUserNameAsync(IdentityUser user, string? userName, CancellationToken cancellationToken)
@@ -33,17 +39,20 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
 
     public Task SetNormalizedUserNameAsync(IdentityUser user, string? normalizedName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        user.NormalizedUserName = normalizedName;
+        return Task.CompletedTask;
     }
 
-    public Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
+    public async Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        user.Id = await _repo.Crear(user);
+        return IdentityResult.Success;
     }
+
 
     public Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(IdentityResult.Success);
     }
 
     public Task<IdentityResult> DeleteAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -56,10 +65,11 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
         throw new NotImplementedException();
     }
 
-    public Task<IdentityUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+    public async Task<IdentityUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _repo.BuscarUsuarioPorEmail(normalizedUserName);
     }
+
     //::End IUserStore
 
     //::Begin IUserEmailStore
@@ -70,7 +80,7 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
 
     public Task<string?> GetEmailAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(user.Email);
     }
 
     public Task<bool> GetEmailConfirmedAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -83,9 +93,9 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
         throw new NotImplementedException();
     }
 
-    public Task<IdentityUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+    public async Task<IdentityUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _repo.BuscarUsuarioPorEmail(normalizedEmail);
     }
 
     public Task<string?> GetNormalizedEmailAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -95,19 +105,22 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
 
     public Task SetNormalizedEmailAsync(IdentityUser user, string? normalizedEmail, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        user.NormalizedEmail = normalizedEmail;
+        return Task.CompletedTask;
     }
+
     //::End IUserEmailStore
 
     //::Begin IUserPasswordStore
     public Task SetPasswordHashAsync(IdentityUser user, string? passwordHash, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        user.PasswordHash = passwordHash;
+        return Task.CompletedTask;
     }
 
     public Task<string?> GetPasswordHashAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(user.PasswordHash);
     }
 
     public Task<bool> HasPasswordAsync(IdentityUser user, CancellationToken cancellationToken)
