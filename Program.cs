@@ -38,6 +38,7 @@ builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
 builder.Services.AddScoped<IRepositorioQuotationHeaderLegacy, RepositorioQuotationHeaderLegacy>();
 builder.Services.AddScoped<IRepositorioQuotationDetailLegacy, RepositorioQuotationDetailLegacy>();
 builder.Services.AddScoped<IRepositorioCustomerLegacy, RepositorioCustomerLegacy>();
+builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 
 builder.Services.AddHttpContextAccessor();
 
