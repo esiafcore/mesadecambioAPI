@@ -6,8 +6,10 @@ using eSiafApiN4.Repositorios.eSiafN4;
 using eSiafApiN4.Repositorios.XanesN4;
 using eSiafApiN4.Repositorios.XanesN8;
 using eSiafApiN4.Servicios;
+using eSiafApiN4.Utilidades;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
@@ -47,7 +49,18 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddAuthentication().AddJwtBearer();
+builder.Services.AddAuthentication().AddJwtBearer(options => 
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        //IssuerSigningKey = Llaves.ObtenerLlave(builder.Configuration).First(),
+        IssuerSigningKeys = Llaves.ObtenerTodasLasLlaves(builder.Configuration),
+        ClockSkew = TimeSpan.Zero
+    }
+);
 builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();
