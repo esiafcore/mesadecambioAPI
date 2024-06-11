@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
     using Microsoft.Data.SqlClient;
 using FluentValidation;
 using eSiafApiN4.Entidades;
+using eSiafApiN4.LoggerManager;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
 
@@ -37,7 +38,7 @@ public static class BancoEndpoints
 
     static async Task<Ok<List<BancosDto>>> GetAlls(Guid uidcia
         , IRepositorioBanco repositorio
-        , IMapper mapper
+        , IMapper mapper ,ILoggerManager logger
         , int pagina = 1, int recordsPorPagina = 10)
     {
         QueryParams queryParams = new()
@@ -47,8 +48,10 @@ public static class BancoEndpoints
             RecordsPorPagina = recordsPorPagina
         };
 
+        logger.LogInfo($"Begin Obteniendo datos de Bancos");
         var dataList = await repositorio.GetAlls(queryParams);
         var objList = mapper.Map<List<BancosDto>>(dataList);
+        logger.LogInfo($"End Obteniendo datos de Bancos, mappeado");
 
         return TypedResults.Ok(objList);
     }
