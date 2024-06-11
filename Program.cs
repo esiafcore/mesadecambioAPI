@@ -10,8 +10,13 @@ using eSiafApiN4.Utilidades;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
+LogManager.Setup()
+    .LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory()
+        , "/nlog.config"));
+
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
 //Inicio de área de los servicios
 builder.Services.AddAntiforgery(options =>
