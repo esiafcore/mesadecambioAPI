@@ -7,11 +7,25 @@ using Dapper;
 
 namespace eSiafApiN4.Repositorios.XanesN4;
 
-public class RepositorioQuotationDetailLegacy(IConfiguration configuration
-    , IHttpContextAccessor httpContextAccessor) : IRepositorioQuotationDetailLegacy
+public class RepositorioQuotationDetailLegacy : IRepositorioQuotationDetailLegacy
 {
-    private readonly string _connectionString = configuration.GetConnectionString("XanesN4Connection")!;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly string _connectionString;
+    private readonly HttpContext _httpContext;
+
+    public RepositorioQuotationDetailLegacy(IConfiguration configuration
+        , IHttpContextAccessor httpContextAccessor)
+    {
+        _connectionString = configuration.GetConnectionString("XanesN4Connection")!;
+        var userId = configuration.GetValue<string>(AC.SecretUserId);
+        var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
+        var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)
+        {
+            UserID = userId,
+            Password = userPwd
+        };
+        _connectionString = connectionStringBuilder.ConnectionString;
+        _httpContext = httpContextAccessor.HttpContext!;
+    }
 
     public async Task<List<QuotationDetailList>> GetAlls(QuotaParams queryParams)
     {

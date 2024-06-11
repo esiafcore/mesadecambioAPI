@@ -7,12 +7,25 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios.eSiafN4;
 
-public class RepositorioCuentaBancaria(IConfiguration configuration
-        , IHttpContextAccessor httpContextAccessor)
-    : IRepositorioCuentaBancaria
+public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
 {
-    private readonly string _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly string _connectionString;
+    private readonly HttpContext _httpContext;
+
+    public RepositorioCuentaBancaria(IConfiguration configuration
+        , IHttpContextAccessor httpContextAccessor)
+    {
+        _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
+        var userId = configuration.GetValue<string>(AC.SecretUserId);
+        var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
+        var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)
+        {
+            UserID = userId,
+            Password = userPwd
+        };
+        _connectionString = connectionStringBuilder.ConnectionString;
+        _httpContext = httpContextAccessor.HttpContext!;
+    }
 
     public async Task<List<CuentasBancarias>> GetAlls(QueryParams queryParams)
     {

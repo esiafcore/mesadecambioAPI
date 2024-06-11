@@ -7,11 +7,25 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios.XanesN8;
 
-public class RepositorioQuotation(IConfiguration configuration
-    , IHttpContextAccessor httpContextAccessor) : IRepositorioQuotation
+public class RepositorioQuotation : IRepositorioQuotation
 {
-    private readonly string _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly string _connectionString;
+    private readonly HttpContext _httpContext;
+
+    public RepositorioQuotation(IConfiguration configuration
+        , IHttpContextAccessor httpContextAccessor)
+    {
+        _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
+        _httpContext = httpContextAccessor.HttpContext!;
+        var userId = configuration.GetValue<string>(AC.SecretUserId);
+        var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
+        var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)
+        {
+            UserID = userId,
+            Password = userPwd
+        };
+        _connectionString = connectionStringBuilder.ConnectionString;
+    }
 
     public async Task<List<QuotationsList>> GetAlls(DatesParams queryParams)
     {

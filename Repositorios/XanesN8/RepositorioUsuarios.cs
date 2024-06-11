@@ -7,9 +7,22 @@ using Microsoft.Data.SqlClient;
 
 namespace eSiafApiN4.Repositorios.XanesN8;
 
-public class RepositorioUsuarios(IConfiguration configuration) : IRepositorioUsuarios
+public class RepositorioUsuarios : IRepositorioUsuarios
 {
-    private readonly string _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
+    private readonly string _connectionString;
+
+    public RepositorioUsuarios(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
+        var userId = configuration.GetValue<string>(AC.SecretUserId);
+        var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
+        var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)
+        {
+            UserID = userId,
+            Password = userPwd
+        };
+        _connectionString = connectionStringBuilder.ConnectionString;
+    }
 
     public async Task<IdentityUser?> BuscarUsuarioPorEmail(string normalizedEmail)
     {
