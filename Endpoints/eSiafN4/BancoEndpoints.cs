@@ -1,17 +1,13 @@
-﻿    using AutoMapper;
+﻿using AutoMapper;
 using eSiafApiN4.DTOs.eSiafN4;
 using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
-    using Microsoft.Data.SqlClient;
 using FluentValidation;
-using eSiafApiN4.Entidades;
 using eSiafApiN4.LoggerManager;
+using AutoMapper.Configuration.Annotations;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
 
@@ -24,8 +20,7 @@ public static class BancoEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(_cacheOutputExpire))
-                .Tag(_evictByTag))
-            .RequireAuthorization();
+                .Tag(_evictByTag));//.RequireAuthorization();
         group.MapGet("/{id:Guid}", GetById);
         group.MapPost("/", Create)
             .DisableAntiforgery();
@@ -36,24 +31,40 @@ public static class BancoEndpoints
         return group;
     }
 
-    static async Task<Ok<List<BancosDto>>> GetAlls(Guid uidcia
+    static async Task<Results<Ok<List<BancosDto>>
+        , NotFound<string> ,BadRequest<string>>> GetAlls(Guid uidcia
         , IRepositorioBanco repositorio
         , IMapper mapper ,ILoggerManager logger
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        QueryParams queryParams = new()
+        try
         {
-            Uidcia = uidcia,
-            Pagina = pagina,
-            RecordsPorPagina = recordsPorPagina
-        };
+            QueryParams queryParams = new()
+            {
+                Uidcia = uidcia,
+                Pagina = pagina,
+                RecordsPorPagina = recordsPorPagina
+            };
 
-        logger.LogInfo($"Begin Obteniendo datos de Bancos");
-        var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<BancosDto>>(dataList);
-        logger.LogInfo($"End Obteniendo datos de Bancos, mappeado");
-
-        return TypedResults.Ok(objList);
+            var dataList = await repositorio.GetAlls(queryParams);
+            if (dataList.Count > 0 )
+            {
+                var objList = mapper.Map<List<BancosDto>>(dataList);
+                return TypedResults.Ok(objList);
+            }
+            else
+            {
+                var errorMessage = $"Método {nameof(GetAlls)} del Endpoint Bancos. No hay datos que mostrar";
+                logger.LogInfo(errorMessage);
+                return TypedResults.NotFound(errorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = $"Ha ocurrido un error el el método {nameof(GetAlls)} del Endpoint Bancos. Error: {ex.Message}";
+            logger.LogError(errorMessage);
+            return TypedResults.BadRequest(errorMessage);
+        }
     }
 
     static async Task<Results<Ok<BancosDto>, NotFound>> GetById(Guid id
@@ -72,14 +83,14 @@ public static class BancoEndpoints
 
     static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>, ValidationProblem>>
         Create(BancosDtoCreate bancoDtoCreate
-        ,IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
-        ,IMapper mapper
-        ,IValidator<BancosDtoCreate> validator)
+        , IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
+        , IMapper mapper
+        , IValidator<BancosDtoCreate> validator)
     {
         try
         {
             var resultadoValidacion = await validator.ValidateAsync(bancoDtoCreate);
-            if(!resultadoValidacion.IsValid)
+            if (!resultadoValidacion.IsValid)
             {
                 return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
             }
@@ -141,7 +152,7 @@ public static class BancoEndpoints
             return TypedResults.NotFound();
         }
 
-        await repositorio .Delete(id);
+        await repositorio.Delete(id);
         await outputCacheStore.EvictByTagAsync(_evictByTag, default);
         return TypedResults.NoContent();
     }

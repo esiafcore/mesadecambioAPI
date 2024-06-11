@@ -18,7 +18,7 @@ public class ContentSecurityPolicyMiddleware
         {
             context.Response.Headers.Add(nameSecurityPolicy,
                 "default-src 'self' 'unsafe-inline';" +
-                "connect-src 'self' 'unsafe-inline' http://localhost:59684 https://vmi531999.contaboserver.net:7202 http://localhost:20092 ws://localhost:59684 ws://localhost:20092 wss://localhost:44353 wss://localhost:44346;" +
+                "connect-src 'self' 'unsafe-inline' http://localhost:59684 https://vmi531999.contaboserver.net:7202 http://localhost:20092 ws://localhost:59684 ws://localhost:20092 wss://localhost:44353 wss://localhost:44346 wss://localhost:44320;" +
                 "font-src 'self' https://fonts.gstatic.com/ ;" +
                 "object-src 'self';" +
                 "style-src 'self' 'unsafe-inline' https://vmi531999.contaboserver.net:7202 https://cdn.datatables.net/ https://cdn.jsdelivr.net/ https://fonts.googleapis.com/ ;" +
