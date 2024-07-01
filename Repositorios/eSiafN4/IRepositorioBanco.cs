@@ -1,5 +1,4 @@
-﻿using eSiafApiN4.Entidades;
-using eSiafApiN4.Entidades.eSiafN4;
+﻿using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.FiltersParameters;
 
 namespace eSiafApiN4.Repositorios.eSiafN4;

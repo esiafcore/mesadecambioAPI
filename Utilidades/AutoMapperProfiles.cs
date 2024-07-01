@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs;
 using eSiafApiN4.DTOs.eSiafN4;
 using eSiafApiN4.DTOs.XanesN4;
-using eSiafApiN4.Entidades;
 using eSiafApiN4.Entidades.eSiafN4;
 using eSiafApiN4.Entidades.XanesN4;
 
@@ -21,12 +19,6 @@ public class AutoMapperProfiles : Profile
 
         //XanesN4
         CreateMap<Customer, CustomerDto>();
-
-        //Shared
-        CreateMap<GeneroDtoCreate, Genero>();
-        CreateMap<GeneroDtoUpdate, Genero>();
-        CreateMap<GeneroDtoCreate, GeneroDtoUpdate>();
-        CreateMap<Genero, GeneroDto>();
 
     }
 }

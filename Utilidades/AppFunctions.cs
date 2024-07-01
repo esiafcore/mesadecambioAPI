@@ -4,15 +4,12 @@ public static class AppFunctions
 {
     public static int CantidadTotalPaginas(int recordsPorPagina, int cantidadRegistros)
     {
-        int ultimaPagina;
-        int cantidadTotalPaginas = 1;
+        var cantidadTotalPaginas = 1;
 
-        if (recordsPorPagina !=  0)
-        {
-            ultimaPagina = cantidadRegistros % recordsPorPagina;
-            cantidadTotalPaginas = (cantidadRegistros / recordsPorPagina);
-            cantidadTotalPaginas += ultimaPagina != 0 ? 1 : 0;
-        }
+        if (recordsPorPagina == 0) return cantidadTotalPaginas;
+        var ultimaPagina = cantidadRegistros % recordsPorPagina;
+        cantidadTotalPaginas = (cantidadRegistros / recordsPorPagina);
+        cantidadTotalPaginas += ultimaPagina != 0 ? 1 : 0;
 
         return cantidadTotalPaginas;
     }

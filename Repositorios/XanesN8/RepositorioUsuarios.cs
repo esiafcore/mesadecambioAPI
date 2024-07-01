@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using Dapper;
-using eSiafApiN4.Entidades.XanesN8;
-using eSiafApiN4.FiltersParameters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 

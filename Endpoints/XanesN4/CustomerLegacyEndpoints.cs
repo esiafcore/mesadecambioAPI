@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs.eSiafN4;
 using eSiafApiN4.DTOs.XanesN4;
-using eSiafApiN4.Entidades.XanesN4;
 using eSiafApiN4.FiltersParameters;
 using eSiafApiN4.Repositorios.XanesN4;
 using Microsoft.AspNetCore.Http.HttpResults;

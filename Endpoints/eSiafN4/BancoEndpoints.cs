@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 using FluentValidation;
 using eSiafApiN4.LoggerManager;
-using AutoMapper.Configuration.Annotations;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
 

@@ -40,7 +40,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ILoggerManager,LoggerManager>();
-builder.Services.AddScoped<IRepositorioGeneros, RepositorioGenero>();
 builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();

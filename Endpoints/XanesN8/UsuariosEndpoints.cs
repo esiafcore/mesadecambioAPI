@@ -1,5 +1,4 @@
-﻿using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.DTOs.XanesN8;
+﻿using eSiafApiN4.DTOs.XanesN8;
 using eSiafApiN4.Utilidades;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
