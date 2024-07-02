@@ -15,7 +15,7 @@ public class RepositorioBanco : IRepositorioBanco
     public RepositorioBanco(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
-        _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
+        _connectionString = configuration.GetConnectionString(AC.EsiafN4Cnx)!;
         var userId = configuration.GetValue<string>(AC.SecretUserId);
         var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
         var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)
@@ -109,7 +109,7 @@ public class RepositorioBanco : IRepositorioBanco
     public async Task<bool> Exist(Guid id, string code)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_existbyidandcode"
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexistbycode"
             , param: new { id = id, codigo = code }
             , commandType: CommandType.StoredProcedure);
         return existe;
@@ -118,7 +118,7 @@ public class RepositorioBanco : IRepositorioBanco
     public async Task<bool> Exist(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_existbyid"
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexist"
             , param: new {id}
             , commandType: CommandType.StoredProcedure);
         return existe;

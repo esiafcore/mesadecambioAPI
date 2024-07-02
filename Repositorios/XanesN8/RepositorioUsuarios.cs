@@ -11,7 +11,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public RepositorioUsuarios(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
+        _connectionString = configuration.GetConnectionString(AC.XanesN8Cnx)!;
         var userId = configuration.GetValue<string>(AC.SecretUserId);
         var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
         var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)

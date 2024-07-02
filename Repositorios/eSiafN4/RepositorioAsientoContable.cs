@@ -15,7 +15,7 @@ public class RepositorioAsientoContable: IRepositorioAsientoContable
     public RepositorioAsientoContable(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
-        _connectionString = configuration.GetConnectionString("eSIAFN4Connection")!;
+        _connectionString = configuration.GetConnectionString(AC.EsiafN4Cnx)!;
         var userId = configuration.GetValue<string>(AC.SecretUserId);
         var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
         var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)

@@ -15,7 +15,7 @@ public class RepositorioQuotationHeaderLegacy : IRepositorioQuotationHeaderLegac
     public RepositorioQuotationHeaderLegacy(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
-        _connectionString = configuration.GetConnectionString("XanesN4Connection")!;
+        _connectionString = configuration.GetConnectionString(AC.XanesN4Cnx)!;
         var userId = configuration.GetValue<string>(AC.SecretUserId);
         var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
         var connectionStringBuilder = new SqlConnectionStringBuilder(_connectionString)

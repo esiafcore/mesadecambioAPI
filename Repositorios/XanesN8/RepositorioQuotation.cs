@@ -15,7 +15,7 @@ public class RepositorioQuotation : IRepositorioQuotation
     public RepositorioQuotation(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
-        _connectionString = configuration.GetConnectionString("XanesN8Connection")!;
+        _connectionString = configuration.GetConnectionString(AC.XanesN8Cnx)!;
         _httpContext = httpContextAccessor.HttpContext!;
         var userId = configuration.GetValue<string>(AC.SecretUserId);
         var userPwd = configuration.GetValue<string>(AC.SecretUserPwd);
