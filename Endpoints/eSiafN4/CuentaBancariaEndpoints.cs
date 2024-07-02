@@ -11,8 +11,8 @@ public static class CuentaBancariaEndpoints
     public static RouteGroupBuilder MapCuentaBancaria(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("cuentasbancarias-get"));
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag(AC.EvictByTagCuentasBancarias));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;

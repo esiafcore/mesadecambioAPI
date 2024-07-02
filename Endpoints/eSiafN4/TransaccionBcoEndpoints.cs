@@ -11,8 +11,8 @@ public static class TransaccionBcoEndpoints
     public static RouteGroupBuilder MapTransaccionBco(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("transaccionesbco-get"));
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag(AC.EvictByTagTransaccionBancarias));
         group.MapGet("/{id:Guid}", GetById);
 
         return group;

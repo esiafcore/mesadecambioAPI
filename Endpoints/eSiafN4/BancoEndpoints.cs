@@ -12,14 +12,13 @@ namespace eSiafApiN4.Endpoints.eSiafN4;
 
 public static class BancoEndpoints
 {
-    private static readonly string _evictByTag = "bancos-get";
-    private static readonly int _cacheOutputExpire = 15;
+    //private static readonly string _evictByTag = "bancos-get";
 
     public static RouteGroupBuilder MapBanco(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(_cacheOutputExpire))
-                .Tag(_evictByTag));//.RequireAuthorization();
+            .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(AC.CacheOutputExpire))
+                .Tag(AC.EvictByTagBancos));//.RequireAuthorization();
         group.MapGet("/{id:Guid}", GetById);
         group.MapPost("/", Create)
             .DisableAntiforgery();
@@ -97,7 +96,7 @@ public static class BancoEndpoints
             var objNew = mapper.Map<Bancos>(bancoDtoCreate);
             var id = await repositorio.Create(objNew);
             objNew.UidRegist = id;
-            await outputCacheStore.EvictByTagAsync(_evictByTag, default);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
             var objDto = mapper.Map<BancosDto>(objNew);
             return TypedResults.Created($"/bancos/{id}", objDto);
 
@@ -132,7 +131,7 @@ public static class BancoEndpoints
             var objUpdate = mapper.Map<Bancos>(bancoDtoUpdate);
 
             await repositorio.Update(objUpdate);
-            await outputCacheStore.EvictByTagAsync(_evictByTag, default);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
             return TypedResults.NoContent();
         }
         catch (Exception e)
@@ -152,7 +151,7 @@ public static class BancoEndpoints
         }
 
         await repositorio.Delete(id);
-        await outputCacheStore.EvictByTagAsync(_evictByTag, default);
+        await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
         return TypedResults.NoContent();
     }
 
