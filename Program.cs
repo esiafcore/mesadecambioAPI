@@ -55,19 +55,24 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddAuthentication().AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = Llaves.ObtenerLlave(builder.Configuration).First(),
-        //IssuerSigningKeys = Llaves.ObtenerTodasLasLlaves(builder.Configuration),
-        ClockSkew = TimeSpan.Zero
-    };
-});
+//Usar JWT Sin tener el sistema de usuario
+builder.Services.AddAuthentication().AddJwtBearer();
+
+//Usar JWT con el sistema de usuario
+
+//options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = false,
+//        ValidateAudience = false,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = Llaves.ObtenerLlave(builder.Configuration).First(),
+//        //IssuerSigningKeys = Llaves.ObtenerTodasLasLlaves(builder.Configuration),
+//        ClockSkew = TimeSpan.Zero
+//    };
+//}
 
 builder.Services.AddAuthorization();
 

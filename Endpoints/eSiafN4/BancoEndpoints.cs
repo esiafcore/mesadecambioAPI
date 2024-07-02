@@ -18,7 +18,8 @@ public static class BancoEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagBancos));//.RequireAuthorization();
+                .Tag(AC.EvictByTagBancos))
+                .RequireAuthorization();
         group.MapGet("/{id:Guid}", GetById);
         group.MapPost("/", Create)
             .DisableAntiforgery();
