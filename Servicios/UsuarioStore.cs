@@ -69,7 +69,6 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
     {
         return await _repo.BuscarUsuarioPorEmail(normalizedUserName);
     }
-
     //::End IUserStore
 
     //::Begin IUserEmailStore

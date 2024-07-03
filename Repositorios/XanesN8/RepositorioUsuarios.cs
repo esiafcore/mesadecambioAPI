@@ -27,7 +27,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         await using var conexion = new SqlConnection(_connectionString);
         return await conexion.QuerySingleOrDefaultAsync<IdentityUser>(
             "cnf.usp_usuarios_buscarporemail", new {normalizedEmail},
-            commandType: System.Data.CommandType.StoredProcedure);
+            commandType: CommandType.StoredProcedure);
     }
 
     public async Task<string> Crear(IdentityUser usuario)
