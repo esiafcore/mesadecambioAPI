@@ -76,6 +76,7 @@ builder.Services.AddAuthentication().AddJwtBearer();
 
 builder.Services.AddAuthorization();
 
+//Configurar Identity a nivel de los Servicios
 builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();
 builder.Services.AddIdentityCore<IdentityUser>();
 builder.Services.AddTransient<SignInManager<IdentityUser>>();

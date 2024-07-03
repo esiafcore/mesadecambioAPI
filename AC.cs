@@ -14,6 +14,10 @@ public static class AC
     public const string Ipv4Default = "127.0.0.1";
     public const string SecretUserId = "DbConnection:UserId";
     public const string SecretUserPwd = "DbConnection:Password";
+    public const string SectionKeys = "Authentication:Schemes:Bearer:SigningKeys";
+    public const string IssuedByKey = "Issuer";
+    public const string IssuedByValue = "Value";
+    public const string IssuedApp = "esiafapin4-app";
 
     public const int CacheOutputExpire = 15;
 

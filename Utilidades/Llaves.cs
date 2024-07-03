@@ -5,21 +5,16 @@ namespace eSiafApiN4.Utilidades;
 public static class Llaves
 {
 
-    public const string IssuerPropio = "esiafapin4-app";
-    private const string SeccionLlaves = "Authentication:Schemes:Bearer:SigningKeys";
-    private const string SeccionLlavesEmisor = "Issuer";
-    private const string SeccionLlavesValor = "Value";
-
     public static IEnumerable<SecurityKey> ObtenerLlave(IConfiguration configuration)
-        => ObtenerLlave(configuration, IssuerPropio);
+        => ObtenerLlave(configuration, AC.IssuedApp);
 
     public static IEnumerable<SecurityKey> ObtenerLlave(IConfiguration configuration, string issuer)
     {
-        var signingkey = configuration.GetSection(SeccionLlaves)
+        var signingKey = configuration.GetSection(AC.SectionKeys)
             .GetChildren()
-            .SingleOrDefault(llave => llave[SeccionLlavesEmisor] == issuer);
+            .SingleOrDefault(llave => llave[AC.IssuedByKey] == issuer);
 
-        if (signingkey?[SeccionLlavesValor] is string valorLlave)
+        if (signingKey?[AC.IssuedByValue] is string valorLlave)
         {
             yield return new SymmetricSecurityKey(Convert.FromBase64String(valorLlave));
         }
@@ -27,16 +22,15 @@ public static class Llaves
 
     public static IEnumerable<SecurityKey> ObtenerTodasLasLlaves(IConfiguration configuration)
     {
-        var signingkeys = configuration.GetSection(SeccionLlaves)
+        var signingKeys = configuration.GetSection(AC.SectionKeys)
             .GetChildren();
 
-        foreach (var signingkey in signingkeys)
+        foreach (var signingKey in signingKeys)
         {
-            if (signingkey?[SeccionLlavesValor] is string valorLlave)
+            if (signingKey?[AC.IssuedByValue] is string valorLlave)
             {
                 yield return new SymmetricSecurityKey(Convert.FromBase64String(valorLlave));
             }
-
         }
     }
 }
