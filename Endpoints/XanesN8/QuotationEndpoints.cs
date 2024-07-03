@@ -12,9 +12,9 @@ public static class QuotationEndpoints
     public static RouteGroupBuilder MapQuotation(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("quotations-get"));
-
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag("quotations-get"))
+                .RequireAuthorization();
         return group;
     }
 

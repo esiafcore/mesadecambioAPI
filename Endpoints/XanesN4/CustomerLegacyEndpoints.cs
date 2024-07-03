@@ -12,14 +12,15 @@ public static class CustomerLegacyEndpoints
     public static RouteGroupBuilder MapCustomerLegacy(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("customerslegacy-get"));
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag("customerslegacy-get"))
+            .RequireAuthorization();
 
         return group;
     }
 
     static async Task<Results<Ok<List<CustomerDto>>, BadRequest<string>>> GetAlls(IRepositorioCustomerLegacy repositorio
-        , IMapper mapper,int pagina = 1, int recordsPorPagina = 10)
+        , IMapper mapper, int pagina = 1, int recordsPorPagina = 10)
     {
         QueryParams queryParams = new()
         {

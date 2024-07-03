@@ -12,8 +12,11 @@ public static class CuentaBancariaEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagCuentasBancarias));
-        group.MapGet("/{id:Guid}", GetById);
+                .Tag(AC.EvictByTagCuentasBancarias))
+            .RequireAuthorization();
+
+        group.MapGet("/{id:Guid}", GetById)
+            .RequireAuthorization();
 
         return group;
     }

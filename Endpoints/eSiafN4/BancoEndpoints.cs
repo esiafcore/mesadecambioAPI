@@ -20,12 +20,15 @@ public static class BancoEndpoints
             .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(AC.CacheOutputExpire))
                 .Tag(AC.EvictByTagBancos))
                 .RequireAuthorization();
-        group.MapGet("/{id:Guid}", GetById);
-        group.MapPost("/", Create)
-            .DisableAntiforgery();
-        group.MapPut("/{id:Guid}", Update);
 
-        group.MapDelete("/{id:Guid}", Delete);
+        group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
+        group.MapPost("/", Create)
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
+        group.MapPut("/{id:Guid}", Update).RequireAuthorization();
+
+        group.MapDelete("/{id:Guid}", Delete).RequireAuthorization();
 
         return group;
     }

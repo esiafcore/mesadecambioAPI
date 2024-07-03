@@ -12,8 +12,11 @@ public static class TransaccionBcoEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagTransaccionBancarias));
-        group.MapGet("/{id:Guid}", GetById);
+                .Tag(AC.EvictByTagTransaccionBancarias))
+            .RequireAuthorization();
+
+        group.MapGet("/{id:Guid}", GetById)
+            .RequireAuthorization();
 
         return group;
     }

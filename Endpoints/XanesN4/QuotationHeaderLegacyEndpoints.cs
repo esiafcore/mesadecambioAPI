@@ -12,8 +12,9 @@ public static class QuotationHeaderLegacyEndpoints
     public static RouteGroupBuilder MapQuotationHeaderLegacy(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("quotationsheaderlegacy-get"));
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag("quotationsheaderlegacy-get"))
+                .RequireAuthorization();
 
         return group;
     }

@@ -12,8 +12,9 @@ public static class QuotationDetailLegacyEndpoints
     public static RouteGroupBuilder MapQuotationDetailLegacy(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60))
-                .Tag("quotationsdetaillegacy-get"));
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag("quotationsdetaillegacy-get"))
+            .RequireAuthorization();
 
         return group;
     }
