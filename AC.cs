@@ -9,7 +9,7 @@ public static class AC
     public const string XanesN4Cnx = "XanesN4Connection";
     public const string XanesN8Cnx = "XanesN8Connection";
 
-    public static string LocalUserName = "LocalUser";
+    public const string LocalUserName = "LocalUser";
     public const string LocHostMe = "LocalHostMe";
     public const string Ipv4Default = "127.0.0.1";
     public const string SecretUserId = "DbConnection:UserId";
@@ -18,6 +18,10 @@ public static class AC
     public const string IssuedByKey = "Issuer";
     public const string IssuedByValue = "Value";
     public const string IssuedApp = "esiafapin4-app";
+
+    //Claims
+    public const string EmailClaim = "email";
+
 
     public const int CacheOutputExpire = 15;
 

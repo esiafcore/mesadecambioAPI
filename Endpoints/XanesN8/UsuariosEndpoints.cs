@@ -1,4 +1,5 @@
 ﻿using eSiafApiN4.DTOs.XanesN8;
+using eSiafApiN4.Filtros;
 using eSiafApiN4.Utilidades;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -14,7 +15,8 @@ public static class UsuariosEndpoints
 {
     public static RouteGroupBuilder MapUsuarios(this RouteGroupBuilder group)
     {
-        group.MapPost("/registrar", Registrar);
+        group.MapPost("/registrar", Registrar)
+            .AddEndpointFilter<FiltroValidaciones<CredencialesUsuarioDto>>();
         return group;
     }
 
@@ -23,14 +25,15 @@ public static class UsuariosEndpoints
         , ValidationProblem>> Registrar(
         CredencialesUsuarioDto credencialesUsuarioDto,
         [FromServices] UserManager<IdentityUser> userManager, IConfiguration configuration
-        ,IValidator<CredencialesUsuarioDto> validator)
+        )
     {
-        var resultadoValidacion = await validator.ValidateAsync(credencialesUsuarioDto);
+        //,IValidator<CredencialesUsuarioDto> validator
+        //var resultadoValidacion = await validator.ValidateAsync(credencialesUsuarioDto);
 
-        if (!resultadoValidacion.IsValid)
-        {
-            return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
-        }
+        //if (!resultadoValidacion.IsValid)
+        //{
+        //    return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
+        //}
 
         var usuario = new IdentityUser
         {
@@ -57,12 +60,15 @@ public static class UsuariosEndpoints
     {
         var claims = new List<Claim>
         {
-            new Claim("email",credencialesUsuarioDto.Email),
-            new Claim("lo que yo quiera","cualquier otro valor")
+            new Claim(AC.EmailClaim,credencialesUsuarioDto.Email)
         };
+
         var llave = Llaves.ObtenerLlave(configuration);
         var creds = new SigningCredentials(llave.First(), SecurityAlgorithms.HmacSha256);
-        var expiracion = DateTime.UtcNow.AddHours(4);
+
+        //Cuando va a expirar el toquen
+        var expiracion = DateTime.UtcNow.AddHours(configuration.GetValue<int>("ExpirationTimeSettings:TokenTimeExpire"));
+
         var tokenDeSeguridad = new JwtSecurityToken(issuer: null, audience: null, claims: claims,
             expires: expiracion, signingCredentials: creds);
         var token = new JwtSecurityTokenHandler().WriteToken(tokenDeSeguridad);
