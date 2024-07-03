@@ -17,6 +17,9 @@ public static class UsuariosEndpoints
     {
         group.MapPost("/registrar", Registrar)
             .AddEndpointFilter<FiltroValidaciones<CredencialesUsuarioDto>>();
+        group.MapPost("/login", Login)
+            .AddEndpointFilter<FiltroValidaciones<CredencialesUsuarioDto>>();
+
         return group;
     }
 
@@ -27,14 +30,6 @@ public static class UsuariosEndpoints
         [FromServices] UserManager<IdentityUser> userManager, IConfiguration configuration
         )
     {
-        //,IValidator<CredencialesUsuarioDto> validator
-        //var resultadoValidacion = await validator.ValidateAsync(credencialesUsuarioDto);
-
-        //if (!resultadoValidacion.IsValid)
-        //{
-        //    return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
-        //}
-
         var usuario = new IdentityUser
         {
             UserName = credencialesUsuarioDto.Email,
@@ -79,4 +74,36 @@ public static class UsuariosEndpoints
             Expiracion = expiracion
         };
     }
+
+    static async Task<Results<Ok<RespuestaAutenticacionDto>
+        , BadRequest<string>>> Login(
+        CredencialesUsuarioDto credencialesUsuarioDto
+        , [FromServices] SignInManager<IdentityUser> signInManager,
+        [FromServices] UserManager<IdentityUser> userManager
+        , IConfiguration configuration
+        )
+    {
+        var usuario = await userManager.FindByEmailAsync(credencialesUsuarioDto.Email);
+
+        if (usuario is null)
+        {
+            return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+        }
+
+        //lockoutOnFailure: false. Por el momento si el usuario intenta varias veces que no lo bloquee
+        var resultado = await signInManager.CheckPasswordSignInAsync(usuario,
+            credencialesUsuarioDto.Password, lockoutOnFailure: false);
+
+        if (resultado.Succeeded)
+        {
+            var respuestaAutenticacion =
+                await ConstruirToken(credencialesUsuarioDto, configuration);
+            return TypedResults.Ok(respuestaAutenticacion);
+        }
+        else
+        {
+            return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+        }
+    }
+
 }

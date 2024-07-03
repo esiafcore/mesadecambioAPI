@@ -30,4 +30,7 @@ public static class AC
     public const string EvictByTagCuentasBancarias = "cuentasbancarias-get";
     public const string EvictByTagTransaccionBancarias = "transaccionesbco-get";
 
+    //Messages Errores
+    public const string LoginIncorrectMessage = "Login incorrecto";
+
 }
