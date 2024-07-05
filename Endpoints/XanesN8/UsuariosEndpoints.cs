@@ -1,7 +1,6 @@
 ﻿using eSiafApiN4.DTOs.XanesN8;
 using eSiafApiN4.Filtros;
 using eSiafApiN4.Utilidades;
-using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +29,8 @@ public static class UsuariosEndpoints
         [FromServices] UserManager<IdentityUser> userManager, IConfiguration configuration
         )
     {
+        credencialesUsuarioDto.Email = credencialesUsuarioDto.Email.Trim();
+        credencialesUsuarioDto.Password = credencialesUsuarioDto.Password.Trim();
         var usuario = new IdentityUser
         {
             UserName = credencialesUsuarioDto.Email,
@@ -49,40 +50,18 @@ public static class UsuariosEndpoints
         }
     }
 
-    private async static Task<RespuestaAutenticacionDto>
-        ConstruirToken(CredencialesUsuarioDto credencialesUsuarioDto,
-            IConfiguration configuration)
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(AC.EmailClaim,credencialesUsuarioDto.Email)
-        };
-
-        var llave = Llaves.ObtenerLlave(configuration);
-        var creds = new SigningCredentials(llave.First(), SecurityAlgorithms.HmacSha256);
-
-        //Cuando va a expirar el toquen
-        var expiracion = DateTime.UtcNow.AddHours(configuration.GetValue<int>("ExpirationTimeSettings:TokenTimeExpire"));
-
-        var tokenDeSeguridad = new JwtSecurityToken(issuer: null, audience: null, claims: claims,
-            expires: expiracion, signingCredentials: creds);
-        var token = new JwtSecurityTokenHandler().WriteToken(tokenDeSeguridad);
-
-        return new RespuestaAutenticacionDto
-        {
-            Token = token,
-            Expiracion = expiracion
-        };
-    }
-
     static async Task<Results<Ok<RespuestaAutenticacionDto>
         , BadRequest<string>>> Login(
         CredencialesUsuarioDto credencialesUsuarioDto
         , [FromServices] SignInManager<IdentityUser> signInManager,
         [FromServices] UserManager<IdentityUser> userManager
         , IConfiguration configuration
-        )
+    )
     {
+
+        credencialesUsuarioDto.Email = credencialesUsuarioDto.Email.Trim();
+        credencialesUsuarioDto.Password = credencialesUsuarioDto.Password.Trim();
+
         var usuario = await userManager.FindByEmailAsync(credencialesUsuarioDto.Email);
 
         if (usuario is null)
@@ -105,5 +84,33 @@ public static class UsuariosEndpoints
             return TypedResults.BadRequest(AC.LoginIncorrectMessage);
         }
     }
+
+    private async static Task<RespuestaAutenticacionDto>
+        ConstruirToken(CredencialesUsuarioDto credencialesUsuarioDto,
+            IConfiguration configuration)
+    {
+        var claimsUser = new List<Claim>
+        {
+            new Claim(AC.TypeClaimEmail,credencialesUsuarioDto.Email)
+        };
+
+        var llave = Llaves.ObtenerLlave(configuration);
+        var creds = new SigningCredentials(llave.First(), SecurityAlgorithms.HmacSha256);
+
+        //Cuando va a expirar el toquen
+        var expiracion = DateTime.UtcNow.AddHours(configuration.GetValue<int>("ExpirationTimeSettings:TokenTimeExpire"));
+
+        var tokenDeSeguridad = new JwtSecurityToken(issuer: null, audience: null, claims: claimsUser,
+            expires: expiracion, signingCredentials: creds);
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenDeSeguridad);
+
+        return new RespuestaAutenticacionDto
+        {
+            Token = token,
+            Expiracion = expiracion
+        };
+    }
+
+
 
 }

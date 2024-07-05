@@ -11,7 +11,7 @@ public static class AC
 
     public const string LocalUserName = "LocalUser";
     public const string LocHostMe = "LocalHostMe";
-    public const string Ipv4Default = "127.0.0.1";
+    public const string LocalIpv4Default = "127.0.0.1";
     public const string SecretUserId = "DbConnection:UserId";
     public const string SecretUserPwd = "DbConnection:Password";
     public const string SectionKeys = "Authentication:Schemes:Bearer:SigningKeys";
@@ -20,8 +20,7 @@ public static class AC
     public const string IssuedApp = "esiafapin4-app";
 
     //Claims
-    public const string EmailClaim = "email";
-
+    public const string TypeClaimEmail = "email";
 
     public const int CacheOutputExpire = 15;
 
@@ -32,5 +31,7 @@ public static class AC
 
     //Messages Errores
     public const string LoginIncorrectMessage = "Login incorrecto";
+
+    public const string UserNotFound = "Usuario no encontrado";
 
 }

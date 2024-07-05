@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 using FluentValidation;
 using eSiafApiN4.LoggerManager;
+using eSiafApiN4.Servicios;
+using eSiafApiN4.Filtros;
 
 namespace eSiafApiN4.Endpoints.eSiafN4;
 
@@ -22,8 +24,10 @@ public static class BancoEndpoints
                 .RequireAuthorization();
 
         group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
+
         group.MapPost("/", Create)
             .DisableAntiforgery()
+            .AddEndpointFilter<FiltroValidaciones<BancosDto>>()
             .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update).RequireAuthorization();
@@ -37,10 +41,19 @@ public static class BancoEndpoints
         , NotFound<string> ,BadRequest<string>>> GetAlls(Guid uidcia
         , IRepositorioBanco repositorio
         , IMapper mapper ,ILoggerManager logger
+        , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
     {
         try
         {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
             QueryParams queryParams = new()
             {
                 Uidcia = uidcia,
@@ -69,10 +82,19 @@ public static class BancoEndpoints
         }
     }
 
-    static async Task<Results<Ok<BancosDto>, NotFound>> GetById(Guid id
+    static async Task<Results<Ok<BancosDto>, NotFound
+        , BadRequest<string>>> GetById(Guid id
         , IRepositorioBanco repositorio
-        , IMapper mapper)
+        , IMapper mapper, IServicioUsuarios srvUser)
     {
+        //Obtener usuario
+        var usuario = await srvUser.ObtenerUsuario();
+
+        if (usuario is null)
+        {
+            return TypedResults.BadRequest(AC.UserNotFound);
+        }
+
         var dataItem = await repositorio.GetById(id);
         if (dataItem is null)
         {
@@ -83,21 +105,25 @@ public static class BancoEndpoints
         return TypedResults.Ok(objItem);
     }
 
-    static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>, ValidationProblem>>
+    static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>
+        , ValidationProblem>>
         Create(BancosDtoCreate bancoDtoCreate
         , IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
-        , IMapper mapper
-        , IValidator<BancosDtoCreate> validator)
+        , IMapper mapper, IServicioUsuarios srvUser)
     {
         try
         {
-            var resultadoValidacion = await validator.ValidateAsync(bancoDtoCreate);
-            if (!resultadoValidacion.IsValid)
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
             {
-                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
+                return TypedResults.BadRequest(AC.UserNotFound);
             }
 
             var objNew = mapper.Map<Bancos>(bancoDtoCreate);
+            //Agregar usuario que crear el registro
+            objNew.CreUsr = usuario.Email!;
             var id = await repositorio.Create(objNew);
             objNew.UidRegist = id;
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);

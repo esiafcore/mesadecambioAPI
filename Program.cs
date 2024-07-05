@@ -18,7 +18,7 @@ LogManager.Setup()
     .LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory()
         , "/nlog.config"));
 
-var origenesPermitidos = builder.Configuration.GetValue<string>("origenesPermitidos")!;
+var origenesPermitidos = builder.Configuration.GetValue<string>("AllowedHosts")!;
 //Inicio de área de los servicios
 builder.Services.AddAntiforgery(options =>
 {
@@ -29,7 +29,7 @@ builder.Services.AddCors(opts =>
 
     opts.AddDefaultPolicy(config =>
     {
-        config.AllowAnyOrigin() //.WithOrigins(origenesPermitidos)
+        config.AllowAnyOrigin() //.WithOrigins(AllowedHosts)
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
@@ -50,6 +50,7 @@ builder.Services.AddScoped<IRepositorioQuotationDetailLegacy, RepositorioQuotati
 builder.Services.AddScoped<IRepositorioCustomerLegacy, RepositorioCustomerLegacy>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 
+builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -59,6 +60,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddAuthentication().AddJwtBearer(
     options =>
     {
+        options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,
@@ -83,7 +85,16 @@ builder.Services.AddAuthorization();
 
 //Configurar Identity a nivel de los Servicios
 builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();
-builder.Services.AddIdentityCore<IdentityUser>();
+//Configurar Política de Administración de Contraseña
+builder.Services.AddIdentityCore<IdentityUser>(opciones =>
+{
+    opciones.Password.RequireDigit = true;
+    opciones.Password.RequireLowercase = true;
+    opciones.Password.RequireUppercase = true;
+    opciones.Password.RequireNonAlphanumeric = true;
+    opciones.Password.RequiredLength = 10;
+}).AddDefaultTokenProviders();
+
 builder.Services.AddTransient<SignInManager<IdentityUser>>();
 
 //Fin de área de los servicios

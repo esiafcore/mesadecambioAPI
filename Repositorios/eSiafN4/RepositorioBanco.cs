@@ -68,11 +68,12 @@ public class RepositorioBanco : IRepositorioBanco
     public async Task<Guid> Create(Bancos objNew)
     {
         using var conexion = new SqlConnection(_connectionString);
+
         Guid uidRegist = Guid.NewGuid();
+        //Completar campos de Auditoria. En el Endpoint se setea el Nombre del Usuario
         objNew.CreFch = DateTime.UtcNow;
-        objNew.CreUsr = AC.LocalUserName;
         objNew.CreHsn = AC.LocHostMe;
-        objNew.CreIps = AC.Ipv4Default;
+        objNew.CreIps = AC.LocalIpv4Default;
 
         var idResult = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
             new
@@ -99,7 +100,7 @@ public class RepositorioBanco : IRepositorioBanco
         objUpdate.ModFch = DateTime.UtcNow;
         objUpdate.ModUsr = AC.LocalUserName;
         objUpdate.ModHsn = AC.LocHostMe;
-        objUpdate.ModIps = AC.Ipv4Default;
+        objUpdate.ModIps = AC.LocalIpv4Default;
 
         var idResult = await conexion.ExecuteAsync("bco.usp_bancos_update",
             objUpdate, commandType: CommandType.StoredProcedure);
