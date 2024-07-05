@@ -8,6 +8,7 @@ using eSiafApiN4.Repositorios.XanesN4;
 using eSiafApiN4.Repositorios.XanesN8;
 using eSiafApiN4.Servicios;
 using eSiafApiN4.Utilidades;
+using eSiafApiN4;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -81,7 +82,22 @@ builder.Services.AddAuthentication().AddJwtBearer(
 //ValidateIssuerSigningKey => Validar que el token esté debidamente firmado con la llave secreta
 //ClockSkew => Se utiliza para no tener diferencia de tiempo a la hora de validar el token
 
-builder.Services.AddAuthorization();
+//Políticas de Autorización para las acciones de los EndPoints
+builder.Services.AddAuthorization(opciones =>
+{
+    opciones.AddPolicy(AC.IsAdminClaim, 
+        politica => politica.RequireClaim(AC.IsAdminClaim));
+
+    opciones.AddPolicy(AC.IsPowerUserClaim,
+        politica => politica.RequireClaim(AC.IsPowerUserClaim));
+
+    opciones.AddPolicy(AC.IsOperatorClaim,
+        politica => politica.RequireClaim(AC.IsOperatorClaim));
+
+    opciones.AddPolicy(AC.IsQueryClaim,
+        politica => politica.RequireClaim(AC.IsQueryClaim));
+
+});
 
 //Configurar Identity a nivel de los Servicios
 builder.Services.AddTransient<IUserStore<IdentityUser>, UsuarioStore>();

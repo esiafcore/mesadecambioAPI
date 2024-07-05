@@ -35,7 +35,12 @@ public static class AC
 
     //Messages Errores
     public const string LoginIncorrectMessage = "Login incorrecto";
-
     public const string UserNotFound = "Usuario no encontrado";
+
+    //Politicas de Claims
+    public const string IsAdminClaim = "isadmin";
+    public const string IsPowerUserClaim = "ispoweruser";
+    public const string IsOperatorClaim = "isoperator";
+    public const string IsQueryClaim = "isquery";
 
 }

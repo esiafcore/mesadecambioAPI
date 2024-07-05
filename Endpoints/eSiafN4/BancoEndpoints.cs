@@ -28,11 +28,13 @@ public static class BancoEndpoints
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<BancosDto>>()
-            .RequireAuthorization();
+            .RequireAuthorization(AC.IsAdminClaim);
 
-        group.MapPut("/{id:Guid}", Update).RequireAuthorization();
+        group.MapPut("/{id:Guid}", Update)
+            .RequireAuthorization(AC.IsAdminClaim);
 
-        group.MapDelete("/{id:Guid}", Delete).RequireAuthorization();
+        group.MapDelete("/{id:Guid}", Delete)
+            .RequireAuthorization(AC.IsAdminClaim);
 
         return group;
     }

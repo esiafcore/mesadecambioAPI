@@ -17,7 +17,8 @@ public static class AsientoContableEndpoints
             .RequireAuthorization();
 
         group.MapGet("/{id:Guid}", GetById)
-            .RequireAuthorization();
+            .RequireAuthorization(AC.IsAdminClaim, AC.IsPowerUserClaim
+            , AC.IsOperatorClaim);
 
         return group;
     }
