@@ -13,7 +13,7 @@ public static class CustomerLegacyEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag("customerslegacy-get"))
+                .Tag(AC.EvictByTagCustomersLegacy))
             .RequireAuthorization();
 
         return group;

@@ -28,6 +28,10 @@ public static class AC
     public const string EvictByTagAsientosContables = "asientoscontables-get";
     public const string EvictByTagCuentasBancarias = "cuentasbancarias-get";
     public const string EvictByTagTransaccionBancarias = "transaccionesbco-get";
+    public const string EvictByTagCustomersLegacy = "customerslegacy-get";
+    public const string EvictByTagQuotationsDetailLegacy = "quotationsdetaillegacy-get";
+    public const string EvictByTagQuotationsHeaderLegacy = "quotationsheaderlegacy-get";
+    public const string EvictByTagQuotationsHeader = "quotationsheader-get";
 
     //Messages Errores
     public const string LoginIncorrectMessage = "Login incorrecto";

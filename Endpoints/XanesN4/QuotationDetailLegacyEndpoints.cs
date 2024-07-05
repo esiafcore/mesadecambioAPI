@@ -13,7 +13,7 @@ public static class QuotationDetailLegacyEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag("quotationsdetaillegacy-get"))
+                .Tag(AC.EvictByTagQuotationsDetailLegacy))
             .RequireAuthorization();
 
         return group;

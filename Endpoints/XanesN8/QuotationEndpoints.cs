@@ -13,7 +13,7 @@ public static class QuotationEndpoints
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag("quotations-get"))
+                .Tag(AC.EvictByTagQuotationsHeader))
                 .RequireAuthorization();
         return group;
     }
