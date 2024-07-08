@@ -27,5 +27,14 @@ public class QuotationHeaderList
     public bool IsJournalPost { get; set; }
     public bool IsVoid { get; set; }
 
+    public DateTime CreatedOn { get; set; }
+    public string CreatedBy { get; set; } = null!;
+
+    public DateTime? UpdatedOn { get; set; }
+    public string? UpdatedBy { get; set; }
+    public DateTime? ClosedOn { get; set; }
+    public string? ClosedBy { get; set; }
+    public DateTime? ReClosedOn { get; set; }
+    public string? ReClosedBy { get; set; }
 }
 
