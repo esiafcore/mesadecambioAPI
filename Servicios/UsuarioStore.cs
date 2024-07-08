@@ -1,10 +1,11 @@
-﻿using eSiafApiN4.Repositorios.XanesN8;
+﻿using System.Security.Claims;
+using eSiafApiN4.Repositorios.XanesN8;
 using Microsoft.AspNetCore.Identity;
 
 namespace eSiafApiN4.Servicios;
 
 public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUser>
-    ,IUserPasswordStore<IdentityUser>
+    ,IUserPasswordStore<IdentityUser> ,IUserClaimStore<IdentityUser>
 {
     private readonly IRepositorioUsuarios _repo;
 
@@ -141,4 +142,31 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
 
     //::End IUserPasswordStore
 
+    //::Begin IUserClaimStore
+
+    public Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task AddClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+    //::End IUserClaimStore
 }
