@@ -19,8 +19,12 @@ public class QuotationHeaderListDto
     public decimal AmountCost { get; set; }
     public decimal AmountRevenue { get; set; }
     public decimal AmountTransferFee { get; set; }
-    public int BankAccountSourceId { get; set; }
-    public int BankAccountTargetId { get; set; }
+    public string? BankSourceCode { get; set; }
+    public int? BankAccountSourceId { get; set; }
+    public string? BankAccountSourceCode { get; set; }
+    public string? BankTargetCode { get; set; }
+    public int? BankAccountTargetId { get; set; }
+    public string? BankAccountTargetCode { get; set; }
     public string BusinessExecutiveCode { get; set; } = null!;
     public bool IsClosed { get; set; }
     public bool IsJournalPost { get; set; }
