@@ -1,11 +1,12 @@
-﻿using eSiafApiN4.Entidades.XanesN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using Dapper;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.XanesN4;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.XanesN4;
+namespace XanesN8.Api.Repositorios.XanesN4;
 
 public class RepositorioCustomerLegacy : IRepositorioCustomerLegacy
 {
@@ -33,7 +34,7 @@ public class RepositorioCustomerLegacy : IRepositorioCustomerLegacy
 
         var objList = await conexion
             .QueryAsync<Customer>(sql: @"dbo.usp_customers_getall"
-                , param: new { companyid=0,queryParams.Pagina,queryParams.RecordsPorPagina}, commandType: CommandType.StoredProcedure);
+                , param: new { companyid = 0, queryParams.Pagina, queryParams.RecordsPorPagina }, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"dbo.usp_customers_count"

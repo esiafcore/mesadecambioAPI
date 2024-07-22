@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using XanesN8.Api;
 
-namespace eSiafApiN4.Servicios;
+namespace XanesN8.Api.Servicios;
 
 public class ServicioUsuarios : IServicioUsuarios
 {
@@ -10,8 +11,8 @@ public class ServicioUsuarios : IServicioUsuarios
     public ServicioUsuarios(IHttpContextAccessor httpAccessor,
         UserManager<IdentityUser> userManager)
     {
-        this._httpAccessor = httpAccessor;
-        this._userManager = userManager;
+        _httpAccessor = httpAccessor;
+        _userManager = userManager;
     }
 
     public async Task<IdentityUser?> ObtenerUsuario()

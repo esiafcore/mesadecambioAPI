@@ -1,20 +1,20 @@
-﻿using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.Repositorios.eSiafN4;
-using FluentValidation;
+﻿using FluentValidation;
+using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.Repositorios.eSiafN4;
 
-namespace eSiafApiN4.Validaciones;
+namespace XanesN8.Api.Validaciones;
 
 public class BancosDtoUpdateValidator : AbstractValidator<BancosDtoUpdate>
 {
     public BancosDtoUpdateValidator(IRepositorioBanco repo
-        ,IHttpContextAccessor httpContextAccessor)
+        , IHttpContextAccessor httpContextAccessor)
     {
         var valorRutaId = httpContextAccessor.HttpContext?.Request.RouteValues["id"];
         Guid id = Guid.Empty;
 
-        if (valorRutaId is string valorString )
+        if (valorRutaId is string valorString)
         {
-            Guid.TryParse( valorString, out id );
+            Guid.TryParse(valorString, out id);
         }
 
         RuleFor(x => x.UidCia)
@@ -42,6 +42,6 @@ public class BancosDtoUpdateValidator : AbstractValidator<BancosDtoUpdate>
             return true;
         }
         valor = valor.Trim();
-        return (!".-".Contains(valor));
+        return !".-".Contains(valor);
     }
 }

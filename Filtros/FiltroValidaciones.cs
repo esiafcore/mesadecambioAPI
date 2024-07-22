@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace eSiafApiN4.Filtros;
+namespace XanesN8.Api.Filtros;
 
 public class FiltroValidaciones<T> : IEndpointFilter
 {

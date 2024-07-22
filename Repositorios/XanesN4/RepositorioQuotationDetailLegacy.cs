@@ -1,11 +1,12 @@
-﻿using eSiafApiN4.Entidades.XanesN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using Dapper;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.XanesN4;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.XanesN4;
+namespace XanesN8.Api.Repositorios.XanesN4;
 
 public class RepositorioQuotationDetailLegacy : IRepositorioQuotationDetailLegacy
 {
@@ -37,7 +38,7 @@ public class RepositorioQuotationDetailLegacy : IRepositorioQuotationDetailLegac
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"dbo.usp_quotationsdetail_count"
-            , param: new { queryParams.BeginDate, queryParams.EndDate ,queryParams.IdentificationNumber }
+            , param: new { queryParams.BeginDate, queryParams.EndDate, queryParams.IdentificationNumber }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",

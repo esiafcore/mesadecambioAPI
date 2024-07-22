@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.Utilidades;
+﻿namespace XanesN8.Api.Utilidades;
 
 public static class AppFunctions
 {
@@ -8,7 +8,7 @@ public static class AppFunctions
 
         if (recordsPorPagina == 0) return cantidadTotalPaginas;
         var ultimaPagina = cantidadRegistros % recordsPorPagina;
-        cantidadTotalPaginas = (cantidadRegistros / recordsPorPagina);
+        cantidadTotalPaginas = cantidadRegistros / recordsPorPagina;
         cantidadTotalPaginas += ultimaPagina != 0 ? 1 : 0;
 
         return cantidadTotalPaginas;

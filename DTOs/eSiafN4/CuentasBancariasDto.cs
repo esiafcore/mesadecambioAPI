@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.DTOs.eSiafN4;
+﻿namespace XanesN8.Api.DTOs.eSiafN4;
 
 public class CuentasBancariasDto
 {

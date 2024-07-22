@@ -1,7 +1,7 @@
-﻿using eSiafApiN4.Entidades.eSiafN4;
-using eSiafApiN4.FiltersParameters;
+﻿using XanesN8.Api.Entidades.eSiafN4;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Repositorios.eSiafN4;
+namespace XanesN8.Api.Repositorios.eSiafN4;
 
 public interface IRepositorioBanco
 {

@@ -1,10 +1,10 @@
-﻿namespace eSiafApiN4;
+﻿namespace XanesN8.Api;
 
 // ReSharper disable once InconsistentNaming
 public static class AC
 {
     //Conexiones
-    
+
     public const string EsiafN4Cnx = "eSIAFN4Connection";
     public const string XanesN4Cnx = "XanesN4Connection";
     public const string XanesN8Cnx = "XanesN8Connection";

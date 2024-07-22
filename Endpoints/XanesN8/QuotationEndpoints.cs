@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using eSiafApiN4.Entidades.XanesN8;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios.XanesN8;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
+using XanesN8.Api;
+using XanesN8.Api.Repositorios.XanesN8;
+using XanesN8.Api.Entidades.XanesN8;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Endpoints.XanesN8;
+namespace XanesN8.Api.Endpoints.XanesN8;
 
 public static class QuotationEndpoints
 {

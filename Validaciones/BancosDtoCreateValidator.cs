@@ -1,8 +1,8 @@
-﻿using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.Repositorios.eSiafN4;
-using FluentValidation;
+﻿using FluentValidation;
+using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.Repositorios.eSiafN4;
 
-namespace eSiafApiN4.Validaciones;
+namespace XanesN8.Api.Validaciones;
 
 public class BancosDtoCreateValidator : AbstractValidator<BancosDtoCreate>
 {
@@ -10,7 +10,7 @@ public class BancosDtoCreateValidator : AbstractValidator<BancosDtoCreate>
     {
         RuleFor(x => x.UidCia)
             .NotEmpty().WithMessage(Utilidades.CampoRequeridoMensaje);
-            
+
         RuleFor(x => x.Codigo)
             .NotEmpty().WithMessage(Utilidades.CampoRequeridoMensaje)
             .Must(FnxCodigoIncorrecto).WithMessage(Utilidades.ValorIncorrectoMensaje)
@@ -32,6 +32,6 @@ public class BancosDtoCreateValidator : AbstractValidator<BancosDtoCreate>
             return true;
         }
         valor = valor.Trim();
-        return (!Utilidades.CaracteresInvalidos.Contains(valor));                    
+        return !Utilidades.CaracteresInvalidos.Contains(valor);
     }
 }

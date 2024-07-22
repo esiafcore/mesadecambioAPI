@@ -1,14 +1,15 @@
-﻿using eSiafApiN4.DTOs.XanesN8;
-using eSiafApiN4.Filtros;
-using eSiafApiN4.Utilidades;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using XanesN8.Api;
+using XanesN8.Api.Filtros;
+using XanesN8.Api.Utilidades;
+using XanesN8.Api.DTOs.XanesN8;
 
-namespace eSiafApiN4.Endpoints.XanesN8;
+namespace XanesN8.Api.Endpoints.XanesN8;
 
 public static class UsuariosEndpoints
 {
@@ -37,7 +38,7 @@ public static class UsuariosEndpoints
             Email = credencialesUsuarioDto.Email
         };
 
-        var resultado = await userManager.CreateAsync(usuario,credencialesUsuarioDto.Password);
+        var resultado = await userManager.CreateAsync(usuario, credencialesUsuarioDto.Password);
 
         if (resultado.Succeeded)
         {

@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.DTOs.Shared;
+﻿namespace XanesN8.Api.DTOs.Shared;
 
 public class PaginacionDto
 {

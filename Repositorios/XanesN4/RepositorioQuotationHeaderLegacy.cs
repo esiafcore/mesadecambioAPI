@@ -1,11 +1,12 @@
 ﻿using Dapper;
-using eSiafApiN4.Entidades.XanesN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.XanesN4;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.XanesN4;
+namespace XanesN8.Api.Repositorios.XanesN4;
 
 public class RepositorioQuotationHeaderLegacy : IRepositorioQuotationHeaderLegacy
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace eSiafApiN4.Servicios;
+namespace XanesN8.Api.Servicios;
 
 public interface IServicioUsuarios
 {

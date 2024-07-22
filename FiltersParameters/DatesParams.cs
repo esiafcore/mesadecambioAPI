@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.FiltersParameters;
+﻿namespace XanesN8.Api.FiltersParameters;
 
 public class DatesParams
 {

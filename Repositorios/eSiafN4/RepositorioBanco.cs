@@ -1,11 +1,12 @@
 ﻿using System.Data;
 using Dapper;
-using eSiafApiN4.Entidades.eSiafN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.eSiafN4;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.eSiafN4;
+namespace XanesN8.Api.Repositorios.eSiafN4;
 
 public class RepositorioBanco : IRepositorioBanco
 {
@@ -77,18 +78,34 @@ public class RepositorioBanco : IRepositorioBanco
 
         var idResult = await conexion.QuerySingleAsync<int>("bco.usp_bancos_create",
             new
-            {uidregist = uidRegist,objNew.UidCia,objNew.Codigo
-            ,objNew.Descripci,objNew.IndTarjetaCredito
-            ,objNew.NumeroObjeto,objNew.NumeroEstado
-            ,objNew.CodigoOperacionSwitch,objNew.CuentaContableInterfazSwitch
-            ,objNew.CodigoOperacionMantenimiento,objNew.CuentaContableInterfazMantenimiento
-            ,objNew.ComisionBancariaPor
-            ,objNew.CreFch,objNew.CreUsr
-            ,objNew.CreHsn,objNew.CreIps
+            {
+                uidregist = uidRegist,
+                objNew.UidCia,
+                objNew.Codigo
+            ,
+                objNew.Descripci,
+                objNew.IndTarjetaCredito
+            ,
+                objNew.NumeroObjeto,
+                objNew.NumeroEstado
+            ,
+                objNew.CodigoOperacionSwitch,
+                objNew.CuentaContableInterfazSwitch
+            ,
+                objNew.CodigoOperacionMantenimiento,
+                objNew.CuentaContableInterfazMantenimiento
+            ,
+                objNew.ComisionBancariaPor
+            ,
+                objNew.CreFch,
+                objNew.CreUsr
+            ,
+                objNew.CreHsn,
+                objNew.CreIps
             },
             commandType: CommandType.StoredProcedure);
 
-        return await Task.FromResult<Guid>(uidRegist);
+        return await Task.FromResult(uidRegist);
 
     }
 
@@ -111,7 +128,7 @@ public class RepositorioBanco : IRepositorioBanco
     {
         using var conexion = new SqlConnection(_connectionString);
         var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexistbycode"
-            , param: new { id = id, codigo = code }
+            , param: new { id, codigo = code }
             , commandType: CommandType.StoredProcedure);
         return existe;
     }
@@ -120,7 +137,7 @@ public class RepositorioBanco : IRepositorioBanco
     {
         using var conexion = new SqlConnection(_connectionString);
         var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexist"
-            , param: new {id}
+            , param: new { id }
             , commandType: CommandType.StoredProcedure);
         return existe;
     }

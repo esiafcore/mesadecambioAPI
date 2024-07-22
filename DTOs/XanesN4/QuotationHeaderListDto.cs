@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.DTOs.XanesN4;
+﻿namespace XanesN8.Api.DTOs.XanesN4;
 
 public class QuotationHeaderListDto
 {

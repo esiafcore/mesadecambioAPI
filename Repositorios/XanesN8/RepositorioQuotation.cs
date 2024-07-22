@@ -1,11 +1,12 @@
 ﻿using System.Data;
 using Dapper;
-using eSiafApiN4.Entidades.XanesN8;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
 using Microsoft.Data.SqlClient;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.XanesN8;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.XanesN8;
+namespace XanesN8.Api.Repositorios.XanesN8;
 
 public class RepositorioQuotation : IRepositorioQuotation
 {

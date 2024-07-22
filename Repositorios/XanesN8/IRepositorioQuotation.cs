@@ -1,7 +1,7 @@
-﻿using eSiafApiN4.Entidades.XanesN8;
-using eSiafApiN4.FiltersParameters;
+﻿using XanesN8.Api.Entidades.XanesN8;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Repositorios.XanesN8;
+namespace XanesN8.Api.Repositorios.XanesN8;
 
 public interface IRepositorioQuotation
 {

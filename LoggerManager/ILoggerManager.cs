@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.LoggerManager;
+﻿namespace XanesN8.Api.LoggerManager;
 
 public interface ILoggerManager
 {

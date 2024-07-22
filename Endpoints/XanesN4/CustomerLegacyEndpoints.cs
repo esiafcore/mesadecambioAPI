@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs.XanesN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios.XanesN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
+using XanesN8.Api;
+using XanesN8.Api.DTOs.XanesN4;
+using XanesN8.Api.Repositorios.XanesN4;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Endpoints.XanesN4;
+namespace XanesN8.Api.Endpoints.XanesN4;
 
 public static class CustomerLegacyEndpoints
 {

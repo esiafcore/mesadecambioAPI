@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.Entidades.eSiafN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 using FluentValidation;
-using eSiafApiN4.LoggerManager;
-using eSiafApiN4.Servicios;
-using eSiafApiN4.Filtros;
+using XanesN8.Api;
+using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.Repositorios.eSiafN4;
+using XanesN8.Api.Servicios;
+using XanesN8.Api.Entidades.eSiafN4;
+using XanesN8.Api.Filtros;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.LoggerManager;
 
-namespace eSiafApiN4.Endpoints.eSiafN4;
+namespace XanesN8.Api.Endpoints.eSiafN4;
 
 public static class BancoEndpoints
 {
@@ -40,9 +41,9 @@ public static class BancoEndpoints
     }
 
     static async Task<Results<Ok<List<BancosDto>>
-        , NotFound<string> ,BadRequest<string>>> GetAlls(Guid uidcia
+        , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
         , IRepositorioBanco repositorio
-        , IMapper mapper ,ILoggerManager logger
+        , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -64,7 +65,7 @@ public static class BancoEndpoints
             };
 
             var dataList = await repositorio.GetAlls(queryParams);
-            if (dataList.Count > 0 )
+            if (dataList.Count > 0)
             {
                 var objList = mapper.Map<List<BancosDto>>(dataList);
                 return TypedResults.Ok(objList);

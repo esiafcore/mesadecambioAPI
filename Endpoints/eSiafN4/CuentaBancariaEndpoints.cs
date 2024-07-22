@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Repositorios.eSiafN4;
 using Microsoft.AspNetCore.Http.HttpResults;
+using XanesN8.Api;
+using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.Repositorios.eSiafN4;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Endpoints.eSiafN4;
+namespace XanesN8.Api.Endpoints.eSiafN4;
 
 public static class CuentaBancariaEndpoints
 {

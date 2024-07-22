@@ -1,7 +1,7 @@
-﻿using eSiafApiN4.Entidades.XanesN4;
-using eSiafApiN4.FiltersParameters;
+﻿using XanesN8.Api.Entidades.XanesN4;
+using XanesN8.Api.FiltersParameters;
 
-namespace eSiafApiN4.Repositorios.XanesN4;
+namespace XanesN8.Api.Repositorios.XanesN4;
 
 public interface IRepositorioCustomerLegacy
 {

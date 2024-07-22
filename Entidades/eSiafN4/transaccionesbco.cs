@@ -10,7 +10,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace eSiafApiN4.Entidades.eSiafN4
+namespace XanesN8.Api.Entidades.eSiafN4
 {
     /// <summary>
     /// Transacciones banco

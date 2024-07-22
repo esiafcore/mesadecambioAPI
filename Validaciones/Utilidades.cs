@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.Validaciones;
+﻿namespace XanesN8.Api.Validaciones;
 
 public static class Utilidades
 {

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using eSiafApiN4.DTOs.eSiafN4;
-using eSiafApiN4.DTOs.XanesN4;
-using eSiafApiN4.Entidades.eSiafN4;
-using eSiafApiN4.Entidades.XanesN4;
+using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.DTOs.XanesN4;
+using XanesN8.Api.Entidades.eSiafN4;
+using XanesN8.Api.Entidades.XanesN4;
 
-namespace eSiafApiN4.Utilidades;
+namespace XanesN8.Api.Utilidades;
 
 public class AutoMapperProfiles : Profile
 {

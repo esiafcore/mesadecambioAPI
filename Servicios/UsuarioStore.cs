@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
-using eSiafApiN4.Repositorios.XanesN8;
 using Microsoft.AspNetCore.Identity;
+using XanesN8.Api.Repositorios.XanesN8;
 
-namespace eSiafApiN4.Servicios;
+namespace XanesN8.Api.Servicios;
 
-public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUser>
-    ,IUserPasswordStore<IdentityUser> ,IUserClaimStore<IdentityUser>
+public class UsuarioStore : IUserStore<IdentityUser>, IUserEmailStore<IdentityUser>
+    , IUserPasswordStore<IdentityUser>, IUserClaimStore<IdentityUser>
 {
     private readonly IRepositorioUsuarios _repo;
 
@@ -40,7 +40,7 @@ public class UsuarioStore: IUserStore<IdentityUser> ,IUserEmailStore<IdentityUse
     //::
     public Task<string?> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
     {
-        return Task.FromResult<string?>(user.Email);
+        return Task.FromResult(user.Email);
     }
 
     //::

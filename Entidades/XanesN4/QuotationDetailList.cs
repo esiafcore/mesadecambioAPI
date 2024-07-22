@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.Entidades.XanesN4;
+﻿namespace XanesN8.Api.Entidades.XanesN4;
 
 public class QuotationDetailList
 {

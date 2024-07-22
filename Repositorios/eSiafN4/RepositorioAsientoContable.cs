@@ -1,13 +1,14 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
-using eSiafApiN4.FiltersParameters;
-using eSiafApiN4.Utilidades;
-using eSiafApiN4.Entidades.eSiafN4;
+using XanesN8.Api;
+using XanesN8.Api.Entidades.eSiafN4;
+using XanesN8.Api.FiltersParameters;
+using XanesN8.Api.Utilidades;
 
-namespace eSiafApiN4.Repositorios.eSiafN4;
+namespace XanesN8.Api.Repositorios.eSiafN4;
 
-public class RepositorioAsientoContable: IRepositorioAsientoContable
+public class RepositorioAsientoContable : IRepositorioAsientoContable
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;

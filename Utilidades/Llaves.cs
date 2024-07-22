@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using XanesN8.Api;
 
-namespace eSiafApiN4.Utilidades;
+namespace XanesN8.Api.Utilidades;
 
 public static class Llaves
 {

@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.CustomMiddleware;
+﻿namespace XanesN8.Api.CustomMiddleware;
 
 public class ContentSecurityPolicyMiddleware
 {

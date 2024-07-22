@@ -1,7 +1,7 @@
-﻿using eSiafApiN4.DTOs.XanesN8;
-using FluentValidation;
+﻿using FluentValidation;
+using XanesN8.Api.DTOs.XanesN8;
 
-namespace eSiafApiN4.Validaciones;
+namespace XanesN8.Api.Validaciones;
 
 public class CredencialesUsuarioDtoValidator : AbstractValidator<CredencialesUsuarioDto>
 {

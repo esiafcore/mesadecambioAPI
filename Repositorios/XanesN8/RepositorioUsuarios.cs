@@ -2,8 +2,9 @@
 using Dapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using XanesN8.Api;
 
-namespace eSiafApiN4.Repositorios.XanesN8;
+namespace XanesN8.Api.Repositorios.XanesN8;
 
 public class RepositorioUsuarios : IRepositorioUsuarios
 {
@@ -26,7 +27,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     {
         await using var conexion = new SqlConnection(_connectionString);
         return await conexion.QuerySingleOrDefaultAsync<IdentityUser>(
-            "cnf.usp_usuarios_buscarporemail", new {normalizedEmail},
+            "cnf.usp_usuarios_buscarporemail", new { normalizedEmail },
             commandType: CommandType.StoredProcedure);
     }
 

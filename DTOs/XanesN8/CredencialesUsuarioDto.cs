@@ -1,4 +1,4 @@
-﻿namespace eSiafApiN4.DTOs.XanesN8;
+﻿namespace XanesN8.Api.DTOs.XanesN8;
 
 public class CredencialesUsuarioDto
 {

@@ -1,18 +1,18 @@
-using eSiafApiN4.CustomMiddleware;
-using eSiafApiN4.Endpoints.eSiafN4;
-using eSiafApiN4.Endpoints.XanesN4;
-using eSiafApiN4.Endpoints.XanesN8;
-using eSiafApiN4.LoggerManager;
-using eSiafApiN4.Repositorios.eSiafN4;
-using eSiafApiN4.Repositorios.XanesN4;
-using eSiafApiN4.Repositorios.XanesN8;
-using eSiafApiN4.Servicios;
-using eSiafApiN4.Utilidades;
-using eSiafApiN4;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
+using XanesN8.Api;
+using XanesN8.Api.Repositorios.eSiafN4;
+using XanesN8.Api.Repositorios.XanesN8;
+using XanesN8.Api.Repositorios.XanesN4;
+using XanesN8.Api.Endpoints.XanesN4;
+using XanesN8.Api.Servicios;
+using XanesN8.Api.Endpoints.XanesN8;
+using XanesN8.Api.Endpoints.eSiafN4;
+using XanesN8.Api.Utilidades;
+using XanesN8.Api.LoggerManager;
+using XanesN8.Api.CustomMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 LogManager.Setup()
@@ -109,6 +109,8 @@ builder.Services.AddIdentityCore<IdentityUser>(opciones =>
     opciones.Password.RequireUppercase = true;
     opciones.Password.RequireNonAlphanumeric = true;
     opciones.Password.RequiredLength = 10;
+    //opciones.SignIn.RequireConfirmedEmail = true;
+    opciones.User.RequireUniqueEmail = true;
 }).AddDefaultTokenProviders();
 
 builder.Services.AddTransient<SignInManager<IdentityUser>>();
