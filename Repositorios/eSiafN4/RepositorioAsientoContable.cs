@@ -30,7 +30,6 @@ public class RepositorioAsientoContable : IRepositorioAsientoContable
 
     public async Task<List<AsientosContables>> GetAlls(YearMonthParams queryParams)
     {
-
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion

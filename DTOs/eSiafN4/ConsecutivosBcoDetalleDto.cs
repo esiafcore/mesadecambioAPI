@@ -26,5 +26,4 @@ public class ConsecutivosBcoDetalleDto
     public string ModHsn { get; set; }
     public string ModHid { get; set; }
     public string ModIps { get; set; }
-
 }

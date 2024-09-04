@@ -1,6 +1,6 @@
 ﻿namespace XanesN8.Api.DTOs.eSiafN4;
 
-public class ConfigBcoUpdateDto
+public class ConfigBcoDtoUpdate
 {
     public Guid UidCia { get; set; }
     public Guid? CuentaContableDifPositivaConciliacion { get; set; }
@@ -31,5 +31,4 @@ public class ConfigBcoUpdateDto
     public string? ModHsn { get; set; }
     public string? ModIps { get; set; }
     public short? VersionFormatoImpresion { get; set; }
-
 }

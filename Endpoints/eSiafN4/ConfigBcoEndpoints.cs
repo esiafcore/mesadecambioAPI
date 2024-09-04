@@ -11,13 +11,13 @@ using XanesN8.Api.LoggerManager;
 
 namespace XanesN8.Api.Endpoints.eSiafN4;
 
-public static class ConsecutivosBcoEndpoints
+public static class ConfigBcoEndpoints
 {
-    public static RouteGroupBuilder MapConsecutivosBco(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapConfigBco(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagConsecutivosBco))
+                .Tag(AC.EvictByTagConfigBco))
             .RequireAuthorization();
 
         group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
@@ -28,9 +28,9 @@ public static class ConsecutivosBcoEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<ConsecutivosBcoDto>>
+    static async Task<Results<Ok<List<ConfigBcoDto>>
         , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioConsecutivosBco repositorio
+        , IRepositorioConfigBco repositorio
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
@@ -55,27 +55,27 @@ public static class ConsecutivosBcoEndpoints
             var dataList = await repositorio.GetAlls(queryParams);
             if (dataList.Count > 0)
             {
-                var objList = mapper.Map<List<ConsecutivosBcoDto>>(dataList);
+                var objList = mapper.Map<List<ConfigBcoDto>>(dataList);
                 return TypedResults.Ok(objList);
             }
             else
             {
-                var errorMessage = $"Método {nameof(GetAlls)} del Endpoint Consecutivos Bco. No hay datos que mostrar";
+                var errorMessage = $"Método {nameof(GetAlls)} del Endpoint Configuración Bco. No hay datos que mostrar";
                 logger.LogInfo(errorMessage);
                 return TypedResults.NotFound(errorMessage);
             }
         }
         catch (Exception ex)
         {
-            var errorMessage = $"Ha ocurrido un error el método {nameof(GetAlls)} del Endpoint Consecutivos. Error: {ex.Message}";
+            var errorMessage = $"Ha ocurrido un error el método {nameof(GetAlls)} del Endpoint Configuración Bco. Error: {ex.Message}";
             logger.LogError(errorMessage);
             return TypedResults.BadRequest(errorMessage);
         }
     }
 
-    static async Task<Results<Ok<ConsecutivosBcoDto>, NotFound
+    static async Task<Results<Ok<ConfigBcoDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioConsecutivosBco repositorio
+        , IRepositorioConfigBco repositorio
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -91,16 +91,16 @@ public static class ConsecutivosBcoEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<ConsecutivosBcoDto>(dataItem);
+        var objItem = mapper.Map<ConfigBcoDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
-        Update(Guid id, ConsecutivosBcoDtoUpdate modelDtoUpdate
-            , IRepositorioConsecutivosBco repositorio, IOutputCacheStore outputCacheStore
+        Update(Guid id, ConfigBcoDtoUpdate modelDtoUpdate
+            , IRepositorioConfigBco repositorio, IOutputCacheStore outputCacheStore
             , IMapper mapper
-            , IValidator<ConsecutivosBcoDtoUpdate> validator)
+            , IValidator<ConfigBcoDtoUpdate> validator)
     {
         try
         {
@@ -116,10 +116,10 @@ public static class ConsecutivosBcoEndpoints
                 return TypedResults.NotFound();
             }
 
-            var objUpdate = mapper.Map<ConsecutivosBco>(modelDtoUpdate);
+            var objUpdate = mapper.Map<ConfigBco>(modelDtoUpdate);
 
             await repositorio.Update(objUpdate);
-            await outputCacheStore.EvictByTagAsync(AC.EvictByTagConsecutivosBco, default);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagConfigBco, default);
             return TypedResults.NoContent();
         }
         catch (Exception e)
@@ -127,5 +127,4 @@ public static class ConsecutivosBcoEndpoints
             return TypedResults.BadRequest(e.Message);
         }
     }
-
 }

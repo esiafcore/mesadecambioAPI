@@ -11,13 +11,13 @@ using XanesN8.Api.LoggerManager;
 
 namespace XanesN8.Api.Endpoints.eSiafN4;
 
-public static class ConsecutivosBcoEndpoints
+public static class ConsecutivosBcoDetalleEndpoints
 {
-    public static RouteGroupBuilder MapConsecutivosBco(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapConsecutivosBcoDetalle(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagConsecutivosBco))
+                .Tag(AC.EvictByTagConsecutivosBcoDetalle))
             .RequireAuthorization();
 
         group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
@@ -28,11 +28,12 @@ public static class ConsecutivosBcoEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<ConsecutivosBcoDto>>
+    static async Task<Results<Ok<List<ConsecutivosBcoDetalleDto>>
         , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioConsecutivosBco repositorio
+        , IRepositorioConsecutivosBcoDetalle repositorio
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
+        , int yearfiscal = 0, int mesfiscal = 0
         , int pagina = 1, int recordsPorPagina = 10)
     {
         try
@@ -45,37 +46,39 @@ public static class ConsecutivosBcoEndpoints
                 return TypedResults.BadRequest(AC.UserNotFound);
             }
 
-            QueryParams queryParams = new()
+            YearMonthParams queryParams = new()
             {
                 Uidcia = uidcia,
                 Pagina = pagina,
+                Yearfiscal = yearfiscal,
+                Mesfiscal = mesfiscal,
                 RecordsPorPagina = recordsPorPagina
             };
 
             var dataList = await repositorio.GetAlls(queryParams);
             if (dataList.Count > 0)
             {
-                var objList = mapper.Map<List<ConsecutivosBcoDto>>(dataList);
+                var objList = mapper.Map<List<ConsecutivosBcoDetalleDto>>(dataList);
                 return TypedResults.Ok(objList);
             }
             else
             {
-                var errorMessage = $"Método {nameof(GetAlls)} del Endpoint Consecutivos Bco. No hay datos que mostrar";
+                var errorMessage = $"Método {nameof(GetAlls)} del Endpoint Consecutivos Bco Detalle. No hay datos que mostrar";
                 logger.LogInfo(errorMessage);
                 return TypedResults.NotFound(errorMessage);
             }
         }
         catch (Exception ex)
         {
-            var errorMessage = $"Ha ocurrido un error el método {nameof(GetAlls)} del Endpoint Consecutivos. Error: {ex.Message}";
+            var errorMessage = $"Ha ocurrido un error el método {nameof(GetAlls)} del Endpoint Consecutivos Bco Detalle. Error: {ex.Message}";
             logger.LogError(errorMessage);
             return TypedResults.BadRequest(errorMessage);
         }
     }
 
-    static async Task<Results<Ok<ConsecutivosBcoDto>, NotFound
+    static async Task<Results<Ok<ConsecutivosBcoDetalleDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioConsecutivosBco repositorio
+        , IRepositorioConsecutivosBcoDetalle repositorio
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -91,16 +94,16 @@ public static class ConsecutivosBcoEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<ConsecutivosBcoDto>(dataItem);
+        var objItem = mapper.Map<ConsecutivosBcoDetalleDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
-        Update(Guid id, ConsecutivosBcoDtoUpdate modelDtoUpdate
-            , IRepositorioConsecutivosBco repositorio, IOutputCacheStore outputCacheStore
+        Update(Guid id, ConsecutivosBcoDetalleDtoUpdate modelDtoUpdate
+            , IRepositorioConsecutivosBcoDetalle repositorio, IOutputCacheStore outputCacheStore
             , IMapper mapper
-            , IValidator<ConsecutivosBcoDtoUpdate> validator)
+            , IValidator<ConsecutivosBcoDetalleDtoUpdate> validator)
     {
         try
         {
@@ -116,10 +119,10 @@ public static class ConsecutivosBcoEndpoints
                 return TypedResults.NotFound();
             }
 
-            var objUpdate = mapper.Map<ConsecutivosBco>(modelDtoUpdate);
+            var objUpdate = mapper.Map<ConsecutivosBcoDetalle>(modelDtoUpdate);
 
             await repositorio.Update(objUpdate);
-            await outputCacheStore.EvictByTagAsync(AC.EvictByTagConsecutivosBco, default);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagConsecutivosBcoDetalle, default);
             return TypedResults.NoContent();
         }
         catch (Exception e)

@@ -37,5 +37,4 @@ public class ConfigBcoDto
     public string ModHid { get; set; }
     public string ModIps { get; set; }
     public short? VersionFormatoImpresion { get; set; }
-
 }

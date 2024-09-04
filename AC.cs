@@ -27,6 +27,8 @@ public static class AC
     public const string EvictByTagBancos = "bancos-get";
     public const string EvictByTagCuentasBancarias = "cuentasbancarias-get";
     public const string EvictByTagConsecutivosBco = "consecutivosbco-get";
+    public const string EvictByTagConsecutivosBcoDetalle = "consecutivosbcodetalle-get";
+    public const string EvictByTagConfigBco = "configbco-get";
 
     public const string EvictByTagAsientosContables = "asientoscontables-get";
     public const string EvictByTagTransaccionBancarias = "transaccionesbco-get";

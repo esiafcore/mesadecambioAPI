@@ -79,7 +79,7 @@ public static class BancoEndpoints
         }
         catch (Exception ex)
         {
-            var errorMessage = $"Ha ocurrido un error el el método {nameof(GetAlls)} del Endpoint Bancos. Error: {ex.Message}";
+            var errorMessage = $"Ha ocurrido un error el método {nameof(GetAlls)} del Endpoint Bancos. Error: {ex.Message}";
             logger.LogError(errorMessage);
             return TypedResults.BadRequest(errorMessage);
         }
