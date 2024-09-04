@@ -45,6 +45,8 @@ builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContab
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
 builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria>();
+builder.Services.AddScoped<IRepositorioConsecutivosBco, RepositorioConsecutivosBco>();
+
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
 builder.Services.AddScoped<IRepositorioQuotationHeaderLegacy, RepositorioQuotationHeaderLegacy>();
 builder.Services.AddScoped<IRepositorioQuotationDetailLegacy, RepositorioQuotationDetailLegacy>();
@@ -144,6 +146,7 @@ app.MapGroup("/quotationslegacy").MapQuotationHeaderLegacy();
 app.MapGroup("/quotationsdetaillegacy").MapQuotationDetailLegacy();
 app.MapGroup("/customerslegacy").MapCustomerLegacy();
 app.MapGroup("/usuarios").MapUsuarios();
+app.MapGroup("/consecutivosbco").MapConsecutivosBco();
 
 //Fin de área de los middleware
 app.Run();
