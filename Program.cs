@@ -45,8 +45,8 @@ builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContab
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
 builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria>();
-builder.Services.AddScoped<IRepositorioConsecutivosBco, RepositorioConsecutivosBco>();
-builder.Services.AddScoped<IRepositorioConsecutivosBcoDetalle, RepositorioConsecutivosBcoDetalle>();
+builder.Services.AddScoped<IRepositorioConsecutivoBco, RepositorioConsecutivoBco>();
+builder.Services.AddScoped<IRepositorioConsecutivoBcoDetalle, RepositorioConsecutivoBcoDetalle>();
 builder.Services.AddScoped<IRepositorioConfigBco, RepositorioConfigBco>();
 
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();

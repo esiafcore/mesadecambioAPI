@@ -21,14 +21,4 @@ public class ConfigBcoDtoUpdateValidator : AbstractValidator<ConfigBcoDtoUpdate>
             .NotEmpty().WithMessage("El campo {PropertyName} es requerido");
 
     }
-
-    private static bool FnxCodigoIncorrecto(string valor)
-    {
-        if (string.IsNullOrWhiteSpace(valor))
-        {
-            return true;
-        }
-        valor = valor.Trim();
-        return !".-".Contains(valor);
-    }
 }

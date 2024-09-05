@@ -1,8 +1,7 @@
 ﻿namespace XanesN8.Api.DTOs.eSiafN4;
 
-public class ConsecutivosBcoDtoUpdate
+public class ConsecutivosBcoDtoCreate
 {
-    public Guid UidRegist { get; set; }
     public Guid UidCia { get; set; }
     public string Categoria { get; set; }
     public string Codigo { get; set; }

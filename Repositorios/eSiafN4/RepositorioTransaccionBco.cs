@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Dapper;
 using XanesN8.Api;
+using XanesN8.Api.DTOs.eSiafN4;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.Utilidades;
 using XanesN8.Api.Entidades.eSiafN4;
@@ -64,5 +65,44 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
             , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;
+    }
+
+    public async Task<Guid> Create(TransaccionesBcoDtoCreate obj)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var idResult = await conexion
+            .QuerySingleAsync<Guid>(
+                "bco.usp_transaccionesbco_create",
+                    obj,
+                    commandType: CommandType.StoredProcedure);
+
+        return await Task.FromResult(idResult);
+    }
+
+    public async Task Update(TransaccionesBcoDtoUpdate obj)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var idResult = await conexion
+            .QuerySingleAsync<Guid>(
+                "bco.usp_transaccionesbco_update",
+                obj,
+                commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task Delete(Guid id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        await conexion.ExecuteAsync("bco.usp_transaccionesbco_delete", new { uidregist = id });
+    }
+
+    public async Task<bool> Exist(Guid id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_transaccionesbco_isexist"
+            , param: new { id }
+            , commandType: CommandType.StoredProcedure);
+        return existe;
     }
 }

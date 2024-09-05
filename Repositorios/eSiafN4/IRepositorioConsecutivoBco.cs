@@ -3,7 +3,7 @@ using XanesN8.Api.FiltersParameters;
 
 namespace XanesN8.Api.Repositorios.eSiafN4;
 
-public interface IRepositorioConsecutivosBco
+public interface IRepositorioConsecutivoBco
 {
     Task<List<ConsecutivosBco>> GetAlls(QueryParams queryParams);
     Task<ConsecutivosBco?> GetById(Guid id);

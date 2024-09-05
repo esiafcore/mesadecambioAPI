@@ -1,8 +1,7 @@
 ﻿namespace XanesN8.Api.DTOs.eSiafN4;
 
-public class ConsecutivosBcoDtoUpdate
+public class ConsecutivosBcoDetalleDtoCreate
 {
-    public Guid UidRegist { get; set; }
     public Guid UidCia { get; set; }
     public string Categoria { get; set; }
     public string Codigo { get; set; }
@@ -13,5 +12,7 @@ public class ConsecutivosBcoDtoUpdate
     public string FormatoContadorTemporal { get; set; }
     public short ContadorPaddingIzquierdo { get; set; }
     public short ContadorTemporalPaddingIzquierdo { get; set; }
+    public short YearFiscal { get; set; }
+    public short MesFiscal { get; set; }
     public bool? IndAplicar { get; set; }
 }

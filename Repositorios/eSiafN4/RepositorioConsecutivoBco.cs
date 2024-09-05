@@ -8,12 +8,12 @@ using XanesN8.Api.Utilidades;
 
 namespace XanesN8.Api.Repositorios.eSiafN4;
 
-public class RepositorioConsecutivosBcoDetalle : IRepositorioConsecutivosBcoDetalle
+public class RepositorioConsecutivoBco : IRepositorioConsecutivoBco
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;
 
-    public RepositorioConsecutivosBcoDetalle(IConfiguration configuration
+    public RepositorioConsecutivoBco(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
         _connectionString = configuration.GetConnectionString(AC.EsiafN4Cnx)!;
@@ -28,17 +28,17 @@ public class RepositorioConsecutivosBcoDetalle : IRepositorioConsecutivosBcoDeta
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<ConsecutivosBcoDetalle>> GetAlls(YearMonthParams queryParams)
+    public async Task<List<ConsecutivosBco>> GetAlls(QueryParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<ConsecutivosBcoDetalle>(sql: @"bco.usp_consecutivosbcodetalle_getall"
+            .QueryAsync<ConsecutivosBco>(sql: @"bco.usp_consecutivosbco_getall"
                 , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.usp_consecutivosbcodetalle_count"
-            , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
+            sql: @"bco.usp_consecutivosbco_count"
+            , param: new { queryParams.Uidcia }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
@@ -55,18 +55,18 @@ public class RepositorioConsecutivosBcoDetalle : IRepositorioConsecutivosBcoDeta
         return objList.ToList();
     }
 
-    public async Task<ConsecutivosBcoDetalle?> GetById(Guid id)
+    public async Task<ConsecutivosBco?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<ConsecutivosBcoDetalle>(sql: @"bco.usp_consecutivosbcodetalle_getid"
+            .QueryFirstOrDefaultAsync<ConsecutivosBco>(sql: @"bco.usp_consecutivosbco_getid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
 
-    public async Task Update(ConsecutivosBcoDetalle objUpdate)
+    public async Task Update(ConsecutivosBco objUpdate)
     {
         using var conexion = new SqlConnection(_connectionString);
 
@@ -76,7 +76,7 @@ public class RepositorioConsecutivosBcoDetalle : IRepositorioConsecutivosBcoDeta
         objUpdate.ModHsn = AC.LocHostMe;
         objUpdate.ModIps = AC.LocalIpv4Default;
 
-        var idResult = await conexion.ExecuteAsync("bco.usp_consecutivosbcodetalle_update",
+        var idResult = await conexion.ExecuteAsync("bco.usp_consecutivosbco_update",
             objUpdate, commandType: CommandType.StoredProcedure);
         throw new NotImplementedException();
     }
@@ -84,7 +84,7 @@ public class RepositorioConsecutivosBcoDetalle : IRepositorioConsecutivosBcoDeta
     public async Task<bool> Exist(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_consecutivosbcodetalle_isexist"
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_consecutivosbco_isexist"
             , param: new { id }
             , commandType: CommandType.StoredProcedure);
         return existe;

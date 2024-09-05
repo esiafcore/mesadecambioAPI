@@ -81,25 +81,18 @@ public class RepositorioBanco : IRepositorioBanco
             {
                 uidregist = uidRegist,
                 objNew.UidCia,
-                objNew.Codigo
-            ,
+                objNew.Codigo,
                 objNew.Descripci,
-                objNew.IndTarjetaCredito
-            ,
+                objNew.IndTarjetaCredito,
                 objNew.NumeroObjeto,
-                objNew.NumeroEstado
-            ,
+                objNew.NumeroEstado,
                 objNew.CodigoOperacionSwitch,
-                objNew.CuentaContableInterfazSwitch
-            ,
+                objNew.CuentaContableInterfazSwitch,
                 objNew.CodigoOperacionMantenimiento,
-                objNew.CuentaContableInterfazMantenimiento
-            ,
-                objNew.ComisionBancariaPor
-            ,
+                objNew.CuentaContableInterfazMantenimiento,
+                objNew.ComisionBancariaPor,
                 objNew.CreFch,
-                objNew.CreUsr
-            ,
+                objNew.CreUsr,
                 objNew.CreHsn,
                 objNew.CreIps
             },
@@ -124,15 +117,12 @@ public class RepositorioBanco : IRepositorioBanco
 
     }
 
-    public async Task<bool> Exist(Guid id, string code)
+    public async Task Delete(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexistbycode"
-            , param: new { id, codigo = code }
-            , commandType: CommandType.StoredProcedure);
-        return existe;
+        await conexion.ExecuteAsync("bco.usp_bancos_delete", new { uidregist = id });
     }
-
+    
     public async Task<bool> Exist(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
@@ -142,10 +132,12 @@ public class RepositorioBanco : IRepositorioBanco
         return existe;
     }
 
-    public async Task Delete(Guid id)
+    public async Task<bool> Exist(Guid id, string code)
     {
         using var conexion = new SqlConnection(_connectionString);
-        await conexion.ExecuteAsync("bco.usp_bancos_delete", new { uidregist = id });
+        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_bancos_isexistbycode"
+            , param: new { id, codigo = code }
+            , commandType: CommandType.StoredProcedure);
+        return existe;
     }
-
 }

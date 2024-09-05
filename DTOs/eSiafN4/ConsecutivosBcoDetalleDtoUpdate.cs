@@ -16,8 +16,4 @@ public class ConsecutivosBcoDetalleDtoUpdate
     public short YearFiscal { get; set; }
     public short MesFiscal { get; set; }
     public bool? IndAplicar { get; set; }
-    public DateTime? ModFch { get; set; }
-    public string? ModUsr { get; set; }
-    public string? ModHsn { get; set; }
-    public string? ModIps { get; set; }
 }

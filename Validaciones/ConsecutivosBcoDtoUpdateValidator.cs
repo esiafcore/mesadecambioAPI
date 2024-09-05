@@ -6,7 +6,7 @@ namespace XanesN8.Api.Validaciones;
 
 public class ConsecutivosBcoDtoUpdateValidator : AbstractValidator<ConsecutivosBcoDtoUpdate>
 {
-    public ConsecutivosBcoDtoUpdateValidator(IRepositorioConsecutivosBco repo
+    public ConsecutivosBcoDtoUpdateValidator(IRepositorioConsecutivoBco repo
         , IHttpContextAccessor httpContextAccessor)
     {
         var valorRutaId = httpContextAccessor.HttpContext?.Request.RouteValues["id"];
@@ -19,17 +19,6 @@ public class ConsecutivosBcoDtoUpdateValidator : AbstractValidator<ConsecutivosB
 
         RuleFor(x => x.UidCia)
             .NotEmpty().WithMessage("El campo {PropertyName} es requerido");
-
-        //RuleFor(x => x.Codigo)
-        //    .NotEmpty().WithMessage("El campo {PropertyName} es requerido")
-        //    .Must(FnxCodigoIncorrecto).WithMessage("El campo {PropertyName} es incorrecto")
-        //    .MaximumLength(10).WithMessage("La longitud máxima de caracteres permitidos para el campo {PropertyName} es {MaxLength}")
-        //    .MustAsync(async (codigo, _) =>
-        //    {
-        //        var existe = await repo.Exist(id, code: codigo);
-        //        return !existe;
-        //    }).WithMessage(x => $"Ya existe un Consecutivo con el código {x.Codigo}");
-
 
         RuleFor(x => x.NombreCampo)
             .NotEmpty().WithMessage("El campo {PropertyName} es requerido");

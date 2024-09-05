@@ -4,9 +4,9 @@ using XanesN8.Api.Repositorios.eSiafN4;
 
 namespace XanesN8.Api.Validaciones;
 
-public class ConsecutivosBcoDetalleDtoUpdateValidator : AbstractValidator<ConsecutivosBcoDetalleDtoUpdate>
+public class TransaccionesBcoDtoUpdateValidator : AbstractValidator<TransaccionesBcoDtoUpdate>
 {
-    public ConsecutivosBcoDetalleDtoUpdateValidator(IRepositorioConsecutivoBcoDetalle repo
+    public TransaccionesBcoDtoUpdateValidator(IRepositorioTransaccionBco repo
         , IHttpContextAccessor httpContextAccessor)
     {
         var valorRutaId = httpContextAccessor.HttpContext?.Request.RouteValues["id"];
@@ -19,18 +19,5 @@ public class ConsecutivosBcoDetalleDtoUpdateValidator : AbstractValidator<Consec
 
         RuleFor(x => x.UidCia)
             .NotEmpty().WithMessage("El campo {PropertyName} es requerido");
-
-        RuleFor(x => x.NombreCampo)
-            .NotEmpty().WithMessage("El campo {PropertyName} es requerido");
-    }
-
-    private static bool FnxCodigoIncorrecto(string valor)
-    {
-        if (string.IsNullOrWhiteSpace(valor))
-        {
-            return true;
-        }
-        valor = valor.Trim();
-        return !".-".Contains(valor);
     }
 }

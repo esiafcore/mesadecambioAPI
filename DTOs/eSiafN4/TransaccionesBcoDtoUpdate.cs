@@ -1,6 +1,6 @@
 ﻿namespace XanesN8.Api.DTOs.eSiafN4;
 
-public class TransaccionesBcoDto
+public class TransaccionesBcoDtoUpdate
 {
     public Guid UidRegist { get; set; }
     public Guid UidCia { get; set; }
@@ -77,16 +77,6 @@ public class TransaccionesBcoDto
     public bool IndImpresoCheque { get; set; }
     public string ImprimirChequeaNombrede { get; set; } = null!;
     public string NumeroIdentificacion { get; set; } = null!;
-    public DateTime CreFch { get; set; }
-    public string CreUsr { get; set; } = null!;
-    public string CreHsn { get; set; } = null!;
-    public string CreHid { get; set; } = null!;
-    public string CreIps { get; set; } = null!;
-    public DateTime ModFch { get; set; }
-    public string ModUsr { get; set; } = null!;
-    public string ModHsn { get; set; } = null!;
-    public string ModHid { get; set; } = null!;
-    public string ModIps { get; set; } = null!;
     public bool IndMesaDeCambio { get; set; }
     public int? TransaMcRelacionada { get; set; }
     public int? TransaMcRelacionadaParent { get; set; }

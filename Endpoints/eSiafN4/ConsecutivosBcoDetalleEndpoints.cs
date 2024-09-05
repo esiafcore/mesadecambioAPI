@@ -30,7 +30,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<Ok<List<ConsecutivosBcoDetalleDto>>
         , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioConsecutivosBcoDetalle repositorio
+        , IRepositorioConsecutivoBcoDetalle repositorio
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int yearfiscal = 0, int mesfiscal = 0
@@ -78,7 +78,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<Ok<ConsecutivosBcoDetalleDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioConsecutivosBcoDetalle repositorio
+        , IRepositorioConsecutivoBcoDetalle repositorio
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -101,7 +101,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
         Update(Guid id, ConsecutivosBcoDetalleDtoUpdate modelDtoUpdate
-            , IRepositorioConsecutivosBcoDetalle repositorio, IOutputCacheStore outputCacheStore
+            , IRepositorioConsecutivoBcoDetalle repositorio, IOutputCacheStore outputCacheStore
             , IMapper mapper
             , IValidator<ConsecutivosBcoDetalleDtoUpdate> validator)
     {
