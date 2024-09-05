@@ -12,13 +12,18 @@ using XanesN8.Api.Servicios;
 
 namespace XanesN8.Api.Endpoints.eSiafN4;
 
-public static class TransaccionBcoEndpoints
+public static class TransaccionBcoDetalleEndpoints
 {
-    public static RouteGroupBuilder MapTransaccionBco(this RouteGroupBuilder group)
+    public static RouteGroupBuilder MapTransaccionBcoDetalle(this RouteGroupBuilder group)
     {
         group.MapGet("/", GetAlls)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
-                .Tag(AC.EvictByTagTransaccionBancarias))
+                .Tag(AC.EvictByTagTransaccionBancariasDetalle))
+            .RequireAuthorization();
+
+        group.MapGet("getallbyparent/", GetAllByParent)
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(AC.CacheOutputExpire))
+                .Tag(AC.EvictByTagTransaccionBancariasDetalle))
             .RequireAuthorization();
 
         group.MapGet("/{id:Guid}", GetById)
@@ -26,7 +31,7 @@ public static class TransaccionBcoEndpoints
 
         group.MapPost("/", Create)
             .DisableAntiforgery()
-            .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDtoCreate>>()
+            .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDetalleDtoCreate>>()
             .RequireAuthorization(AC.IsAdminClaim);
 
         group.MapPut("/{id:Guid}", Update)
@@ -35,11 +40,14 @@ public static class TransaccionBcoEndpoints
         group.MapDelete("/{id:Guid}", Delete)
             .RequireAuthorization(AC.IsAdminClaim);
 
+        group.MapDelete("deletebyparent/{id:Guid}", DeleteByParent)
+            .RequireAuthorization(AC.IsAdminClaim);
+
         return group;
     }
 
-    static async Task<Ok<List<TransaccionesBcoDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioTransaccionBco repositorio
+    static async Task<Ok<List<TransaccionesBcoDetalleDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+        , IRepositorioTransaccionBcoDetalle repositorio
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -53,13 +61,34 @@ public static class TransaccionBcoEndpoints
         };
 
         var dataList = await repositorio.GetAlls(queryParams);
-        var objList = mapper.Map<List<TransaccionesBcoDto>>(dataList);
+        var objList = mapper.Map<List<TransaccionesBcoDetalleDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
-    static async Task<Results<Ok<TransaccionesBcoDto>, NotFound>> GetById(Guid id
-        , IRepositorioTransaccionBco repositorio
+    static async Task<Ok<List<TransaccionesBcoDetalleDto>>> GetAllByParent(Guid uidparent, Guid uidcia, int yearfiscal, int mesfiscal
+        , IRepositorioTransaccionBcoDetalle repositorio
+        , IMapper mapper
+        , int pagina = 1, int recordsPorPagina = 10)
+    {
+        ParentYearMonthParams queryParams = new()
+        {
+            UidParent = uidparent,
+            Uidcia = uidcia,
+            Yearfiscal = yearfiscal,
+            Mesfiscal = mesfiscal,
+            Pagina = pagina,
+            RecordsPorPagina = recordsPorPagina
+        };
+
+        var dataList = await repositorio.GetAllByParent(queryParams);
+        var objList = mapper.Map<List<TransaccionesBcoDetalleDto>>(dataList);
+
+        return TypedResults.Ok(objList);
+    }
+
+    static async Task<Results<Ok<TransaccionesBcoDetalleDto>, NotFound>> GetById(Guid id
+        , IRepositorioTransaccionBcoDetalle repositorio
         , IMapper mapper)
     {
         var dataItem = await repositorio.GetById(id);
@@ -67,15 +96,15 @@ public static class TransaccionBcoEndpoints
         {
             return TypedResults.NotFound();
         }
-        var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
+        var objItem = mapper.Map<TransaccionesBcoDetalleDto>(dataItem);
 
         return TypedResults.Ok(objItem);
     }
 
-    static async Task<Results<Created<TransaccionesBcoDto>, BadRequest, NotFound, BadRequest<string>
+    static async Task<Results<Created<TransaccionesBcoDetalleDto>, BadRequest, NotFound, BadRequest<string>
        , ValidationProblem>>
-       Create(TransaccionesBcoDtoCreate modelDtoCreate
-       , IRepositorioTransaccionBco repositorio, IOutputCacheStore outputCacheStore
+       Create(TransaccionesBcoDetalleDtoCreate modelDtoCreate
+       , IRepositorioTransaccionBcoDetalle repositorio, IOutputCacheStore outputCacheStore
        , IMapper mapper, IServicioUsuarios srvUser)
     {
         try
@@ -97,11 +126,11 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.NotFound();
             }
 
-            var objDto = mapper.Map<TransaccionesBcoDto>(dataItem);
-            
+            var objDto = mapper.Map<TransaccionesBcoDetalleDto>(dataItem);
+
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
-           
-            return TypedResults.Created($"/transaccionesbco/{uid}", objDto);
+
+            return TypedResults.Created($"/transaccionesbcodetalle/{uid}", objDto);
 
         }
         catch (Exception e)
@@ -111,10 +140,10 @@ public static class TransaccionBcoEndpoints
     }
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
-        Update(Guid id, TransaccionesBcoDtoUpdate modelDtoUpdate
-            , IRepositorioTransaccionBco repositorio, IOutputCacheStore outputCacheStore
+        Update(Guid id, TransaccionesBcoDetalleDtoUpdate modelDtoUpdate
+            , IRepositorioTransaccionBcoDetalle repositorio, IOutputCacheStore outputCacheStore
             , IMapper mapper
-            , IValidator<TransaccionesBcoDtoUpdate> validator)
+            , IValidator<TransaccionesBcoDetalleDtoUpdate> validator)
     {
         try
         {
@@ -131,7 +160,7 @@ public static class TransaccionBcoEndpoints
             }
 
             await repositorio.Update(modelDtoUpdate);
-            await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancariasDetalle, default);
             return TypedResults.NoContent();
         }
         catch (Exception e)
@@ -141,9 +170,8 @@ public static class TransaccionBcoEndpoints
     }
 
     static async Task<Results<NoContent, NotFound>> Delete(
-        Guid id, 
-        IRepositorioTransaccionBco repositorio,
-        IRepositorioTransaccionBcoDetalle repositorioChildren,
+        Guid id,
+        IRepositorioTransaccionBcoDetalle repositorio,
         IOutputCacheStore outputCacheStore)
     {
         var objDB = await repositorio.GetById(id);
@@ -154,9 +182,29 @@ public static class TransaccionBcoEndpoints
         }
 
         //Eliminar los hijos
-        await repositorioChildren.DeleteByParent(id);
+
         await repositorio.Delete(id);
-        await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
+        await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancariasDetalle, default);
+        return TypedResults.NoContent();
+    }
+
+    static async Task<Results<NoContent, NotFound>> DeleteByParent(
+        Guid id,
+        IRepositorioTransaccionBcoDetalle repositorio,
+        IRepositorioTransaccionBco repositorioParent,
+        IOutputCacheStore outputCacheStore)
+    {
+        var objDB = await repositorioParent.GetById(id);
+
+        if (objDB is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        //Eliminar los hijos
+
+        await repositorio.DeleteByParent(id);
+        await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancariasDetalle, default);
         return TypedResults.NoContent();
     }
 

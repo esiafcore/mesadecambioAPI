@@ -233,7 +233,7 @@ namespace XanesN8.Api.Entidades.eSiafN4
         [Required()]
         public string ModIps { get; set; }
 
-        public virtual TransaccionesBco transaccionesbco { get; set; }
+        //public virtual TransaccionesBco transaccionesbco { get; set; }
 
         #region Extensibility Method Definitions
 

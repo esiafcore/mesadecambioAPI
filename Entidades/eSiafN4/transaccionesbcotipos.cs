@@ -152,9 +152,9 @@ namespace XanesN8.Api.Entidades.eSiafN4
         [Required()]
         public string ModIps { get; set; }
 
-        public virtual IList<TransaccionesBco> transaccionesbcos { get; set; }
+        //public virtual IList<TransaccionesBco> transaccionesbcos { get; set; }
 
-        public virtual IList<TransaccionesBcoSubtipos> transaccionesbcosubtipos { get; set; }
+        //public virtual IList<TransaccionesBcoSubtipos> transaccionesbcosubtipos { get; set; }
 
         #region Extensibility Method Definitions
 

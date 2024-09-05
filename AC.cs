@@ -32,6 +32,7 @@ public static class AC
 
     public const string EvictByTagAsientosContables = "asientoscontables-get";
     public const string EvictByTagTransaccionBancarias = "transaccionesbco-get";
+    public const string EvictByTagTransaccionBancariasDetalle = "transaccionesbcodetalle-get";
     public const string EvictByTagCustomersLegacy = "customerslegacy-get";
     public const string EvictByTagQuotationsDetailLegacy = "quotationsdetaillegacy-get";
     public const string EvictByTagQuotationsHeaderLegacy = "quotationsheaderlegacy-get";
