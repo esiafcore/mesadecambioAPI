@@ -28,7 +28,7 @@ public class RepositorioConfigBco : IRepositorioConfigBco
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<ConfigBco>> GetAlls(QueryParams queryParams)
+    public async Task<List<ConfigBco>> GetAlls(PaginationParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
@@ -38,7 +38,7 @@ public class RepositorioConfigBco : IRepositorioConfigBco
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"bco.usp_configbco_count"
-            , param: new { queryParams.Uidcia }
+            , param: new { }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
@@ -55,38 +55,14 @@ public class RepositorioConfigBco : IRepositorioConfigBco
         return objList.ToList();
     }
 
-    public async Task<ConfigBco?> GetById(Guid id)
+    public async Task<ConfigBco?> GetByCia(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
             .QueryFirstOrDefaultAsync<ConfigBco>(sql: @"bco.usp_configbco_getid"
-                , param: new { uidregist = id }
+                , param: new { uidCia = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;
-    }
-
-    public async Task Update(ConfigBco objUpdate)
-    {
-        using var conexion = new SqlConnection(_connectionString);
-
-        Guid uidRegist = Guid.NewGuid();
-        objUpdate.ModFch = DateTime.UtcNow;
-        objUpdate.ModUsr = AC.LocalUserName;
-        objUpdate.ModHsn = AC.LocHostMe;
-        objUpdate.ModIps = AC.LocalIpv4Default;
-
-        var idResult = await conexion.ExecuteAsync("bco.usp_configbco_update",
-            objUpdate, commandType: CommandType.StoredProcedure);
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> Exist(Guid id)
-    {
-        using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_configbco_isexist"
-            , param: new { id }
-            , commandType: CommandType.StoredProcedure);
-        return existe;
     }
 }

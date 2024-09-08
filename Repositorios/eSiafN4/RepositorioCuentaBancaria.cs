@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using XanesN8.Api;
+using XanesN8.Api.DTOs.eSiafN4;
 using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.Utilidades;
@@ -64,5 +65,16 @@ public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;
+    }
+
+    public async Task Update(CuentasBancariasDtoUpdate obj)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var idResult = await conexion
+            .QuerySingleAsync<Guid>(
+                "bco.usp_cuentasbancarias_update",
+                obj,
+                commandType: CommandType.StoredProcedure);
     }
 }

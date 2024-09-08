@@ -30,7 +30,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<Ok<List<ConsecutivosBcoDetalleDto>>
         , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioConsecutivoBcoDetalle repositorio
+        , IRepositorioConsecutivoBcoDetalle repo
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int yearfiscal = 0, int mesfiscal = 0
@@ -55,7 +55,7 @@ public static class ConsecutivosBcoDetalleEndpoints
                 RecordsPorPagina = recordsPorPagina
             };
 
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             if (dataList.Count > 0)
             {
                 var objList = mapper.Map<List<ConsecutivosBcoDetalleDto>>(dataList);
@@ -78,7 +78,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<Ok<ConsecutivosBcoDetalleDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioConsecutivoBcoDetalle repositorio
+        , IRepositorioConsecutivoBcoDetalle repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -89,7 +89,7 @@ public static class ConsecutivosBcoDetalleEndpoints
             return TypedResults.BadRequest(AC.UserNotFound);
         }
 
-        var dataItem = await repositorio.GetById(id);
+        var dataItem = await repo.GetById(id);
         if (dataItem is null)
         {
             return TypedResults.NotFound();
@@ -101,7 +101,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
         Update(Guid id, ConsecutivosBcoDetalleDtoUpdate modelDtoUpdate
-            , IRepositorioConsecutivoBcoDetalle repositorio, IOutputCacheStore outputCacheStore
+            , IRepositorioConsecutivoBcoDetalle repo, IOutputCacheStore outputCacheStore
             , IMapper mapper
             , IValidator<ConsecutivosBcoDetalleDtoUpdate> validator)
     {
@@ -113,15 +113,13 @@ public static class ConsecutivosBcoDetalleEndpoints
                 return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
             }
 
-            var existe = await repositorio.Exist(id);
+            var existe = await repo.Exist(id);
             if (!existe)
             {
                 return TypedResults.NotFound();
             }
 
-            var objUpdate = mapper.Map<ConsecutivosBcoDetalle>(modelDtoUpdate);
-
-            await repositorio.Update(objUpdate);
+            await repo.Update(modelDtoUpdate);
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagConsecutivosBcoDetalle, default);
             return TypedResults.NoContent();
         }

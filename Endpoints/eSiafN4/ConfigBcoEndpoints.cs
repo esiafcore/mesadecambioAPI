@@ -22,15 +22,11 @@ public static class ConfigBcoEndpoints
 
         group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
 
-        group.MapPut("/{id:Guid}", Update)
-            .RequireAuthorization(AC.IsAdminClaim);
-
         return group;
     }
 
     static async Task<Results<Ok<List<ConfigBcoDto>>
-        , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioConfigBco repositorio
+        , NotFound<string>, BadRequest<string>>> GetAlls(IRepositorioConfigBco repo
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
@@ -45,14 +41,13 @@ public static class ConfigBcoEndpoints
                 return TypedResults.BadRequest(AC.UserNotFound);
             }
 
-            QueryParams queryParams = new()
+            PaginationParams queryParams = new()
             {
-                Uidcia = uidcia,
                 Pagina = pagina,
                 RecordsPorPagina = recordsPorPagina
             };
 
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             if (dataList.Count > 0)
             {
                 var objList = mapper.Map<List<ConfigBcoDto>>(dataList);
@@ -75,7 +70,7 @@ public static class ConfigBcoEndpoints
 
     static async Task<Results<Ok<ConfigBcoDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioConfigBco repositorio
+        , IRepositorioConfigBco repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -86,7 +81,7 @@ public static class ConfigBcoEndpoints
             return TypedResults.BadRequest(AC.UserNotFound);
         }
 
-        var dataItem = await repositorio.GetById(id);
+        var dataItem = await repo.GetByCia(id);
         if (dataItem is null)
         {
             return TypedResults.NotFound();
@@ -94,37 +89,5 @@ public static class ConfigBcoEndpoints
         var objItem = mapper.Map<ConfigBcoDto>(dataItem);
 
         return TypedResults.Ok(objItem);
-    }
-
-    static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
-        Update(Guid id, ConfigBcoDtoUpdate modelDtoUpdate
-            , IRepositorioConfigBco repositorio, IOutputCacheStore outputCacheStore
-            , IMapper mapper
-            , IValidator<ConfigBcoDtoUpdate> validator)
-    {
-        try
-        {
-            var resultadoValidacion = await validator.ValidateAsync(modelDtoUpdate);
-            if (!resultadoValidacion.IsValid)
-            {
-                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
-            }
-
-            var existe = await repositorio.Exist(id);
-            if (!existe)
-            {
-                return TypedResults.NotFound();
-            }
-
-            var objUpdate = mapper.Map<ConfigBco>(modelDtoUpdate);
-
-            await repositorio.Update(objUpdate);
-            await outputCacheStore.EvictByTagAsync(AC.EvictByTagConfigBco, default);
-            return TypedResults.NoContent();
-        }
-        catch (Exception e)
-        {
-            return TypedResults.BadRequest(e.Message);
-        }
     }
 }

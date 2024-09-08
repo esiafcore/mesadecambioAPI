@@ -22,7 +22,7 @@ public static class QuotationDetailLegacyEndpoints
 
     static async Task<Results<Ok<List<QuotationDetailList>>, BadRequest<string>>> GetAlls(DateTime beginDate, DateTime endDate
         , string? identificationNumber
-        , IRepositorioQuotationDetailLegacy repositorio
+        , IRepositorioQuotationDetailLegacy repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -44,7 +44,7 @@ public static class QuotationDetailLegacyEndpoints
 
         try
         {
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             return TypedResults.Ok(dataList);
         }
         catch (SqlException e)

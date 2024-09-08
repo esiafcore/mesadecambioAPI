@@ -49,6 +49,8 @@ builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria
 builder.Services.AddScoped<IRepositorioConsecutivoBco, RepositorioConsecutivoBco>();
 builder.Services.AddScoped<IRepositorioConsecutivoBcoDetalle, RepositorioConsecutivoBcoDetalle>();
 builder.Services.AddScoped<IRepositorioConfigBco, RepositorioConfigBco>();
+builder.Services.AddScoped<IRepositorioTransaccionBcoTipo, RepositorioTransaccionBcoTipo>();
+builder.Services.AddScoped<IRepositorioTransaccionBcoSubtipo, RepositorioTransaccionBcoSubtipo>();
 
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
 builder.Services.AddScoped<IRepositorioQuotationHeaderLegacy, RepositorioQuotationHeaderLegacy>();

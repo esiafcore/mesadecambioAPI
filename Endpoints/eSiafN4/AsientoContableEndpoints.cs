@@ -25,7 +25,7 @@ public static class AsientoContableEndpoints
     }
 
     static async Task<Results<Ok<List<AsientosContablesDto>>, BadRequest<string>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
-        , IRepositorioAsientoContable repositorio
+        , IRepositorioAsientoContable repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -40,7 +40,7 @@ public static class AsientoContableEndpoints
 
         try
         {
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             var objList = mapper.Map<List<AsientosContablesDto>>(dataList);
             return TypedResults.Ok(objList);
         }
@@ -55,12 +55,12 @@ public static class AsientoContableEndpoints
     }
 
     static async Task<Results<Ok<AsientosContablesDto>, NotFound, BadRequest<string>>> GetById(Guid id
-        , IRepositorioAsientoContable repositorio
+        , IRepositorioAsientoContable repo
         , IMapper mapper)
     {
         try
         {
-            var dataItem = await repositorio.GetById(id);
+            var dataItem = await repo.GetById(id);
             if (dataItem is null)
             {
                 return TypedResults.NotFound();

@@ -42,7 +42,7 @@ public static class BancoEndpoints
 
     static async Task<Results<Ok<List<BancosDto>>
         , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
-        , IRepositorioBanco repositorio
+        , IRepositorioBanco repo
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
@@ -64,7 +64,7 @@ public static class BancoEndpoints
                 RecordsPorPagina = recordsPorPagina
             };
 
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             if (dataList.Count > 0)
             {
                 var objList = mapper.Map<List<BancosDto>>(dataList);
@@ -87,7 +87,7 @@ public static class BancoEndpoints
 
     static async Task<Results<Ok<BancosDto>, NotFound
         , BadRequest<string>>> GetById(Guid id
-        , IRepositorioBanco repositorio
+        , IRepositorioBanco repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         //Obtener usuario
@@ -98,7 +98,7 @@ public static class BancoEndpoints
             return TypedResults.BadRequest(AC.UserNotFound);
         }
 
-        var dataItem = await repositorio.GetById(id);
+        var dataItem = await repo.GetById(id);
         if (dataItem is null)
         {
             return TypedResults.NotFound();
@@ -111,7 +111,7 @@ public static class BancoEndpoints
     static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>
         , ValidationProblem>>
         Create(BancosDtoCreate bancoDtoCreate
-        , IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
+        , IRepositorioBanco repo, IOutputCacheStore outputCacheStore
         , IMapper mapper, IServicioUsuarios srvUser)
     {
         try
@@ -127,7 +127,7 @@ public static class BancoEndpoints
             var objNew = mapper.Map<Bancos>(bancoDtoCreate);
             //Agregar usuario que crear el registro
             objNew.CreUsr = usuario.Email!;
-            var id = await repositorio.Create(objNew);
+            var id = await repo.Create(objNew);
             objNew.UidRegist = id;
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
             var objDto = mapper.Map<BancosDto>(objNew);
@@ -143,7 +143,7 @@ public static class BancoEndpoints
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
         Update(Guid id, BancosDtoUpdate bancoDtoUpdate
-            , IRepositorioBanco repositorio, IOutputCacheStore outputCacheStore
+            , IRepositorioBanco repo, IOutputCacheStore outputCacheStore
             , IMapper mapper
             , IValidator<BancosDtoUpdate> validator)
     {
@@ -155,7 +155,7 @@ public static class BancoEndpoints
                 return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
             }
 
-            var existe = await repositorio.Exist(id);
+            var existe = await repo.Exist(id);
             if (!existe)
             {
                 return TypedResults.NotFound();
@@ -163,7 +163,7 @@ public static class BancoEndpoints
 
             var objUpdate = mapper.Map<Bancos>(bancoDtoUpdate);
 
-            await repositorio.Update(objUpdate);
+            await repo.Update(objUpdate);
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
             return TypedResults.NoContent();
         }
@@ -173,17 +173,17 @@ public static class BancoEndpoints
         }
     }
 
-    static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repositorio,
+    static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repo,
         IOutputCacheStore outputCacheStore)
     {
-        var objDB = await repositorio.GetById(id);
+        var objDB = await repo.GetById(id);
 
         if (objDB is null)
         {
             return TypedResults.NotFound();
         }
 
-        await repositorio.Delete(id);
+        await repo.Delete(id);
         await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
         return TypedResults.NoContent();
     }

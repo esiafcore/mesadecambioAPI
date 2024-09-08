@@ -23,7 +23,7 @@ public static class CuentaBancariaEndpoints
     }
 
     static async Task<Ok<List<CuentasBancariasDto>>> GetAlls(Guid uidcia
-        , IRepositorioCuentaBancaria repositorio
+        , IRepositorioCuentaBancaria repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -34,17 +34,17 @@ public static class CuentaBancariaEndpoints
             RecordsPorPagina = recordsPorPagina
         };
 
-        var dataList = await repositorio.GetAlls(queryParams);
+        var dataList = await repo.GetAlls(queryParams);
         var objList = mapper.Map<List<CuentasBancariasDto>>(dataList);
 
         return TypedResults.Ok(objList);
     }
 
     static async Task<Results<Ok<CuentasBancariasDto>, NotFound>> GetById(Guid id
-        , IRepositorioCuentaBancaria repositorio
+        , IRepositorioCuentaBancaria repo
         , IMapper mapper)
     {
-        var dataItem = await repositorio.GetById(id);
+        var dataItem = await repo.GetById(id);
         if (dataItem is null)
         {
             return TypedResults.NotFound();

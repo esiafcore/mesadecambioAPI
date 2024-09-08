@@ -30,7 +30,7 @@ public static class QuotationEndpoints
     }
 
     static async Task<Results<Ok<List<QuotationsList>>, BadRequest<string>>> GetAlls(int companyId, DateTime beginDate, DateTime endDate
-        , IRepositorioQuotation repositorio
+        , IRepositorioQuotation repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -51,7 +51,7 @@ public static class QuotationEndpoints
 
         try
         {
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             return TypedResults.Ok(dataList);
         }
         catch (SqlException e)
@@ -66,7 +66,7 @@ public static class QuotationEndpoints
 
 
     static async Task<Results<Ok<List<DepositsList>>, BadRequest<string>>> GetDeposits(int companyId, DateTime beginDate, DateTime endDate
-        , IRepositorioQuotation repositorio
+        , IRepositorioQuotation repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -87,7 +87,7 @@ public static class QuotationEndpoints
 
         try
         {
-            var dataList = await repositorio.GetDeposits(queryParams);
+            var dataList = await repo.GetDeposits(queryParams);
             return TypedResults.Ok(dataList);
         }
         catch (SqlException e)
@@ -101,7 +101,7 @@ public static class QuotationEndpoints
     }
 
     static async Task<Results<Ok<List<TransfersList>>, BadRequest<string>>> GetTransfers(int companyId, DateTime beginDate, DateTime endDate
-        , IRepositorioQuotation repositorio
+        , IRepositorioQuotation repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
@@ -122,7 +122,7 @@ public static class QuotationEndpoints
 
         try
         {
-            var dataList = await repositorio.GetTransfers(queryParams);
+            var dataList = await repo.GetTransfers(queryParams);
             return TypedResults.Ok(dataList);
         }
         catch (SqlException e)

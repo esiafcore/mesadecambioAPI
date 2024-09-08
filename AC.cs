@@ -3,8 +3,9 @@
 // ReSharper disable once InconsistentNaming
 public static class AC
 {
-    //Conexiones
+    public const string CategoryByDefault = "BCO";
 
+    //Conexiones
     public const string EsiafN4Cnx = "eSIAFN4Connection";
     public const string XanesN4Cnx = "XanesN4Connection";
     public const string XanesN8Cnx = "XanesN8Connection";
@@ -13,6 +14,7 @@ public static class AC
     public const string LocHostMe = "LocalHostMe";
     public const string LocalIpv4Default = "127.0.0.1";
     public const string SecretUserId = "DbConnection:UserId";
+    public const string SecreteSiafN4CompanyUid = "eSiafN4CompanyUid";
     public const string SecretUserPwd = "DbConnection:Password";
     public const string SectionKeys = "Authentication:Schemes:Bearer:SigningKeys";
     public const string IssuedByKey = "Issuer";
@@ -48,5 +50,9 @@ public static class AC
     public const string IsPowerUserClaim = "ispoweruser";
     public const string IsOperatorClaim = "isoperator";
     public const string IsQueryClaim = "isquery";
+
+
+    public const short TransactionTotalDigitsNumberDefault = 5;
+    public const char CharDefaultEmpty = '0';
 
 }

@@ -20,7 +20,7 @@ public static class CustomerLegacyEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<CustomerDto>>, BadRequest<string>>> GetAlls(IRepositorioCustomerLegacy repositorio
+    static async Task<Results<Ok<List<CustomerDto>>, BadRequest<string>>> GetAlls(IRepositorioCustomerLegacy repo
         , IMapper mapper, int pagina = 1, int recordsPorPagina = 10)
     {
         QueryParams queryParams = new()
@@ -32,7 +32,7 @@ public static class CustomerLegacyEndpoints
 
         try
         {
-            var dataList = await repositorio.GetAlls(queryParams);
+            var dataList = await repo.GetAlls(queryParams);
             var objList = mapper.Map<List<CustomerDto>>(dataList);
 
             return TypedResults.Ok(objList);

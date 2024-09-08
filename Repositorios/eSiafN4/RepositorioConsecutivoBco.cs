@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using XanesN8.Api;
+using XanesN8.Api.DTOs.eSiafN4;
 using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.Utilidades;
@@ -66,15 +67,9 @@ public class RepositorioConsecutivoBco : IRepositorioConsecutivoBco
         return dataItem;
     }
 
-    public async Task Update(ConsecutivosBco objUpdate)
+    public async Task Update(ConsecutivosBcoDtoUpdate objUpdate)
     {
         using var conexion = new SqlConnection(_connectionString);
-
-        Guid uidRegist = Guid.NewGuid();
-        objUpdate.ModFch = DateTime.UtcNow;
-        objUpdate.ModUsr = AC.LocalUserName;
-        objUpdate.ModHsn = AC.LocHostMe;
-        objUpdate.ModIps = AC.LocalIpv4Default;
 
         var idResult = await conexion.ExecuteAsync("bco.usp_consecutivosbco_update",
             objUpdate, commandType: CommandType.StoredProcedure);
