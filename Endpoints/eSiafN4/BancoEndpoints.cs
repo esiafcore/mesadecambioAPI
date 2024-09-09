@@ -10,6 +10,7 @@ using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.Filtros;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.LoggerManager;
+using System.ComponentModel.Design;
 
 namespace XanesN8.Api.Endpoints.eSiafN4;
 
@@ -26,6 +27,8 @@ public static class BancoEndpoints
 
         group.MapGet("/{id:Guid}", GetById).RequireAuthorization();
 
+        group.MapGet("getbycode/", GetByCode).RequireAuthorization();
+
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<BancosDto>>()
@@ -41,7 +44,7 @@ public static class BancoEndpoints
     }
 
     static async Task<Results<Ok<List<BancosDto>>
-        , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
+        , NotFound<string>, BadRequest<string>>> GetAlls(Guid companyId
         , IRepositorioBanco repo
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
@@ -59,7 +62,7 @@ public static class BancoEndpoints
 
             QueryParams queryParams = new()
             {
-                Uidcia = uidcia,
+                Uidcia = companyId,
                 Pagina = pagina,
                 RecordsPorPagina = recordsPorPagina
             };
@@ -85,27 +88,79 @@ public static class BancoEndpoints
         }
     }
 
-    static async Task<Results<Ok<BancosDto>, NotFound
+    static async Task<Results<Ok<BancosDto>, NotFound<string>
         , BadRequest<string>>> GetById(Guid id
         , IRepositorioBanco repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
-        //Obtener usuario
-        var usuario = await srvUser.ObtenerUsuario();
-
-        if (usuario is null)
+        try
         {
-            return TypedResults.BadRequest(AC.UserNotFound);
-        }
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        var dataItem = await repo.GetById(id);
-        if (dataItem is null)
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var dataItem = await repo.GetById(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound("Banco no encontrado");
+            }
+            var objItem = mapper.Map<BancosDto>(dataItem);
+
+            return TypedResults.Ok(objItem);
+
+        }
+        catch (Exception e)
         {
-            return TypedResults.NotFound();
+            return TypedResults.BadRequest(e.Message);
         }
-        var objItem = mapper.Map<BancosDto>(dataItem);
+    }
 
-        return TypedResults.Ok(objItem);
+    static async Task<Results<Ok<BancosDto>, NotFound<string>
+        , BadRequest<string>>> GetByCode(Guid companyId, string codigo
+        , IRepositorioBanco repo
+        , IMapper mapper, IServicioUsuarios srvUser)
+    {
+        try
+        {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            QueryParams queryParams = new()
+            {
+                Uidcia = companyId,
+                Pagina = 1,
+                RecordsPorPagina = 0
+            };
+
+            var dataList = await repo.GetAlls(queryParams);
+            if (dataList is null)
+            {
+                return TypedResults.NotFound("Bancos no encontrados");
+            }
+
+            var dataItem = dataList.FirstOrDefault(x => x.Codigo.Trim() == codigo.Trim());
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound($"Banco:{codigo} no encontrado");
+            }
+
+            var objItem = mapper.Map<BancosDto>(dataItem);
+
+            return TypedResults.Ok(objItem);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
     static async Task<Results<Created<BancosDto>, BadRequest, BadRequest<string>
@@ -173,19 +228,27 @@ public static class BancoEndpoints
         }
     }
 
-    static async Task<Results<NoContent, NotFound>> Delete(Guid id, IRepositorioBanco repo,
+    static async Task<Results<NoContent, NotFound, BadRequest<string>>> Delete(Guid id, IRepositorioBanco repo,
         IOutputCacheStore outputCacheStore)
     {
-        var objDB = await repo.GetById(id);
-
-        if (objDB is null)
+        try
         {
-            return TypedResults.NotFound();
-        }
+            var objDB = await repo.GetById(id);
 
-        await repo.Delete(id);
-        await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
-        return TypedResults.NoContent();
+            if (objDB is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            await repo.Delete(id);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagBancos, default);
+            return TypedResults.NoContent();
+
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
 }

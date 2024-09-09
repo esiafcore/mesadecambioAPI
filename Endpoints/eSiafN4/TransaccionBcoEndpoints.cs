@@ -7,6 +7,7 @@ using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.Filtros;
 using FluentValidation;
 using Microsoft.AspNetCore.OutputCaching;
+using XanesN8.Api.DTOs;
 using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.Servicios;
 using static XanesN8.Api.Utilidades.Enumeradores;
@@ -25,6 +26,9 @@ public static class TransaccionBcoEndpoints
         group.MapGet("/{id:Guid}", GetById)
             .RequireAuthorization();
 
+        group.MapGet("getnextsecuentialnumber/", GetNextSecuentialNumber)
+            .RequireAuthorization();
+
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDtoCreate>>()
@@ -39,42 +43,76 @@ public static class TransaccionBcoEndpoints
         return group;
     }
 
-    static async Task<Ok<List<TransaccionesBcoDto>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+    static async Task<Results<Ok<List<TransaccionesBcoDto>>, BadRequest<string>>> GetAlls(Guid companyId, int yearfiscal, int mesfiscal
         , IRepositorioTransaccionBco repo
         , IMapper mapper
+        , IServicioUsuarios srvUser
         , int pagina = 1, int recordsPorPagina = 10)
     {
-        YearMonthParams queryParams = new()
+        try
         {
-            Uidcia = uidcia,
-            Yearfiscal = yearfiscal,
-            Mesfiscal = mesfiscal,
-            Pagina = pagina,
-            RecordsPorPagina = recordsPorPagina
-        };
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        var dataList = await repo.GetAlls(queryParams);
-        var objList = mapper.Map<List<TransaccionesBcoDto>>(dataList);
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
 
-        return TypedResults.Ok(objList);
-    }
+            YearMonthParams queryParams = new()
+            {
+                Uidcia = companyId,
+                Yearfiscal = yearfiscal,
+                Mesfiscal = mesfiscal,
+                Pagina = pagina,
+                RecordsPorPagina = recordsPorPagina
+            };
 
-    static async Task<Results<Ok<TransaccionesBcoDto>, NotFound>> GetById(Guid id
-        , IRepositorioTransaccionBco repo
-        , IMapper mapper)
-    {
-        var dataItem = await repo.GetById(id);
-        if (dataItem is null)
-        {
-            return TypedResults.NotFound();
+            var dataList = await repo.GetAlls(queryParams);
+            var objList = mapper.Map<List<TransaccionesBcoDto>>(dataList);
+
+            return TypedResults.Ok(objList);
+
         }
-
-        var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
-
-        return TypedResults.Ok(objItem);
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
-    static async Task<Results<Ok<string>, NotFound<string>, BadRequest<string>>> GetNextSecuentialNumber(
+    static async Task<Results<Ok<TransaccionesBcoDto>, NotFound<string>, BadRequest<string>>> GetById(Guid id
+        , IRepositorioTransaccionBco repo
+        , IMapper mapper
+        , IServicioUsuarios srvUser)
+    {
+        try
+        {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var dataItem = await repo.GetById(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound("Transacción bancaria no encontrada");
+            }
+
+            var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
+
+            return TypedResults.Ok(objItem);
+
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+    }
+
+    static async Task<Results<Ok<TransaccionResponse>, NotFound<string>, BadRequest<string>>> GetNextSecuentialNumber(
         Guid companyId,
         Guid bankAccountId,
         int fiscalYear,
@@ -89,204 +127,226 @@ public static class TransaccionBcoEndpoints
         IRepositorioTransaccionBcoTipo repoTipo,
         IRepositorioTransaccionBcoSubtipo repoSubtipo,
         IMapper mapper,
+        IServicioUsuarios srvUser,
         ConsecutivoTipo consecutivo = ConsecutivoTipo.Temporal,
         bool isSave = false)
 
     {
-        int numberTransa = 0;
-        string numberFull = string.Empty;
-        CuentasBancarias? cuentaModel = new();
-        ConsecutivosBco? consecutivoBcoModel = new();
-        ConsecutivosBcoDetalle? consecutivoBcoDetalleModel = new();
-        TransaccionesBcoTipos? transaccionBcoTipoModel = new();
-        TransaccionesBcoSubtipos? transaccionBcoSubtipoModel = new();
-        List<ConsecutivosBco>? consecutivoBcoList = new();
-        List<ConsecutivosBcoDetalle>? consecutivoBcoDetalleList = new();
-        List<TransaccionesBcoTipos>? transaccionBcoTipoList = new();
-        List<TransaccionesBcoSubtipos>? transaccionBcoSubtipoList = new();
-
-        if (companyId == Guid.Empty)
+        try
         {
-            return TypedResults.BadRequest("Compañia es requerida");
-        }
 
-        QueryParams queryParams = new QueryParams
-        {
-            Uidcia = companyId,
-            Pagina = 1,
-            RecordsPorPagina = 0
-        };
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        YearMonthParams yearMonthParams = new YearMonthParams
-        {
-            Uidcia = companyId,
-            Yearfiscal = fiscalYear,
-            Mesfiscal = fiscalMonth,
-            Pagina = 1,
-            RecordsPorPagina = 0
-        };
-
-        var configBco = await repoConfigBco.GetByCia(companyId);
-        if (configBco is null)
-        {
-            return TypedResults.NotFound("Configuración de banco no encontrada");
-        }
-
-        transaccionBcoTipoList = await repoTipo.GetAlls(queryParams);
-
-        if (transaccionBcoTipoList is null || transaccionBcoTipoList.Count == 0)
-        {
-            return TypedResults.NotFound("Tipos de transacciones bancarias no encontrados");
-        }
-
-        transaccionBcoTipoModel = transaccionBcoTipoList
-            .FirstOrDefault(x => x.Numero == tipo);
-
-        if (transaccionBcoTipoModel is null)
-        {
-            return TypedResults.NotFound("Tipo de transaccion bancaria no encontrado");
-        }
-
-        transaccionBcoSubtipoList = await repoSubtipo.GetAlls(queryParams);
-
-        if (transaccionBcoSubtipoList is null || transaccionBcoSubtipoList.Count == 0)
-        {
-            return TypedResults.NotFound("Subtipos de transacciones bancarias no encontrados");
-        }
-
-        transaccionBcoSubtipoModel = transaccionBcoSubtipoList
-            .FirstOrDefault(x => x.Numero == subtipo);
-
-        if (transaccionBcoSubtipoModel is null)
-        {
-            return TypedResults.NotFound("Subtipo de transaccion bancaria no encontrado");
-        }
-
-        var transaTipo = (TransaccionBcoTipo)tipo;
-
-        //Si es pago, sacar el consecutivo de la cuenta
-        if (transaTipo == TransaccionBcoTipo.Pago &&
-            (TransaccionBcoPagoSubtipo)subtipo == TransaccionBcoPagoSubtipo.MesaCambio)
-        {
-            cuentaModel = await repoCuentaBancaria.GetById(bankAccountId);
-
-            if (cuentaModel is null)
+            if (usuario is null)
             {
-                return TypedResults.NotFound("Cuenta bancaria no encontrada");
+                return TypedResults.BadRequest(AC.UserNotFound);
             }
 
-            switch (consecutivo)
+            TransaccionResponse response = new();
+            int numberTransa = 0;
+            string numberFull = string.Empty;
+            CuentasBancarias? cuentaModel = new();
+            ConsecutivosBco? consecutivoBcoModel = new();
+            ConsecutivosBcoDetalle? consecutivoBcoDetalleModel = new();
+            TransaccionesBcoTipos? transaccionBcoTipoModel = new();
+            TransaccionesBcoSubtipos? transaccionBcoSubtipoModel = new();
+            List<ConsecutivosBco>? consecutivoBcoList = new();
+            List<ConsecutivosBcoDetalle>? consecutivoBcoDetalleList = new();
+            List<TransaccionesBcoTipos>? transaccionBcoTipoList = new();
+            List<TransaccionesBcoSubtipos>? transaccionBcoSubtipoList = new();
+
+            if (companyId == Guid.Empty)
             {
-                case ConsecutivoTipo.Temporal:
-                    cuentaModel.ContadorTemporalExchange++;
-                    numberTransa = (int)cuentaModel.ContadorTemporalExchange;
-                    await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
-
-                    break;
-                case ConsecutivoTipo.Perpetuo:
-                    cuentaModel.ContadorExchange++;
-                    numberTransa = (int)cuentaModel.ContadorExchange;
-
-                    if (isSave)
-                        await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
-
-                    break;
+                return TypedResults.BadRequest("Compañia es requerida");
             }
-        }
-        else
-        {
-            var consecutivoTipo =
-                (BancoConsecutivoPor.Tipo | BancoConsecutivoPor.TipoMensual | BancoConsecutivoPor.TipoAnual);
 
-            var consecutivoPor = (BancoConsecutivoPor)configBco.ConsecutivoTransaPor;
-
-            //Si los consecutivos son por tipo
-            if ((consecutivoPor & consecutivoTipo) == consecutivoPor)
+            QueryParams queryParams = new QueryParams
             {
-                consecutivoBcoDetalleList = await repoConsecutivoBcoDetalle.GetAlls(yearMonthParams);
+                Uidcia = companyId,
+                Pagina = 1,
+                RecordsPorPagina = 0
+            };
 
-                if (consecutivoBcoDetalleList is null || consecutivoBcoDetalleList.Count == 0)
+            YearMonthParams yearMonthParams = new YearMonthParams
+            {
+                Uidcia = companyId,
+                Yearfiscal = fiscalYear,
+                Mesfiscal = fiscalMonth,
+                Pagina = 1,
+                RecordsPorPagina = 0
+            };
+
+            var configBco = await repoConfigBco.GetByCia(companyId);
+            if (configBco is null)
+            {
+                return TypedResults.NotFound("Configuración de banco no encontrada");
+            }
+
+            transaccionBcoTipoList = await repoTipo.GetAlls(queryParams);
+
+            if (transaccionBcoTipoList is null || transaccionBcoTipoList.Count == 0)
+            {
+                return TypedResults.NotFound("Tipos de transacciones bancarias no encontrados");
+            }
+
+            transaccionBcoTipoModel = transaccionBcoTipoList
+                .FirstOrDefault(x => x.Numero == tipo);
+
+            if (transaccionBcoTipoModel is null)
+            {
+                return TypedResults.NotFound("Tipo de transaccion bancaria no encontrado");
+            }
+
+            transaccionBcoSubtipoList = await repoSubtipo.GetAlls(queryParams);
+
+            if (transaccionBcoSubtipoList is null || transaccionBcoSubtipoList.Count == 0)
+            {
+                return TypedResults.NotFound("Subtipos de transacciones bancarias no encontrados");
+            }
+
+            transaccionBcoSubtipoModel = transaccionBcoSubtipoList
+                .FirstOrDefault(x => 
+                    x.UidRegistPad == transaccionBcoTipoModel.UidRegist &&
+                    x.Numero == subtipo);
+
+            if (transaccionBcoSubtipoModel is null)
+            {
+                return TypedResults.NotFound("Subtipo de transaccion bancaria no encontrado");
+            }
+
+            var transaTipo = (TransaccionBcoTipo)tipo;
+
+            //Si es pago, sacar el consecutivo de la cuenta
+            if (transaTipo == TransaccionBcoTipo.Pago &&
+                (TransaccionBcoPagoSubtipo)subtipo == TransaccionBcoPagoSubtipo.MesaCambio)
+            {
+                cuentaModel = await repoCuentaBancaria.GetById(bankAccountId);
+
+                if (cuentaModel is null)
                 {
-                    return TypedResults.NotFound("Detalles de consecutivos no encontrados");
-                }
-
-                consecutivoBcoDetalleModel = consecutivoBcoDetalleList
-                    .FirstOrDefault(x => x.Categoria == AC.CategoryByDefault &&
-                                         x.Codigo == transaccionBcoSubtipoModel.Codigo);
-
-                if (consecutivoBcoDetalleModel is null)
-                {
-                    return TypedResults.NotFound("Detalle de consecutivo no encontrado");
+                    return TypedResults.NotFound("Cuenta bancaria no encontrada");
                 }
 
                 switch (consecutivo)
                 {
                     case ConsecutivoTipo.Temporal:
-                        consecutivoBcoDetalleModel.ContadorTemporal++;
-                        numberTransa = (int)consecutivoBcoDetalleModel.ContadorTemporal;
-                        await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+                        cuentaModel.ContadorTemporalExchange++;
+                        numberTransa = (int)cuentaModel.ContadorTemporalExchange;
+                        await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
 
                         break;
                     case ConsecutivoTipo.Perpetuo:
-                        consecutivoBcoDetalleModel.Contador++;
-                        numberTransa = (int)consecutivoBcoDetalleModel.Contador;
+                        cuentaModel.ContadorExchange++;
+                        numberTransa = (int)cuentaModel.ContadorExchange;
 
                         if (isSave)
-                            await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+                            await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
 
                         break;
                 }
-
             }
             else
             {
-                consecutivoBcoList = await repoConsecutivoBco.GetAlls(queryParams);
+                var consecutivoTipo =
+                    (BancoConsecutivoPor.Tipo | BancoConsecutivoPor.TipoMensual | BancoConsecutivoPor.TipoAnual);
 
-                if (consecutivoBcoList is null || consecutivoBcoList.Count == 0)
+                var consecutivoPor = (BancoConsecutivoPor)configBco.ConsecutivoTransaPor;
+
+                //Si los consecutivos son por tipo
+                if ((consecutivoPor & consecutivoTipo) == consecutivoPor)
                 {
-                    return TypedResults.NotFound("Consecutivos no encontrados");
+                    consecutivoBcoDetalleList = await repoConsecutivoBcoDetalle.GetAlls(yearMonthParams);
+
+                    if (consecutivoBcoDetalleList is null || consecutivoBcoDetalleList.Count == 0)
+                    {
+                        return TypedResults.NotFound("Detalles de consecutivos no encontrados");
+                    }
+
+                    consecutivoBcoDetalleModel = consecutivoBcoDetalleList
+                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryByDefault &&
+                                             x.Codigo.Trim() == transaccionBcoSubtipoModel.Codigo.Trim());
+
+                    if (consecutivoBcoDetalleModel is null)
+                    {
+                        return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryByDefault}-{transaccionBcoSubtipoModel.Codigo.Trim()} no encontrado");
+                    }
+
+                    switch (consecutivo)
+                    {
+                        case ConsecutivoTipo.Temporal:
+                            consecutivoBcoDetalleModel.ContadorTemporal++;
+                            numberTransa = (int)consecutivoBcoDetalleModel.ContadorTemporal;
+                            await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+
+                            break;
+                        case ConsecutivoTipo.Perpetuo:
+                            consecutivoBcoDetalleModel.Contador++;
+                            numberTransa = (int)consecutivoBcoDetalleModel.Contador;
+
+                            if (isSave)
+                                await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+
+                            break;
+                    }
+
                 }
-
-                consecutivoBcoModel = consecutivoBcoList
-                    .FirstOrDefault(x => x.Categoria == AC.CategoryByDefault &&
-                                         x.Codigo == AC.CategoryByDefault);
-
-                if (consecutivoBcoModel is null)
+                else
                 {
-                    return TypedResults.NotFound("Consecutivo no encontrado");
-                }
+                    consecutivoBcoList = await repoConsecutivoBco.GetAlls(queryParams);
 
-                switch (consecutivo)
-                {
-                    case ConsecutivoTipo.Temporal:
-                        consecutivoBcoModel.ContadorTemporal++;
-                        numberTransa = (int)consecutivoBcoModel.ContadorTemporal;
-                        await repoConsecutivoBco.Update(mapper.Map<ConsecutivosBcoDtoUpdate>(consecutivoBcoModel));
+                    if (consecutivoBcoList is null || consecutivoBcoList.Count == 0)
+                    {
+                        return TypedResults.NotFound("Consecutivos no encontrados");
+                    }
 
-                        break;
-                    case ConsecutivoTipo.Perpetuo:
-                        consecutivoBcoModel.Contador++;
-                        numberTransa = (int)consecutivoBcoModel.Contador;
+                    consecutivoBcoModel = consecutivoBcoList
+                        .FirstOrDefault(x => x.Categoria == AC.CategoryByDefault &&
+                                             x.Codigo == AC.CategoryByDefault);
 
-                        if (isSave)
+                    if (consecutivoBcoModel is null)
+                    {
+                        return TypedResults.NotFound("Consecutivo no encontrado");
+                    }
+
+                    switch (consecutivo)
+                    {
+                        case ConsecutivoTipo.Temporal:
+                            consecutivoBcoModel.ContadorTemporal++;
+                            numberTransa = (int)consecutivoBcoModel.ContadorTemporal;
                             await repoConsecutivoBco.Update(mapper.Map<ConsecutivosBcoDtoUpdate>(consecutivoBcoModel));
 
-                        break;
+                            break;
+                        case ConsecutivoTipo.Perpetuo:
+                            consecutivoBcoModel.Contador++;
+                            numberTransa = (int)consecutivoBcoModel.Contador;
+
+                            if (isSave)
+                                await repoConsecutivoBco.Update(mapper.Map<ConsecutivosBcoDtoUpdate>(consecutivoBcoModel));
+
+                            break;
+                    }
                 }
             }
+
+            response.NumberTransa = numberTransa.ToString()
+                .PadLeft(AC.TransactionTotalDigitsNumberDefault, AC.CharDefaultEmpty);
+            response.TipoId = transaccionBcoTipoModel.UidRegist;
+            response.SubtipoId = transaccionBcoSubtipoModel.UidRegist;
+
+            return TypedResults.Ok(response);
         }
-
-        numberFull = numberTransa.ToString()
-            .PadLeft(AC.TransactionTotalDigitsNumberDefault, AC.CharDefaultEmpty);
-
-        return TypedResults.Ok(numberFull);
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
-    static async Task<Results<Created<TransaccionesBcoDto>, BadRequest, NotFound, BadRequest<string>
+    static async Task<Results<Created<TransaccionesBcoDto>, NotFound<string>, BadRequest<string>
        , ValidationProblem>>
        Create(TransaccionesBcoDtoCreate modelDtoCreate
        , IRepositorioTransaccionBco repo, IOutputCacheStore outputCacheStore
-       , IMapper mapper, IServicioUsuarios srvUser)
+       , IMapper mapper, IServicioUsuarios srvUser, IValidator<TransaccionesBcoDtoCreate> validator)
     {
         try
         {
@@ -298,13 +358,20 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.BadRequest(AC.UserNotFound);
             }
 
+            var resultadoValidacion = await validator.ValidateAsync(modelDtoCreate);
+            if (!resultadoValidacion.IsValid)
+            {
+                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
+            }
+
+
             var uid = await repo.Create(modelDtoCreate);
 
             var dataItem = await repo.GetById(uid);
 
             if (dataItem is null)
             {
-                return TypedResults.NotFound();
+                return TypedResults.NotFound("Transacción bancaria no encontrada");
             }
 
             var objDto = mapper.Map<TransaccionesBcoDto>(dataItem);
@@ -324,10 +391,19 @@ public static class TransaccionBcoEndpoints
         Update(Guid id, TransaccionesBcoDtoUpdate modelDtoUpdate
             , IRepositorioTransaccionBco repo, IOutputCacheStore outputCacheStore
             , IMapper mapper
+            , IServicioUsuarios srvUser
             , IValidator<TransaccionesBcoDtoUpdate> validator)
     {
         try
         {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
             var resultadoValidacion = await validator.ValidateAsync(modelDtoUpdate);
             if (!resultadoValidacion.IsValid)
             {
@@ -350,24 +426,41 @@ public static class TransaccionBcoEndpoints
         }
     }
 
-    static async Task<Results<NoContent, NotFound>> Delete(
+    static async Task<Results<NoContent, NotFound, BadRequest<string>>> Delete(
         Guid id,
         IRepositorioTransaccionBco repo,
         IRepositorioTransaccionBcoDetalle repoChildren,
-        IOutputCacheStore outputCacheStore)
+        IOutputCacheStore outputCacheStore,
+        IServicioUsuarios srvUser)
     {
-        var objDB = await repo.GetById(id);
-
-        if (objDB is null)
+        try
         {
-            return TypedResults.NotFound();
-        }
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        //Eliminar los hijos
-        await repoChildren.DeleteByParent(id);
-        await repo.Delete(id);
-        await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
-        return TypedResults.NoContent();
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+
+            var objDB = await repo.GetById(id);
+
+            if (objDB is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            //Eliminar los hijos
+            await repoChildren.DeleteByParent(id);
+            await repo.Delete(id);
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
+            return TypedResults.NoContent();
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 
 }

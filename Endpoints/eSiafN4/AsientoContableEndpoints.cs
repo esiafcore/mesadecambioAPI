@@ -24,14 +24,14 @@ public static class AsientoContableEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<AsientosContablesDto>>, BadRequest<string>>> GetAlls(Guid uidcia, int yearfiscal, int mesfiscal
+    static async Task<Results<Ok<List<AsientosContablesDto>>, BadRequest<string>>> GetAlls(Guid companyId, int yearfiscal, int mesfiscal
         , IRepositorioAsientoContable repo
         , IMapper mapper
         , int pagina = 1, int recordsPorPagina = 10)
     {
         YearMonthParams queryParams = new()
         {
-            Uidcia = uidcia,
+            Uidcia = companyId,
             Yearfiscal = yearfiscal,
             Mesfiscal = mesfiscal,
             Pagina = pagina,

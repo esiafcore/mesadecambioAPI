@@ -29,7 +29,7 @@ public static class ConsecutivosBcoDetalleEndpoints
     }
 
     static async Task<Results<Ok<List<ConsecutivosBcoDetalleDto>>
-        , NotFound<string>, BadRequest<string>>> GetAlls(Guid uidcia
+        , NotFound<string>, BadRequest<string>>> GetAlls(Guid companyId
         , IRepositorioConsecutivoBcoDetalle repo
         , IMapper mapper, ILoggerManager logger
         , IServicioUsuarios srvUser
@@ -48,7 +48,7 @@ public static class ConsecutivosBcoDetalleEndpoints
 
             YearMonthParams queryParams = new()
             {
-                Uidcia = uidcia,
+                Uidcia = companyId,
                 Pagina = pagina,
                 Yearfiscal = yearfiscal,
                 Mesfiscal = mesfiscal,
@@ -81,32 +81,49 @@ public static class ConsecutivosBcoDetalleEndpoints
         , IRepositorioConsecutivoBcoDetalle repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
-        //Obtener usuario
-        var usuario = await srvUser.ObtenerUsuario();
-
-        if (usuario is null)
+        try
         {
-            return TypedResults.BadRequest(AC.UserNotFound);
-        }
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        var dataItem = await repo.GetById(id);
-        if (dataItem is null)
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var dataItem = await repo.GetById(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound();
+            }
+            var objItem = mapper.Map<ConsecutivosBcoDetalleDto>(dataItem);
+
+            return TypedResults.Ok(objItem);
+
+        }
+        catch (Exception e)
         {
-            return TypedResults.NotFound();
+            return TypedResults.BadRequest(e.Message);
         }
-        var objItem = mapper.Map<ConsecutivosBcoDetalleDto>(dataItem);
-
-        return TypedResults.Ok(objItem);
     }
 
     static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
         Update(Guid id, ConsecutivosBcoDetalleDtoUpdate modelDtoUpdate
             , IRepositorioConsecutivoBcoDetalle repo, IOutputCacheStore outputCacheStore
             , IMapper mapper
+            , IServicioUsuarios srvUser
             , IValidator<ConsecutivosBcoDetalleDtoUpdate> validator)
     {
         try
         {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
             var resultadoValidacion = await validator.ValidateAsync(modelDtoUpdate);
             if (!resultadoValidacion.IsValid)
             {

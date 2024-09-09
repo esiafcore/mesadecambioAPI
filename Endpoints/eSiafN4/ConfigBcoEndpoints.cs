@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OutputCaching;
-using FluentValidation;
 using XanesN8.Api.DTOs.eSiafN4;
 using XanesN8.Api.Repositorios.eSiafN4;
 using XanesN8.Api.Servicios;
-using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.LoggerManager;
 
@@ -73,21 +70,30 @@ public static class ConfigBcoEndpoints
         , IRepositorioConfigBco repo
         , IMapper mapper, IServicioUsuarios srvUser)
     {
-        //Obtener usuario
-        var usuario = await srvUser.ObtenerUsuario();
 
-        if (usuario is null)
+        try
         {
-            return TypedResults.BadRequest(AC.UserNotFound);
-        }
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
 
-        var dataItem = await repo.GetByCia(id);
-        if (dataItem is null)
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var dataItem = await repo.GetByCia(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound();
+            }
+            var objItem = mapper.Map<ConfigBcoDto>(dataItem);
+
+            return TypedResults.Ok(objItem);
+
+        }
+        catch (Exception e)
         {
-            return TypedResults.NotFound();
+            return TypedResults.BadRequest(e.Message);
         }
-        var objItem = mapper.Map<ConfigBcoDto>(dataItem);
-
-        return TypedResults.Ok(objItem);
     }
 }

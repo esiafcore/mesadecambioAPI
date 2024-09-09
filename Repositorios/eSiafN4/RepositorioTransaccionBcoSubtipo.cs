@@ -35,7 +35,7 @@ public class RepositorioTransaccionBcoSubtipo : IRepositorioTransaccionBcoSubtip
 
         var objList = await conexion
             .QueryAsync<TransaccionesBcoSubtipos>(sql: @"bco.usp_transaccionesbcosubtipos_getall"
-            , param: queryParams, commandType: CommandType.StoredProcedure);
+            , param: new { queryParams.Uidcia }, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
             sql: @"bco.usp_transaccionesbcosubtipos_count"
