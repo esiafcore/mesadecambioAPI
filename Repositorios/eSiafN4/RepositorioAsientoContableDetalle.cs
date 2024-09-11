@@ -9,12 +9,12 @@ using XanesN8.Api.Entidades.eSiafN4;
 
 namespace XanesN8.Api.Repositorios.eSiafN4;
 
-public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetalle
+public class RepositorioAsientoContableDetalle : IRepositorioAsientoContableDetalle
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;
 
-    public RepositorioTransaccionBcoDetalle(IConfiguration configuration
+    public RepositorioAsientoContableDetalle(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
         _connectionString = configuration.GetConnectionString(AC.EsiafN4Cnx)!;
@@ -29,16 +29,16 @@ public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetall
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<TransaccionesBcoDetalle>> GetAlls(YearMonthParams queryParams)
+    public async Task<List<AsientosContablesDetalle>> GetAlls(YearMonthParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<TransaccionesBcoDetalle>(sql: @"bco.usp_transaccionesbcodetalle_getall"
+            .QueryAsync<AsientosContablesDetalle>(sql: @"cnt.usp_asientoscontablesdetalle_getall"
             , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.usp_transaccionesbcodetalle_count"
+            sql: @"cnt.usp_asientoscontablesdetalle_count"
             , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
             , commandType: CommandType.StoredProcedure);
 
@@ -56,27 +56,27 @@ public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetall
         return objList.ToList();
     }
 
-    public async Task<TransaccionesBcoDetalle?> GetById(Guid id)
+    public async Task<AsientosContablesDetalle?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<TransaccionesBcoDetalle>(sql: @"bco.usp_transaccionesbcodetalle_getid"
+            .QueryFirstOrDefaultAsync<AsientosContablesDetalle>(sql: @"cnt.usp_asientoscontablesdetalle_getid"
             , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
 
-    public async Task<List<TransaccionesBcoDetalle>> GetAllByParent(ParentYearMonthParams queryParams)
+    public async Task<List<AsientosContablesDetalle>> GetAllByParent(ParentYearMonthParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<TransaccionesBcoDetalle>(sql: @"bco.usp_transaccionesbcodetalle_getbyparent"
+            .QueryAsync<AsientosContablesDetalle>(sql: @"cnt.usp_asientoscontablesdetalle_getbyparent"
                 , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.usp_transaccionesbcodetalle_count"
+            sql: @"cnt.usp_asientoscontablesdetalle_count"
             , param: new { queryParams.UidParent, queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
             , commandType: CommandType.StoredProcedure);
 
@@ -94,27 +94,27 @@ public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetall
         return objList.ToList();
     }
 
-    public async Task<Guid> Create(TransaccionesBcoDetalleDtoCreate obj)
+    public async Task<Guid> Create(AsientosContablesDetalleDtoCreate obj)
     {
         using var conexion = new SqlConnection(_connectionString);
         Guid uidRegist = Guid.NewGuid();
         obj.UidRegist = uidRegist;
         var idResult = await conexion
             .ExecuteAsync(
-                "bco.usp_transaccionesbcodetalle_create",
+                "cnt.usp_asientoscontablesdetalle_create",
                     obj,
                     commandType: CommandType.StoredProcedure);
 
         return await Task.FromResult(uidRegist);
     }
 
-    public async Task Update(TransaccionesBcoDetalleDtoUpdate obj)
+    public async Task Update(AsientosContablesDetalleDtoUpdate obj)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var idResult = await conexion
             .ExecuteAsync(
-                "bco.usp_transaccionesbcodetalle_update",
+                "cnt.usp_asientoscontablesdetalle_update",
                 obj,
                 commandType: CommandType.StoredProcedure);
     }
@@ -122,19 +122,19 @@ public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetall
     public async Task Delete(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        await conexion.ExecuteAsync("bco.usp_transaccionesbcodetalle_delete", new { uidregist = id });
+        await conexion.ExecuteAsync("cnt.usp_asientoscontablesdetalle_delete", new { uidregist = id });
     }
 
     public async Task DeleteByParent(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        await conexion.ExecuteAsync("bco.usp_transaccionesbcodetalle_deletebyparent", new { uidregist = id });
+        await conexion.ExecuteAsync("cnt.usp_asientoscontablesdetalle_deletebyparent", new { uidregist = id });
     }
 
     public async Task<bool> Exist(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_transaccionesbcodetalle_isexist"
+        var existe = await conexion.QuerySingleAsync<bool>("cnt.usp_asientoscontablesdetalle_isexist"
             , param: new { id }
             , commandType: CommandType.StoredProcedure);
         return existe;

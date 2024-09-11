@@ -41,7 +41,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ILoggerManager,LoggerManager>();
-builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
 builder.Services.AddScoped<IRepositorioTransaccionBcoDetalle, RepositorioTransaccionBcoDetalle>();
@@ -51,6 +50,11 @@ builder.Services.AddScoped<IRepositorioConsecutivoBcoDetalle, RepositorioConsecu
 builder.Services.AddScoped<IRepositorioConfigBco, RepositorioConfigBco>();
 builder.Services.AddScoped<IRepositorioTransaccionBcoTipo, RepositorioTransaccionBcoTipo>();
 builder.Services.AddScoped<IRepositorioTransaccionBcoSubtipo, RepositorioTransaccionBcoSubtipo>();
+builder.Services.AddScoped<IRepositorioAsientoContable, RepositorioAsientoContable>();
+builder.Services.AddScoped<IRepositorioAsientoContableDetalle, RepositorioAsientoContableDetalle>();
+builder.Services.AddScoped<IRepositorioConsecutivoCnt, RepositorioConsecutivoCnt>();
+builder.Services.AddScoped<IRepositorioConsecutivoCntDetalle, RepositorioConsecutivoCntDetalle>();
+builder.Services.AddScoped<IRepositorioConfigCnt, RepositorioConfigCnt>();
 
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
 builder.Services.AddScoped<IRepositorioQuotationHeaderLegacy, RepositorioQuotationHeaderLegacy>();

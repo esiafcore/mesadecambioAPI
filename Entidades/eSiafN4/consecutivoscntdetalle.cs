@@ -2,7 +2,7 @@
 
 namespace XanesN8.Api.Entidades.eSiafN4
 {
-    public partial class TransaccionesBcoDetalle {
+    public partial class ConsecutivosCntDetalle {
 
         [Key]
         [Required()]
@@ -11,96 +11,81 @@ namespace XanesN8.Api.Entidades.eSiafN4
         [Required()]
         public Guid UidCia { get; set; }
 
+        /// <summary>
+        /// Categoria del consecutivo
+        /// </summary>
+        [StringLength(5)]
         [Required()]
-        public Guid UidRegistPad { get; set; }
+        public string Categoria { get; set; }
 
-        [Required()]
-        public Guid UidCuentaContable { get; set; }
-
-        public Guid? UidCentroCostoContable { get; set; }
-
-        public Guid? UidAuxiliarContable { get; set; }
-
-        public Guid? UidCuentaPresupuesto { get; set; }
-
-        public Guid? UidCentroCostoPresupuesto { get; set; }
-
-        public Guid? UidAuxiliarPresupuesto { get; set; }
-
-        public Guid? ProyectoActividadUid { get; set; }
-
-        public Guid? UidDocumento { get; set; }
-
+        /// <summary>
+        /// codigo del tipo de transacción
+        /// </summary>
         [StringLength(10)]
-        public string CodigoDocumento { get; set; }
-
         [Required()]
-        public int NumeroLinea { get; set; }
-
-        [Required()]
-        public short TipoMovimiento { get; set; }
-
-        [Required()]
-        public decimal TipoCambioMonfor { get; set; }
-
-        [Required()]
-        public decimal TipoCambioMonxtr { get; set; }
-
-        [Required()]
-        public decimal TipoCambioParaMonfor { get; set; }
-
-        [Required()]
-        public decimal TipoCambioParaMonxtr { get; set; }
-
-        [Required()]
-        public decimal MontoMonbas { get; set; }
-
-        [Required()]
-        public decimal MontoMonfor { get; set; }
-
-        [Required()]
-        public decimal MontoMonxtr { get; set; }
+        public string Codigo { get; set; }
 
         /// <summary>
-        /// Uid beneficiario
+        /// Nombre del campo
         /// </summary>
-        public Guid? UidBeneficiario { get; set; }
+        [StringLength(150)]
+        [Required()]
+        public string NombreCampo { get; set; }
 
         /// <summary>
-        /// Uid entidad
-        /// </summary>
-        public Guid? UidEntidad { get; set; }
-
-        /// <summary>
-        /// Tipo de beneficiario
-        /// </summary>
-        public short? TipoBeneficiario { get; set; }
-
-        /// <summary>
-        /// Indicador - Partida del diferencial
+        /// Contador
         /// </summary>
         [Required()]
-        public bool IndDiferencial { get; set; }
+        public long Contador { get; set; }
 
         /// <summary>
-        /// Comentario de la línea
-        /// </summary>
-        [StringLength(250)]
-        public string Comentarios { get; set; }
-
-        /// <summary>
-        /// Tipo de registro
-        /// </summary>
-        public short? TipoRegistro { get; set; }
-
-        /// <summary>
-        /// Indicador Partida de Cuadratura contable del asiento
+        /// Contador temporal
         /// </summary>
         [Required()]
-        public bool InddeCuadratura { get; set; }
+        public long ContadorTemporal { get; set; }
 
+        /// <summary>
+        /// Formato contador
+        /// </summary>
+        [StringLength(15)]
         [Required()]
-        public short NumeroTipoCambio { get; set; }
+        public string FormatoContador { get; set; }
+
+        /// <summary>
+        /// Formato contador temporal
+        /// </summary>
+        [StringLength(15)]
+        [Required()]
+        public string FormatoContadorTemporal { get; set; }
+
+        /// <summary>
+        /// # de ceros del padding izquierdo contador
+        /// </summary>
+        [Required()]
+        public short ContadorPaddingIzquierdo { get; set; }
+
+        /// <summary>
+        /// # de ceros del padding izquierdo contador temporal
+        /// </summary>
+        [Required()]
+        public short ContadorTemporalPaddingIzquierdo { get; set; }
+
+        /// <summary>
+        /// Año Fiscal
+        /// </summary>
+        [Required()]
+        public short YearFiscal { get; set; }
+
+        /// <summary>
+        /// Mes fiscal
+        /// </summary>
+        [Required()]
+        public short MesFiscal { get; set; }
+
+        /// <summary>
+        /// Indicador de registro en uso
+        /// </summary>
+        public bool? IndAplicar { get; set; }
 
         /// <summary>
         /// Fecha de creación del registro
@@ -169,8 +154,6 @@ namespace XanesN8.Api.Entidades.eSiafN4
         [StringLength(48)]
         [Required()]
         public string ModIps { get; set; }
-
-        //public virtual TransaccionesBco transaccionesbco { get; set; }
 
         #region Extensibility Method Definitions
 

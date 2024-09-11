@@ -3,64 +3,33 @@ using System.ComponentModel.DataAnnotations;
 
 namespace XanesN8.Api.Entidades.eSiafN4
 {
-    /// <summary>
-    /// Transacciones banco
-    /// </summary>
     public partial class TransaccionesBco
     {
-
-        /// <summary>
-        /// Uid registro
-        /// </summary>
         [Key]
         [Required()]
         public Guid UidRegist { get; set; }
 
-        /// <summary>
-        /// Uid cia
-        /// </summary>
         [Required()]
         public Guid UidCia { get; set; }
 
-        /// <summary>
-        /// Uid banco
-        /// </summary>
         [Required()]
         public Guid UidBanco { get; set; }
 
-        /// <summary>
-        /// Uid cuenta bancaria
-        /// </summary>
         [Required()]
         public Guid UidCuentaBancaria { get; set; }
 
-        /// <summary>
-        /// Uid cuenta bancaria de referencia. Para transferencias
-        /// </summary>
         public Guid? UidCuentaBancariaRef { get; set; }
 
-        /// <summary>
-        /// Fecha del registro
-        /// </summary>
         [Required()]
         public DateTime FechaTransa { get; set; }
 
-        /// <summary>
-        /// Año/Mes Fiscal
-        /// </summary>
         [StringLength(6)]
         [Required()]
         public string YearMonthFiscal { get; set; } = null!;
 
-        /// <summary>
-        /// Año fiscal
-        /// </summary>
         [Required()]
         public short YearFiscal { get; set; }
 
-        /// <summary>
-        /// Mes fiscal
-        /// </summary>
         [Required()]
         public short MesFiscal { get; set; }
 
@@ -149,13 +118,13 @@ namespace XanesN8.Api.Entidades.eSiafN4
         /// Tipo de cambio paralelo moneda foránea
         /// </summary>
         [Required()]
-        public decimal TipoCambioparaMonfor { get; set; }
+        public decimal TipoCambioParaMonfor { get; set; }
 
         /// <summary>
         /// Tipo de cambio paralelo moneda foránea adicional
         /// </summary>
         [Required()]
-        public decimal TipoCambioparaMonxtr { get; set; }
+        public decimal TipoCambioParaMonxtr { get; set; }
 
         /// <summary>
         /// # de objeto

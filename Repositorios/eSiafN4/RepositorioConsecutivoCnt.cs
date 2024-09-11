@@ -1,20 +1,20 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using XanesN8.Api;
 using XanesN8.Api.DTOs.eSiafN4;
+using XanesN8.Api.Entidades.eSiafN4;
 using XanesN8.Api.FiltersParameters;
 using XanesN8.Api.Utilidades;
-using XanesN8.Api.Entidades.eSiafN4;
 
 namespace XanesN8.Api.Repositorios.eSiafN4;
 
-public class RepositorioTransaccionBco : IRepositorioTransaccionBco
+public class RepositorioConsecutivoCnt : IRepositorioConsecutivoCnt
 {
     private readonly string _connectionString;
     private readonly HttpContext _httpContext;
 
-    public RepositorioTransaccionBco(IConfiguration configuration
+    public RepositorioConsecutivoCnt(IConfiguration configuration
         , IHttpContextAccessor httpContextAccessor)
     {
         _connectionString = configuration.GetConnectionString(AC.EsiafN4Cnx)!;
@@ -29,17 +29,17 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
         _httpContext = httpContextAccessor.HttpContext!;
     }
 
-    public async Task<List<TransaccionesBco>> GetAlls(YearMonthParams queryParams)
+    public async Task<List<ConsecutivosCnt>> GetAlls(QueryParams queryParams)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var objList = await conexion
-            .QueryAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getall"
-            , param: queryParams, commandType: CommandType.StoredProcedure);
+            .QueryAsync<ConsecutivosCnt>(sql: @"cnt.usp_consecutivoscnt_getall"
+                , param: queryParams, commandType: CommandType.StoredProcedure);
 
         var cantidadRegistros = await conexion.QuerySingleAsync<int>(
-            sql: @"bco.usp_transaccionesbco_count"
-            , param: new { queryParams.Uidcia, queryParams.Yearfiscal, queryParams.Mesfiscal }
+            sql: @"cnt.usp_consecutivoscnt_count"
+            , param: new { queryParams.Uidcia }
             , commandType: CommandType.StoredProcedure);
 
         _httpContext.Response.Headers.Append("cantidadTotalRegistros",
@@ -56,50 +56,30 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
         return objList.ToList();
     }
 
-    public async Task<TransaccionesBco?> GetById(Guid id)
+    public async Task<ConsecutivosCnt?> GetById(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<TransaccionesBco>(sql: @"bco.usp_transaccionesbco_getid"
-            , param: new { uidregist = id }
-            , commandType: CommandType.StoredProcedure);
+            .QueryFirstOrDefaultAsync<ConsecutivosCnt>(sql: @"cnt.usp_consecutivoscnt_getid"
+                , param: new { uidregist = id }
+                , commandType: CommandType.StoredProcedure);
         return dataItem;
     }
 
-    public async Task<Guid> Create(TransaccionesBcoDtoCreate obj)
-    {
-        using var conexion = new SqlConnection(_connectionString);
-        Guid uidRegist = Guid.NewGuid();
-        obj.UidRegist = uidRegist;
-        await conexion.ExecuteAsync(
-            "bco.usp_transaccionesbco_create",
-            obj,
-            commandType: CommandType.StoredProcedure);
-
-        return await Task.FromResult(uidRegist);
-    }
-
-    public async Task Update(TransaccionesBcoDtoUpdate obj)
+    public async Task Update(ConsecutivosCntDtoUpdate objUpdate)
     {
         using var conexion = new SqlConnection(_connectionString);
 
-        await conexion.ExecuteAsync(
-            "bco.usp_transaccionesbco_update",
-            obj,
-            commandType: CommandType.StoredProcedure);
-    }
-
-    public async Task Delete(Guid id)
-    {
-        using var conexion = new SqlConnection(_connectionString);
-        await conexion.ExecuteAsync("bco.usp_transaccionesbco_delete", new { uidregist = id });
+        var idResult = await conexion.ExecuteAsync("cnt.usp_consecutivoscnt_update",
+            objUpdate, commandType: CommandType.StoredProcedure);
+        throw new NotImplementedException();
     }
 
     public async Task<bool> Exist(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        var existe = await conexion.QuerySingleAsync<bool>("bco.usp_transaccionesbco_isexist"
+        var existe = await conexion.QuerySingleAsync<bool>("cnt.usp_consecutivoscnt_isexist"
             , param: new { id }
             , commandType: CommandType.StoredProcedure);
         return existe;

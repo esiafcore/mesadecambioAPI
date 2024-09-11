@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using XanesN8.Api;
 using XanesN8.Api.Repositorios.eSiafN4;
 using XanesN8.Api.DTOs.eSiafN4;
 using XanesN8.Api.FiltersParameters;
@@ -32,7 +31,7 @@ public static class TransaccionBcoEndpoints
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDtoCreate>>()
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update)
             .RequireAuthorization(AC.IsAdminClaim);

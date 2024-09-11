@@ -32,7 +32,7 @@ public static class TransaccionBcoDetalleEndpoints
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDetalleDtoCreate>>()
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update)
             .RequireAuthorization(AC.IsAdminClaim);

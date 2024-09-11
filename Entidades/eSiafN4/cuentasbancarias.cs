@@ -2,39 +2,21 @@
 
 namespace XanesN8.Api.Entidades.eSiafN4
 {
-    /// <summary>
-    /// Cuentas bancarias
-    /// </summary>
     public partial class CuentasBancarias
     {
 
-        /// <summary>
-        /// Uid registro
-        /// </summary>
         [Key]
         [Required()]
         public Guid UidRegist { get; set; }
 
-        /// <summary>
-        /// Uid cía
-        /// </summary>
         [Required()]
         public Guid UidCia { get; set; }
 
-        /// <summary>
-        /// Uid cuenta contable
-        /// </summary>
         public Guid? UidCuentaContable { get; set; }
 
-        /// <summary>
-        /// Uid cuenta bancaria
-        /// </summary>
         [Required()]
         public Guid UidBanco { get; set; }
 
-        /// <summary>
-        /// # de tipo de cuenta bancaria
-        /// </summary>
         [Required()]
         public short NumeroTipo { get; set; }
 
