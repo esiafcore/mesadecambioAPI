@@ -31,8 +31,11 @@ public static class AC
     public const string EvictByTagConsecutivosBco = "consecutivosbco-get";
     public const string EvictByTagConsecutivosBcoDetalle = "consecutivosbcodetalle-get";
     public const string EvictByTagConfigBco = "configbco-get";
-
+    public const string EvictByTagConfigCnt = "configcnt-get";
+    public const string EvictByTagConsecutivosCnt = "consecutivoscnt-get";
+    public const string EvictByTagConsecutivosCntDetalle = "consecutivoscntdetalle-get";
     public const string EvictByTagAsientosContables = "asientoscontables-get";
+    public const string EvictByTagAsientosContablesDetalle = "asientoscontablesdetalle-get";
     public const string EvictByTagTransaccionBancarias = "transaccionesbco-get";
     public const string EvictByTagTransaccionBancariasDetalle = "transaccionesbcodetalle-get";
     public const string EvictByTagCustomersLegacy = "customerslegacy-get";

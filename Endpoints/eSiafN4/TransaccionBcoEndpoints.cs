@@ -425,7 +425,7 @@ public static class TransaccionBcoEndpoints
         }
     }
 
-    static async Task<Results<NoContent, NotFound, BadRequest<string>>> Delete(
+    static async Task<Results<NoContent, NotFound<string>, BadRequest<string>>> Delete(
         Guid id,
         IRepositorioTransaccionBco repo,
         IRepositorioTransaccionBcoDetalle repoChildren,
@@ -447,7 +447,7 @@ public static class TransaccionBcoEndpoints
 
             if (objDB is null)
             {
-                return TypedResults.NotFound();
+                return TypedResults.NotFound("Transacción bancaria no encontrada");
             }
 
             //Eliminar los hijos

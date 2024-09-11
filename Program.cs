@@ -147,6 +147,11 @@ app.UseOutputCache();
 app.UseAuthorization();
 
 app.MapGroup("/asientoscontables").MapAsientoContable();
+app.MapGroup("/asientoscontablesdetalle").MapAsientoContableDetalle();
+app.MapGroup("/configcnt").MapConfigCnt();
+app.MapGroup("/consecutivoscnt").MapConsecutivosCnt();
+app.MapGroup("/consecutivoscntdetalle").MapConsecutivosCntDetalle();
+
 app.MapGroup("/bancos").MapBanco();
 app.MapGroup("/transaccionesbco").MapTransaccionBco();
 app.MapGroup("/transaccionesbcodetalle").MapTransaccionBcoDetalle();
