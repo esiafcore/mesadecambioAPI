@@ -11,7 +11,6 @@ public class AutoMapperProfiles : Profile
     public AutoMapperProfiles()
     {
         //eSiafN4
-        CreateMap<AsientosContables, AsientosContablesDto>().ReverseMap();
         CreateMap<Bancos, BancosDto>().ReverseMap();
         CreateMap<BancosDtoCreate, Bancos>().ReverseMap();
 
@@ -42,6 +41,28 @@ public class AutoMapperProfiles : Profile
         CreateMap<TransaccionesBcoSubtipos, TransaccionesBcoSubtipoDto>().ReverseMap();
         CreateMap<TransaccionesBcoSubtipos, TransaccionesBcoSubtipoDtoCreate>().ReverseMap();
         CreateMap<TransaccionesBcoSubtipos, TransaccionesBcoSubtipoDtoUpdate>().ReverseMap();
+
+        CreateMap<AsientosContables, AsientosContablesDto>().ReverseMap();
+        CreateMap<AsientosContables, AsientosContablesDtoCreate>().ReverseMap();
+        CreateMap<AsientosContables, AsientosContablesDtoUpdate>().ReverseMap();
+
+        CreateMap<AsientosContablesDetalle, AsientosContablesDetalleDto>().ReverseMap();
+        CreateMap<AsientosContablesDetalle, AsientosContablesDetalleDtoCreate>().ReverseMap();
+        CreateMap<AsientosContablesDetalle, AsientosContablesDetalleDtoUpdate>().ReverseMap();
+
+        CreateMap<ConfigCnt, ConfigCntDto>().ReverseMap();
+        CreateMap<ConfigCnt, ConfigCntDtoUpdate>().ReverseMap();
+
+        CreateMap<ConsecutivosCnt, ConsecutivosCntDto>().ReverseMap();
+        CreateMap<ConsecutivosCnt, ConsecutivosCntDtoUpdate>().ReverseMap();
+
+        CreateMap<ConsecutivosCntDetalle, ConsecutivosCntDetalleDto>().ReverseMap();
+        CreateMap<ConsecutivosCntDetalle, ConsecutivosCntDetalleDtoUpdate>().ReverseMap();
+
+        CreateMap<Modulos, ModulosDto>().ReverseMap();
+
+        CreateMap<ModulosDocumentos, ModulosDocumentosDto>().ReverseMap();
+
 
         //XanesN4
         CreateMap<Customer, CustomerDto>().ReverseMap();

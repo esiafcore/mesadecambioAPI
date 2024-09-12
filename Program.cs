@@ -55,6 +55,8 @@ builder.Services.AddScoped<IRepositorioAsientoContableDetalle, RepositorioAsient
 builder.Services.AddScoped<IRepositorioConsecutivoCnt, RepositorioConsecutivoCnt>();
 builder.Services.AddScoped<IRepositorioConsecutivoCntDetalle, RepositorioConsecutivoCntDetalle>();
 builder.Services.AddScoped<IRepositorioConfigCnt, RepositorioConfigCnt>();
+builder.Services.AddScoped<IRepositorioModulo, RepositorioModulo>();
+builder.Services.AddScoped<IRepositorioModuloDocumento, RepositorioModuloDocumento>();
 
 builder.Services.AddScoped<IRepositorioQuotation, RepositorioQuotation>();
 builder.Services.AddScoped<IRepositorioQuotationHeaderLegacy, RepositorioQuotationHeaderLegacy>();
@@ -151,6 +153,9 @@ app.MapGroup("/asientoscontablesdetalle").MapAsientoContableDetalle();
 app.MapGroup("/configcnt").MapConfigCnt();
 app.MapGroup("/consecutivoscnt").MapConsecutivosCnt();
 app.MapGroup("/consecutivoscntdetalle").MapConsecutivosCntDetalle();
+app.MapGroup("/modulos").MapModulo();
+app.MapGroup("/modulosdocumentos").MapModuloDocumento();
+
 
 app.MapGroup("/bancos").MapBanco();
 app.MapGroup("/transaccionesbco").MapTransaccionBco();
