@@ -60,7 +60,7 @@ public class RepositorioConfigCnt : IRepositorioConfigCnt
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<ConfigCnt>(sql: @"cnt.usp_configcnt_getid"
+            .QueryFirstOrDefaultAsync<ConfigCnt>(sql: @"cnt.usp_configcnt_getbyid"
                 , param: new { uidCia = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

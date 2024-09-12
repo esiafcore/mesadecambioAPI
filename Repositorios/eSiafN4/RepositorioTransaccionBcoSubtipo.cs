@@ -61,7 +61,7 @@ public class RepositorioTransaccionBcoSubtipo : IRepositorioTransaccionBcoSubtip
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<TransaccionesBcoSubtipos>(sql: @"bco.usp_transaccionesbcosubtipos_getid"
+            .QueryFirstOrDefaultAsync<TransaccionesBcoSubtipos>(sql: @"bco.usp_transaccionesbcosubtipos_getbyid"
             , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;

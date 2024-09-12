@@ -61,7 +61,7 @@ public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getid"
+            .QueryFirstOrDefaultAsync<CuentasBancarias>(sql: @"bco.usp_cuentasbancarias_getbyid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

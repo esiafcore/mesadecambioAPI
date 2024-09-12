@@ -61,7 +61,7 @@ public class RepositorioAsientoContableDetalle : IRepositorioAsientoContableDeta
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<AsientosContablesDetalle>(sql: @"cnt.usp_asientoscontablesdetalle_getid"
+            .QueryFirstOrDefaultAsync<AsientosContablesDetalle>(sql: @"cnt.usp_asientoscontablesdetalle_getbyid"
             , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;

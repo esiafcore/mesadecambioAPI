@@ -61,7 +61,7 @@ public class RepositorioTransaccionBcoDetalle : IRepositorioTransaccionBcoDetall
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<TransaccionesBcoDetalle>(sql: @"bco.usp_transaccionesbcodetalle_getid"
+            .QueryFirstOrDefaultAsync<TransaccionesBcoDetalle>(sql: @"bco.usp_transaccionesbcodetalle_getbyid"
             , param: new { uidregist = id }
             , commandType: CommandType.StoredProcedure);
         return dataItem;

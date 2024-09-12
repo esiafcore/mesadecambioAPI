@@ -61,7 +61,7 @@ public class RepositorioConsecutivoBcoDetalle : IRepositorioConsecutivoBcoDetall
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<ConsecutivosBcoDetalle>(sql: @"bco.usp_consecutivosbcodetalle_getid"
+            .QueryFirstOrDefaultAsync<ConsecutivosBcoDetalle>(sql: @"bco.usp_consecutivosbcodetalle_getbyid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

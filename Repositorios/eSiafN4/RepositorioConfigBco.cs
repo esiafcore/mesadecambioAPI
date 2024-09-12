@@ -60,7 +60,7 @@ public class RepositorioConfigBco : IRepositorioConfigBco
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<ConfigBco>(sql: @"bco.usp_configbco_getid"
+            .QueryFirstOrDefaultAsync<ConfigBco>(sql: @"bco.usp_configbco_getbyid"
                 , param: new { uidCia = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

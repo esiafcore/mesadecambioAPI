@@ -61,7 +61,7 @@ public class RepositorioConsecutivoCnt : IRepositorioConsecutivoCnt
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<ConsecutivosCnt>(sql: @"cnt.usp_consecutivoscnt_getid"
+            .QueryFirstOrDefaultAsync<ConsecutivosCnt>(sql: @"cnt.usp_consecutivoscnt_getbyid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;

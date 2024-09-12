@@ -60,7 +60,7 @@ public class RepositorioBanco : IRepositorioBanco
         using var conexion = new SqlConnection(_connectionString);
 
         var dataItem = await conexion
-            .QueryFirstOrDefaultAsync<Bancos>(sql: @"bco.usp_bancos_getid"
+            .QueryFirstOrDefaultAsync<Bancos>(sql: @"bco.usp_bancos_getbyid"
                 , param: new { uidregist = id }
                 , commandType: CommandType.StoredProcedure);
         return dataItem;
