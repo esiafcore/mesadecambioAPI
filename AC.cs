@@ -3,7 +3,8 @@
 // ReSharper disable once InconsistentNaming
 public static class AC
 {
-    public const string CategoryByDefault = "BCO";
+    public const string CategoryBcoByDefault = "BCO";
+    public const string CategoryCntByDefault = "CNT";
 
     //Conexiones
     public const string EsiafN4Cnx = "eSIAFN4Connection";

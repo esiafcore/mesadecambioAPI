@@ -14,6 +14,17 @@ public static class Enumeradores
     }
 
     [Flags]
+    public enum ContabilidadConsecutivoPor : int
+    {
+        Categoria = 1,
+        CategoriaMensual = 2,
+        CategoriaAnual = 4,
+        Tipo = 8,
+        TipoMensual = 16,
+        TipoAnual = 32
+    }
+
+    [Flags]
     public enum ConsecutivoTipo : int
     {
         Temporal = 1,

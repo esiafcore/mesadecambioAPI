@@ -263,12 +263,12 @@ public static class TransaccionBcoEndpoints
                     }
 
                     consecutivoBcoDetalleModel = consecutivoBcoDetalleList
-                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryByDefault &&
+                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryBcoByDefault &&
                                              x.Codigo.Trim() == transaccionBcoSubtipoModel.Codigo.Trim());
 
                     if (consecutivoBcoDetalleModel is null)
                     {
-                        return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryByDefault}-{transaccionBcoSubtipoModel.Codigo.Trim()} no encontrado");
+                        return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryBcoByDefault}-{transaccionBcoSubtipoModel.Codigo.Trim()} no encontrado");
                     }
 
                     switch (consecutivo)
@@ -300,8 +300,8 @@ public static class TransaccionBcoEndpoints
                     }
 
                     consecutivoBcoModel = consecutivoBcoList
-                        .FirstOrDefault(x => x.Categoria == AC.CategoryByDefault &&
-                                             x.Codigo == AC.CategoryByDefault);
+                        .FirstOrDefault(x => x.Categoria == AC.CategoryBcoByDefault &&
+                                             x.Codigo == AC.CategoryBcoByDefault);
 
                     if (consecutivoBcoModel is null)
                     {
