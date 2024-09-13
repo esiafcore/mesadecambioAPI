@@ -38,7 +38,9 @@ public static class TransaccionBcoEndpoints
             .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .DisableAntiforgery()
+            .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDtoUpdate>>()
+            .RequireAuthorization();
 
         group.MapDelete("/{id:Guid}", Delete)
             .RequireAuthorization(AC.IsAdminClaim);
@@ -416,7 +418,7 @@ public static class TransaccionBcoEndpoints
         }
     }
 
-    static async Task<Results<NotFound, BadRequest<string>, NoContent, ValidationProblem>>
+    static async Task<Results<NotFound<string>, BadRequest<string>, NoContent, ValidationProblem>>
         Update(Guid id, TransaccionesBcoDtoUpdate modelDtoUpdate
             , IRepositorioTransaccionBco repo, IOutputCacheStore outputCacheStore
             , IMapper mapper
@@ -442,7 +444,7 @@ public static class TransaccionBcoEndpoints
             var existe = await repo.Exist(id);
             if (!existe)
             {
-                return TypedResults.NotFound();
+                return TypedResults.NotFound("Transacción bancaria no encontrada");
             }
 
             await repo.Update(modelDtoUpdate);
