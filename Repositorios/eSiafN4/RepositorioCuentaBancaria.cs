@@ -72,7 +72,7 @@ public class RepositorioCuentaBancaria : IRepositorioCuentaBancaria
         using var conexion = new SqlConnection(_connectionString);
 
         var idResult = await conexion
-            .QuerySingleAsync<Guid>(
+            .ExecuteAsync(
                 "bco.usp_cuentasbancarias_update",
                 obj,
                 commandType: CommandType.StoredProcedure);
