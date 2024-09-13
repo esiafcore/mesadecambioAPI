@@ -73,7 +73,6 @@ public class RepositorioConsecutivoCnt : IRepositorioConsecutivoCnt
 
         var idResult = await conexion.ExecuteAsync("cnt.usp_consecutivoscnt_update",
             objUpdate, commandType: CommandType.StoredProcedure);
-        throw new NotImplementedException();
     }
 
     public async Task<bool> Exist(Guid id)

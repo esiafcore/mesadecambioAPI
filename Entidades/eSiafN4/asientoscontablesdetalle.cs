@@ -51,7 +51,7 @@ public partial class AsientosContablesDetalle
     public decimal TipoCambioParaMonfor { get; set; }
 
     [Required()]
-    public decimal TipoCambioMonParaMonxtr { get; set; }
+    public decimal TipoCambioParaMonxtr { get; set; }
 
     [Required()]
     public decimal MontoMonbas { get; set; }

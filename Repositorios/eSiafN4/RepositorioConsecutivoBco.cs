@@ -73,7 +73,6 @@ public class RepositorioConsecutivoBco : IRepositorioConsecutivoBco
 
         var idResult = await conexion.ExecuteAsync("bco.usp_consecutivosbco_update",
             objUpdate, commandType: CommandType.StoredProcedure);
-        throw new NotImplementedException();
     }
 
     public async Task<bool> Exist(Guid id)

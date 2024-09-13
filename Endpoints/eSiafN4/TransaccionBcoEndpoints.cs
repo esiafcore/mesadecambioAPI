@@ -332,8 +332,8 @@ public static class TransaccionBcoEndpoints
                     }
 
                     consecutivoBcoModel = consecutivoBcoList
-                        .FirstOrDefault(x => x.Categoria == AC.CategoryBcoByDefault &&
-                                             x.Codigo == AC.CategoryBcoByDefault);
+                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryBcoByDefault &&
+                                             x.Codigo.Trim() == AC.CategoryBcoByDefault);
 
                     if (consecutivoBcoModel is null)
                     {

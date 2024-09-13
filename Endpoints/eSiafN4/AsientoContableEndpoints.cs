@@ -264,8 +264,8 @@ public static class AsientoContableEndpoints
                     }
 
                     consecutivoCntModel = consecutivoCntList
-                        .FirstOrDefault(x => x.Categoria == AC.CategoryCntByDefault &&
-                                             x.Codigo == AC.CategoryCntByDefault);
+                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryCntByDefault &&
+                                             x.Codigo.Trim() == AC.CategoryCntByDefault);
 
                     if (consecutivoCntModel is null)
                     {
