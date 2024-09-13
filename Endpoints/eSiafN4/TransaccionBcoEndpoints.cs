@@ -43,7 +43,7 @@ public static class TransaccionBcoEndpoints
             .RequireAuthorization();
 
         group.MapDelete("/{id:Guid}", Delete)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         return group;
     }

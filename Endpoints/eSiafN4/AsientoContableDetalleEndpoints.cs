@@ -35,13 +35,13 @@ public static class AsientoContableDetalleEndpoints
             .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         group.MapDelete("/{id:Guid}", Delete)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
-        group.MapDelete("deletebyparent/{id:Guid}", DeleteByParent)
-            .RequireAuthorization(AC.IsAdminClaim);
+        group.MapDelete("deletebyparent/", DeleteByParent)
+            .RequireAuthorization();
 
         return group;
     }
@@ -284,7 +284,7 @@ public static class AsientoContableDetalleEndpoints
 
             if (objDB is null)
             {
-                return TypedResults.NotFound("Detalle asiento contable no encontrado");
+                return TypedResults.NotFound("Asiento contable no encontrado");
             }
 
             //Eliminar los hijos

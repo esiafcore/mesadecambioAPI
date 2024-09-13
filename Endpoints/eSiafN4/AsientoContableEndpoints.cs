@@ -37,10 +37,10 @@ public static class AsientoContableEndpoints
             .RequireAuthorization();
 
         group.MapPut("/{id:Guid}", Update)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         group.MapDelete("/{id:Guid}", Delete)
-            .RequireAuthorization(AC.IsAdminClaim);
+            .RequireAuthorization();
 
         return group;
     }
