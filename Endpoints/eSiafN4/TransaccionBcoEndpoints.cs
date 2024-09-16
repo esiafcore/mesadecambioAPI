@@ -248,6 +248,11 @@ public static class TransaccionBcoEndpoints
 
             var transaTipo = (TransaccionBcoTipo)tipo;
 
+            if (transaTipo == TransaccionBcoTipo.NotaDebito)
+            {
+                transaccionBcoSubtipoModel.Codigo = "NDB";
+            }
+
             //Si es pago, sacar el consecutivo de la cuenta
             if (transaTipo == TransaccionBcoTipo.Pago &&
                 (TransaccionBcoPagoSubtipo)subtipo == TransaccionBcoPagoSubtipo.MesaCambio)
