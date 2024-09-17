@@ -572,14 +572,6 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.BadRequest(AC.UserNotFound);
             }
 
-
-            var objDB = await repo.GetById(id);
-
-            if (objDB is null)
-            {
-                return TypedResults.NotFound("Transacción bancaria no encontrada");
-            }
-
             await repo.Delete(id);
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
             return TypedResults.NoContent();
