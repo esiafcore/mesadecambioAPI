@@ -43,6 +43,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ILoggerManager,LoggerManager>();
 builder.Services.AddScoped<IRepositorioBanco, RepositorioBanco>();
 builder.Services.AddScoped<IRepositorioTransaccionBco, RepositorioTransaccionBco>();
+builder.Services.AddScoped<IRepositorioTransaccionBcoRel, RepositorioTransaccionBcoRel>();
 builder.Services.AddScoped<IRepositorioTransaccionBcoDetalle, RepositorioTransaccionBcoDetalle>();
 builder.Services.AddScoped<IRepositorioCuentaBancaria, RepositorioCuentaBancaria>();
 builder.Services.AddScoped<IRepositorioConsecutivoBco, RepositorioConsecutivoBco>();

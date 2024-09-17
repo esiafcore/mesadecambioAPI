@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using XanesN8.Api.Repositorios.eSiafN4;
 using XanesN8.Api.DTOs.eSiafN4;
@@ -32,6 +33,9 @@ public static class TransaccionBcoEndpoints
         group.MapGet("getnextsecuentialnumber/", GetNextSecuentialNumber)
             .RequireAuthorization();
 
+        group.MapPost("relation/", CreateRelation)
+            .RequireAuthorization();
+
         group.MapPost("/", Create)
             .DisableAntiforgery()
             .AddEndpointFilter<FiltroValidaciones<TransaccionesBcoDtoCreate>>()
@@ -48,7 +52,8 @@ public static class TransaccionBcoEndpoints
         return group;
     }
 
-    static async Task<Results<Ok<List<TransaccionesBcoDto>>, BadRequest<string>>> GetAlls(Guid companyId, int yearfiscal, int mesfiscal
+    static async Task<Results<Ok<List<TransaccionesBcoDto>>, BadRequest<string>>> GetAlls(Guid companyId,
+        int yearfiscal, int mesfiscal
         , IRepositorioTransaccionBco repo
         , IMapper mapper
         , IServicioUsuarios srvUser
@@ -237,7 +242,7 @@ public static class TransaccionBcoEndpoints
             }
 
             transaccionBcoSubtipoModel = transaccionBcoSubtipoList
-                .FirstOrDefault(x => 
+                .FirstOrDefault(x =>
                     x.UidRegistPad == transaccionBcoTipoModel.UidRegist &&
                     x.Numero == subtipo);
 
@@ -305,7 +310,8 @@ public static class TransaccionBcoEndpoints
 
                     if (consecutivoBcoDetalleModel is null)
                     {
-                        return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryBcoByDefault}-{transaccionBcoSubtipoModel.Codigo.Trim()} no encontrado");
+                        return TypedResults.NotFound(
+                            $"Detalle de consecutivo: {AC.CategoryBcoByDefault}-{transaccionBcoSubtipoModel.Codigo.Trim()} no encontrado");
                     }
 
                     switch (consecutivo)
@@ -313,7 +319,8 @@ public static class TransaccionBcoEndpoints
                         case ConsecutivoTipo.Temporal:
                             consecutivoBcoDetalleModel.ContadorTemporal++;
                             numberTransa = (int)consecutivoBcoDetalleModel.ContadorTemporal;
-                            await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+                            await repoConsecutivoBcoDetalle.Update(
+                                mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
 
                             break;
                         case ConsecutivoTipo.Perpetuo:
@@ -321,7 +328,8 @@ public static class TransaccionBcoEndpoints
                             numberTransa = (int)consecutivoBcoDetalleModel.Contador;
 
                             if (isSave)
-                                await repoConsecutivoBcoDetalle.Update(mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
+                                await repoConsecutivoBcoDetalle.Update(
+                                    mapper.Map<ConsecutivosBcoDetalleDtoUpdate>(consecutivoBcoDetalleModel));
 
                             break;
                     }
@@ -358,7 +366,8 @@ public static class TransaccionBcoEndpoints
                             numberTransa = (int)consecutivoBcoModel.Contador;
 
                             if (isSave)
-                                await repoConsecutivoBco.Update(mapper.Map<ConsecutivosBcoDtoUpdate>(consecutivoBcoModel));
+                                await repoConsecutivoBco.Update(
+                                    mapper.Map<ConsecutivosBcoDtoUpdate>(consecutivoBcoModel));
 
                             break;
                     }
@@ -379,10 +388,10 @@ public static class TransaccionBcoEndpoints
     }
 
     static async Task<Results<Created<TransaccionesBcoDto>, NotFound<string>, BadRequest<string>
-       , ValidationProblem>>
-       Create(TransaccionesBcoDtoCreate modelDtoCreate
-       , IRepositorioTransaccionBco repo, IOutputCacheStore outputCacheStore
-       , IMapper mapper, IServicioUsuarios srvUser, IValidator<TransaccionesBcoDtoCreate> validator)
+            , ValidationProblem>>
+        Create(TransaccionesBcoDtoCreate modelDtoCreate
+            , IRepositorioTransaccionBco repo, IOutputCacheStore outputCacheStore
+            , IMapper mapper, IServicioUsuarios srvUser, IValidator<TransaccionesBcoDtoCreate> validator)
     {
         try
         {
@@ -400,7 +409,6 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
             }
 
-
             var uid = await repo.Create(modelDtoCreate);
 
             var dataItem = await repo.GetById(uid);
@@ -415,6 +423,91 @@ public static class TransaccionBcoEndpoints
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
 
             return TypedResults.Created($"/transaccionesbco/{uid}", objDto);
+
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+    }
+
+    static async Task<Results<NotFound<string>, BadRequest<string>, NoContent>>
+          CreateRelation(Guid transaBcoDebitId,
+              Guid transaBcoCreditId,
+              Guid transaBcoCommisionId,
+              IRepositorioTransaccionBco repo,
+              IRepositorioTransaccionBcoRel repoRel,
+              IOutputCacheStore outputCacheStore,
+              IMapper mapper, IServicioUsuarios srvUser)
+    {
+        try
+        {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var objTransaDebit = await repo.GetById(transaBcoDebitId);
+
+            if (objTransaDebit is null)
+            {
+                return TypedResults.NotFound("Transacción bancaria de debito no encontrada");
+            }
+
+            var objTransaCredit = await repo.GetById(transaBcoCreditId);
+
+            if (objTransaCredit is null)
+            {
+                return TypedResults.NotFound("Transacción bancaria de credito no encontrada");
+            }
+
+            var objTransaCommision = await repo.GetById(transaBcoCommisionId);
+
+            if (objTransaCommision is null)
+            {
+                return TypedResults.NotFound("Transacción bancaria de comisión no encontrada");
+            }
+
+            var objRelDebit = new TransaccionesBcoRelDtoCreate()
+            {
+                UidCia = objTransaDebit.UidCia,
+                UidTransaccionBco = objTransaDebit.UidRegist,
+                UidTransaccionesRelacionada = objTransaCredit.UidRegist,
+                TipoRelacion = (short)mexTransferTypeRelation.TransferCredit,
+                NumeroMoneda = objTransaDebit.NumeroMoneda,
+                MontoTransaccionBancaria = (CurrencyType)objTransaDebit.NumeroMoneda switch
+                {
+                    CurrencyType.Base => objTransaDebit.MontoMonbas,
+                    CurrencyType.Foreign => objTransaDebit.MontoMonfor,
+                    _ => objTransaDebit.MontoMonxtr
+                }
+            };
+
+            var objRelCommision = new TransaccionesBcoRelDtoCreate()
+            {
+                UidCia = objTransaDebit.UidCia,
+                UidTransaccionBco = objTransaDebit.UidRegist,
+                UidTransaccionesRelacionada = objTransaCommision.UidRegist,
+                TipoRelacion = (short)mexTransferTypeRelation.TransferFee,
+                NumeroMoneda = objTransaCommision.NumeroMoneda,
+                MontoTransaccionBancaria = (CurrencyType)objTransaCommision.NumeroMoneda switch
+                {
+                    CurrencyType.Base => objTransaCommision.MontoMonbas,
+                    CurrencyType.Foreign => objTransaCommision.MontoMonfor,
+                    _ => objTransaCommision.MontoMonxtr
+                }
+            };
+
+
+            await repoRel.Create(objRelDebit);
+            await repoRel.Create(objRelCommision);
+
+
+            await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancariasRelacion, default);
+            return TypedResults.NoContent();
 
         }
         catch (Exception e)
@@ -487,8 +580,6 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.NotFound("Transacción bancaria no encontrada");
             }
 
-            //Eliminar los hijos
-            await repoChildren.DeleteByParent(id);
             await repo.Delete(id);
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancarias, default);
             return TypedResults.NoContent();

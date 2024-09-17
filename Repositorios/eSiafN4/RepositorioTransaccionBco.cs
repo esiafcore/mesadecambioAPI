@@ -104,7 +104,7 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
     public async Task Delete(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);
-        await conexion.ExecuteAsync("bco.usp_transaccionesbco_delete", new { uidregist = id });
+        await conexion.ExecuteAsync("bco.mpxtransaccionesbcodelbyid", new { putransaccionuid = id });
     }
 
     public async Task<bool> Exist(Guid id)

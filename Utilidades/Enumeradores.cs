@@ -77,5 +77,20 @@ public static class Enumeradores
         TransferenciaDebito = 2,
         TransferenciaCredito = 4
     }
+
+    public enum mexTransferTypeRelation : short
+    {
+        TransferCredit = 1,
+        TransferFee = 2,
+        All = 3
+    }
+
+    [Flags]
+    public enum CurrencyType : int
+    {
+        Base = 1,
+        Foreign = 2,
+        Additional = 4
+    }
 }
 
