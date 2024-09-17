@@ -434,7 +434,7 @@ public static class TransaccionBcoEndpoints
     static async Task<Results<NotFound<string>, BadRequest<string>, NoContent>>
           CreateRelation(Guid transaBcoDebitId,
               Guid transaBcoCreditId,
-              Guid transaBcoCommisionId,
+              Guid? transaBcoCommisionId,
               IRepositorioTransaccionBco repo,
               IRepositorioTransaccionBcoRel repoRel,
               IOutputCacheStore outputCacheStore,
@@ -464,11 +464,31 @@ public static class TransaccionBcoEndpoints
                 return TypedResults.NotFound("Transacción bancaria de credito no encontrada");
             }
 
-            var objTransaCommision = await repo.GetById(transaBcoCommisionId);
-
-            if (objTransaCommision is null)
+            if (transaBcoCommisionId != null && transaBcoCommisionId != Guid.Empty)
             {
-                return TypedResults.NotFound("Transacción bancaria de comisión no encontrada");
+                var objTransaCommision = await repo.GetById(transaBcoCommisionId.Value);
+
+                if (objTransaCommision is null)
+                {
+                    return TypedResults.NotFound("Transacción bancaria de comisión no encontrada");
+                }
+
+                var objRelCommision = new TransaccionesBcoRelDtoCreate()
+                {
+                    UidCia = objTransaDebit.UidCia,
+                    UidTransaccionBco = objTransaDebit.UidRegist,
+                    UidTransaccionesRelacionada = objTransaCommision.UidRegist,
+                    TipoRelacion = (short)mexTransferTypeRelation.TransferFee,
+                    NumeroMoneda = objTransaCommision.NumeroMoneda,
+                    MontoTransaccionBancaria = (CurrencyType)objTransaCommision.NumeroMoneda switch
+                    {
+                        CurrencyType.Base => objTransaCommision.MontoMonbas,
+                        CurrencyType.Foreign => objTransaCommision.MontoMonfor,
+                        _ => objTransaCommision.MontoMonxtr
+                    }
+                };
+
+                await repoRel.Create(objRelCommision);
             }
 
             var objRelDebit = new TransaccionesBcoRelDtoCreate()
@@ -486,26 +506,7 @@ public static class TransaccionBcoEndpoints
                 }
             };
 
-            var objRelCommision = new TransaccionesBcoRelDtoCreate()
-            {
-                UidCia = objTransaDebit.UidCia,
-                UidTransaccionBco = objTransaDebit.UidRegist,
-                UidTransaccionesRelacionada = objTransaCommision.UidRegist,
-                TipoRelacion = (short)mexTransferTypeRelation.TransferFee,
-                NumeroMoneda = objTransaCommision.NumeroMoneda,
-                MontoTransaccionBancaria = (CurrencyType)objTransaCommision.NumeroMoneda switch
-                {
-                    CurrencyType.Base => objTransaCommision.MontoMonbas,
-                    CurrencyType.Foreign => objTransaCommision.MontoMonfor,
-                    _ => objTransaCommision.MontoMonxtr
-                }
-            };
-
-
             await repoRel.Create(objRelDebit);
-            await repoRel.Create(objRelCommision);
-
-
             await outputCacheStore.EvictByTagAsync(AC.EvictByTagTransaccionBancariasRelacion, default);
             return TypedResults.NoContent();
 
@@ -554,6 +555,34 @@ public static class TransaccionBcoEndpoints
             return TypedResults.BadRequest(e.Message);
         }
     }
+
+    //static async Task<Results<NoContent, NotFound<string>, BadRequest<string>>> Void(
+    //    Guid id,
+    //    IRepositorioTransaccionBco repoTransa,
+    //    IRepositorioTransaccionBcoDetalle repoTransaDetail,
+    //    IRepositorioTransaccionBco repoAsiento,
+    //    IRepositorioTransaccionBcoDetalle repoAsientoDetail,
+    //    IOutputCacheStore outputCacheStore,
+    //    IServicioUsuarios srvUser)
+    //{
+    //    try
+    //    {
+    //        //Obtener usuario
+    //        var usuario = await srvUser.ObtenerUsuario();
+
+    //        if (usuario is null)
+    //        {
+    //            return TypedResults.BadRequest(AC.UserNotFound);
+    //        }
+
+
+    //        return TypedResults.NoContent();
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        return TypedResults.BadRequest(e.Message);
+    //    }
+    //}
 
     static async Task<Results<NoContent, NotFound<string>, BadRequest<string>>> Delete(
         Guid id,
