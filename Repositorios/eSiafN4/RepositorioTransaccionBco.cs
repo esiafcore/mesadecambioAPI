@@ -67,6 +67,17 @@ public class RepositorioTransaccionBco : IRepositorioTransaccionBco
         return dataItem;
     }
 
+    public async Task<TransaccionesBcoDtoStatus?> GetByStatus(Guid id)
+    {
+        using var conexion = new SqlConnection(_connectionString);
+
+        var dataItem = await conexion
+            .QueryFirstOrDefaultAsync<TransaccionesBcoDtoStatus>(sql: @"bco.usp_transaccionesbco_getbystatus"
+                , param: new { uidregist = id }
+                , commandType: CommandType.StoredProcedure);
+        return dataItem;
+    }
+
     public async Task<bool> GetIsAproval(Guid id)
     {
         using var conexion = new SqlConnection(_connectionString);

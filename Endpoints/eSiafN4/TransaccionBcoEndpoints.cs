@@ -26,6 +26,9 @@ public static class TransaccionBcoEndpoints
         group.MapGet("/{id:Guid}", GetById)
             .RequireAuthorization();
 
+        group.MapGet("status/", GetByStatus)
+            .RequireAuthorization();
+
         group.MapGet("isaproval/", GetIsAproval)
             .RequireAuthorization();
 
@@ -114,6 +117,36 @@ public static class TransaccionBcoEndpoints
             var objItem = mapper.Map<TransaccionesBcoDto>(dataItem);
 
             return TypedResults.Ok(objItem);
+
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
+    }
+
+    static async Task<Results<Ok<TransaccionesBcoDtoStatus>, NotFound<string>, BadRequest<string>>> GetByStatus(Guid id
+        , IRepositorioTransaccionBco repo
+        , IMapper mapper
+        , IServicioUsuarios srvUser)
+    {
+        try
+        {
+            //Obtener usuario
+            var usuario = await srvUser.ObtenerUsuario();
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.UserNotFound);
+            }
+
+            var dataItem = await repo.GetByStatus(id);
+            if (dataItem is null)
+            {
+                return TypedResults.NotFound("Transacción bancaria no encontrada");
+            }
+
+            return TypedResults.Ok(dataItem);
 
         }
         catch (Exception e)
