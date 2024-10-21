@@ -116,7 +116,6 @@ public static class AsientoContableEndpoints
 
     static async Task<Results<Ok<string>, NotFound<string>, BadRequest<string>>> GetNextSecuentialNumber(
        Guid companyId,
-       Guid bankAccountId,
        int fiscalYear,
        int fiscalMonth,
        short tipo,
@@ -125,7 +124,6 @@ public static class AsientoContableEndpoints
        IRepositorioConfigCnt repoConfigCnt,
        IRepositorioConsecutivoCnt repoConsecutivoCnt,
        IRepositorioConsecutivoCntDetalle repoConsecutivoCntDetalle,
-       IRepositorioCuentaBancaria repoCuentaBancaria,
        IMapper mapper,
        IServicioUsuarios srvUser,
        ConsecutivoTipo consecutivo = ConsecutivoTipo.Temporal,
@@ -145,7 +143,6 @@ public static class AsientoContableEndpoints
 
             int numberTransa = 0;
             string numberFull = string.Empty;
-            CuentasBancarias? cuentaModel = new();
             ConsecutivosCnt? consecutivoCntModel = new();
             ConsecutivosCntDetalle? consecutivoCntDetalleModel = new();
             List<ConsecutivosCnt>? consecutivoCntList = new();
@@ -180,115 +177,83 @@ public static class AsientoContableEndpoints
 
             var transaTipo = (TransaccionBcoTipo)tipo;
 
-            //Si es pago, sacar el consecutivo de la cuenta
-            if (transaTipo == TransaccionBcoTipo.Pago &&
-                (TransaccionBcoPagoSubtipo)subtipo == TransaccionBcoPagoSubtipo.MesaCambio)
-            {
-                cuentaModel = await repoCuentaBancaria.GetById(bankAccountId);
+            var consecutivoTipo =
+                (ContabilidadConsecutivoPor.Tipo | ContabilidadConsecutivoPor.TipoMensual | ContabilidadConsecutivoPor.TipoAnual);
 
-                if (cuentaModel is null)
+            var consecutivoPor = (ContabilidadConsecutivoPor)configCnt.ConsecutivoAsientopor;
+
+            //Si los consecutivos son por tipo
+            if ((consecutivoPor & consecutivoTipo) == consecutivoPor)
+            {
+                consecutivoCntDetalleList = await repoConsecutivoCntDetalle.GetAlls(yearMonthParams);
+
+                if (consecutivoCntDetalleList is null || consecutivoCntDetalleList.Count == 0)
                 {
-                    return TypedResults.NotFound("Cuenta bancaria no encontrada");
+                    return TypedResults.NotFound("Detalles de consecutivos no encontrados");
+                }
+
+                consecutivoCntDetalleModel = consecutivoCntDetalleList
+                    .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryBcoByDefault &&
+                                         x.Codigo.Trim() == AC.CategoryBcoByDefault);
+
+                if (consecutivoCntDetalleModel is null)
+                {
+                    return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryBcoByDefault}-{AC.CategoryBcoByDefault} no encontrado");
                 }
 
                 switch (consecutivo)
                 {
                     case ConsecutivoTipo.Temporal:
-                        cuentaModel.ContadorTemporalExchange++;
-                        numberTransa = (int)cuentaModel.ContadorTemporalExchange;
-                        await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
+                        consecutivoCntDetalleModel.ContadorTemporal++;
+                        numberTransa = (int)consecutivoCntDetalleModel.ContadorTemporal;
+                        await repoConsecutivoCntDetalle.Update(mapper.Map<ConsecutivosCntDetalleDtoUpdate>(consecutivoCntDetalleModel));
 
                         break;
                     case ConsecutivoTipo.Perpetuo:
-                        cuentaModel.ContadorExchange++;
-                        numberTransa = (int)cuentaModel.ContadorExchange;
+                        consecutivoCntDetalleModel.Contador++;
+                        numberTransa = (int)consecutivoCntDetalleModel.Contador;
 
                         if (isSave)
-                            await repoCuentaBancaria.Update(mapper.Map<CuentasBancariasDtoUpdate>(cuentaModel));
+                            await repoConsecutivoCntDetalle.Update(mapper.Map<ConsecutivosCntDetalleDtoUpdate>(consecutivoCntDetalleModel));
 
                         break;
                 }
+
             }
             else
             {
-                var consecutivoTipo =
-                    (ContabilidadConsecutivoPor.Tipo | ContabilidadConsecutivoPor.TipoMensual | ContabilidadConsecutivoPor.TipoAnual);
+                consecutivoCntList = await repoConsecutivoCnt.GetAlls(queryParams);
 
-                var consecutivoPor = (ContabilidadConsecutivoPor)configCnt.ConsecutivoAsientopor;
-
-                //Si los consecutivos son por tipo
-                if ((consecutivoPor & consecutivoTipo) == consecutivoPor)
+                if (consecutivoCntList is null || consecutivoCntList.Count == 0)
                 {
-                    consecutivoCntDetalleList = await repoConsecutivoCntDetalle.GetAlls(yearMonthParams);
-
-                    if (consecutivoCntDetalleList is null || consecutivoCntDetalleList.Count == 0)
-                    {
-                        return TypedResults.NotFound("Detalles de consecutivos no encontrados");
-                    }
-
-                    consecutivoCntDetalleModel = consecutivoCntDetalleList
-                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryBcoByDefault &&
-                                             x.Codigo.Trim() == AC.CategoryBcoByDefault);
-
-                    if (consecutivoCntDetalleModel is null)
-                    {
-                        return TypedResults.NotFound($"Detalle de consecutivo: {AC.CategoryBcoByDefault}-{AC.CategoryBcoByDefault} no encontrado");
-                    }
-
-                    switch (consecutivo)
-                    {
-                        case ConsecutivoTipo.Temporal:
-                            consecutivoCntDetalleModel.ContadorTemporal++;
-                            numberTransa = (int)consecutivoCntDetalleModel.ContadorTemporal;
-                            await repoConsecutivoCntDetalle.Update(mapper.Map<ConsecutivosCntDetalleDtoUpdate>(consecutivoCntDetalleModel));
-
-                            break;
-                        case ConsecutivoTipo.Perpetuo:
-                            consecutivoCntDetalleModel.Contador++;
-                            numberTransa = (int)consecutivoCntDetalleModel.Contador;
-
-                            if (isSave)
-                                await repoConsecutivoCntDetalle.Update(mapper.Map<ConsecutivosCntDetalleDtoUpdate>(consecutivoCntDetalleModel));
-
-                            break;
-                    }
-
+                    return TypedResults.NotFound("Consecutivos no encontrados");
                 }
-                else
+
+                consecutivoCntModel = consecutivoCntList
+                    .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryCntByDefault &&
+                                         x.Codigo.Trim() == AC.CategoryCntByDefault);
+
+                if (consecutivoCntModel is null)
                 {
-                    consecutivoCntList = await repoConsecutivoCnt.GetAlls(queryParams);
+                    return TypedResults.NotFound("Consecutivo no encontrado");
+                }
 
-                    if (consecutivoCntList is null || consecutivoCntList.Count == 0)
-                    {
-                        return TypedResults.NotFound("Consecutivos no encontrados");
-                    }
+                switch (consecutivo)
+                {
+                    case ConsecutivoTipo.Temporal:
+                        consecutivoCntModel.ContadorTemporal++;
+                        numberTransa = (int)consecutivoCntModel.ContadorTemporal;
+                        await repoConsecutivoCnt.Update(mapper.Map<ConsecutivosCntDtoUpdate>(consecutivoCntModel));
 
-                    consecutivoCntModel = consecutivoCntList
-                        .FirstOrDefault(x => x.Categoria.Trim() == AC.CategoryCntByDefault &&
-                                             x.Codigo.Trim() == AC.CategoryCntByDefault);
+                        break;
+                    case ConsecutivoTipo.Perpetuo:
+                        consecutivoCntModel.Contador++;
+                        numberTransa = (int)consecutivoCntModel.Contador;
 
-                    if (consecutivoCntModel is null)
-                    {
-                        return TypedResults.NotFound("Consecutivo no encontrado");
-                    }
-
-                    switch (consecutivo)
-                    {
-                        case ConsecutivoTipo.Temporal:
-                            consecutivoCntModel.ContadorTemporal++;
-                            numberTransa = (int)consecutivoCntModel.ContadorTemporal;
+                        if (isSave)
                             await repoConsecutivoCnt.Update(mapper.Map<ConsecutivosCntDtoUpdate>(consecutivoCntModel));
 
-                            break;
-                        case ConsecutivoTipo.Perpetuo:
-                            consecutivoCntModel.Contador++;
-                            numberTransa = (int)consecutivoCntModel.Contador;
-
-                            if (isSave)
-                                await repoConsecutivoCnt.Update(mapper.Map<ConsecutivosCntDtoUpdate>(consecutivoCntModel));
-
-                            break;
-                    }
+                        break;
                 }
             }
 
