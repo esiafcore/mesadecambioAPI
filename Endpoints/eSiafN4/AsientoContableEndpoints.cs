@@ -28,7 +28,7 @@ public static class AsientoContableEndpoints
         group.MapGet("/{id:Guid}", GetById)
             .RequireAuthorization();
 
-        group.MapGet("getnextsecuentialnumber/", GetNextSecuentialNumber)
+        group.MapGet("getnextsecuentialnumber/", GetNextSequentialNumber)
             .RequireAuthorization();
 
         group.MapPost("/", Create)
@@ -114,7 +114,7 @@ public static class AsientoContableEndpoints
         }
     }
 
-    static async Task<Results<Ok<string>, NotFound<string>, BadRequest<string>>> GetNextSecuentialNumber(
+    static async Task<Results<Ok<string>, NotFound<string>, BadRequest<string>>> GetNextSequentialNumber(
        Guid companyId,
        int fiscalYear,
        int fiscalMonth,
