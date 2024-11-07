@@ -28,7 +28,7 @@ public static class AsientoContableEndpoints
         group.MapGet("/{id:Guid}", GetById)
             .RequireAuthorization();
 
-        group.MapGet("getnextsecuentialnumber/", GetNextSequentialNumber)
+        group.MapGet("getnextsequentialnumber/", GetNextSequentialNumber)
             .RequireAuthorization();
 
         group.MapPost("/", Create)
