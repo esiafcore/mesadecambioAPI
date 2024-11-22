@@ -63,26 +63,33 @@ public static class UsuariosEndpoints
         credencialesUsuarioDto.Email = credencialesUsuarioDto.Email.Trim();
         credencialesUsuarioDto.Password = credencialesUsuarioDto.Password.Trim();
 
-        var usuario = await userManager.FindByEmailAsync(credencialesUsuarioDto.Email);
-
-        if (usuario is null)
+        try
         {
-            return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+            var usuario = await userManager.FindByEmailAsync(credencialesUsuarioDto.Email);
+
+            if (usuario is null)
+            {
+                return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+            }
+
+            //lockoutOnFailure: false. Por el momento si el usuario intenta varias veces que no lo bloquee
+            var resultado = await signInManager.CheckPasswordSignInAsync(usuario,
+                credencialesUsuarioDto.Password, lockoutOnFailure: false);
+
+            if (resultado.Succeeded)
+            {
+                var respuestaAutenticacion =
+                    await ConstruirToken(credencialesUsuarioDto, configuration);
+                return TypedResults.Ok(respuestaAutenticacion);
+            }
+            else
+            {
+                return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+            }
         }
-
-        //lockoutOnFailure: false. Por el momento si el usuario intenta varias veces que no lo bloquee
-        var resultado = await signInManager.CheckPasswordSignInAsync(usuario,
-            credencialesUsuarioDto.Password, lockoutOnFailure: false);
-
-        if (resultado.Succeeded)
+        catch (Exception e)
         {
-            var respuestaAutenticacion =
-                await ConstruirToken(credencialesUsuarioDto, configuration);
-            return TypedResults.Ok(respuestaAutenticacion);
-        }
-        else
-        {
-            return TypedResults.BadRequest(AC.LoginIncorrectMessage);
+            return TypedResults.BadRequest(e.Message);
         }
     }
 
